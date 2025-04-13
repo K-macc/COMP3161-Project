@@ -4,8 +4,8 @@
 1. Create the database and the tables (run create_tables.sql in your sql environment)
 2. Run insert_sql_queries.py to insert the statements. 
 3. Run apache and sql from xampp
-4. Go to react-frontend/course-management-system in your terminal and run 'npm install'
-5. In that same terminal, run 'npm run dev' and click the link that shows up
+4. Go to react-frontend/course-management-system in your terminal and run 'npm install' 
+5. In that same terminal, run 'npm run dev' and click the link that shows up (run 'npm install vite --save-dev' if it says vite isn't present)
 6. Create a new terminal and navigate to the project-files folder
 7. Run 'pip install flask' (If pip doesn't work you might need to download pip)
 8. Run 'flask --app app --debug run'
