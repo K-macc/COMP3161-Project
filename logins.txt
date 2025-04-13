@@ -1,0 +1,11 @@
+"Admin"
+UserID: USER-000001
+Password: )5ZqaM3ngT
+
+"Lecturer"
+UserID: USER-000011
+Password: i_Wb@uAB$6
+
+"Student"
+UserID: USER-000061
+Password: W@)17sGce5
