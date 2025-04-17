@@ -21,11 +21,11 @@ try:
         # Step 1: Generate Users
         for i in range(1, 11):
             user_id = "USER-" + str(i).zfill(6)
-            name = fake.name()  # Use name as username
-            username = name.replace(" ", "").lower() 
+            name = fake.name()
+            username = name.replace(" ", "").lower()
             password = fake.password(length=10, special_chars=True, digits=True, upper_case=True, lower_case=True)
             role = "admin"
-            admin_ids.append((user_id, name))  # store name with ID
+            admin_ids.append((user_id, name, username))  # also save username to use in email
             users.append((user_id, username, password, role))
             f.write(f"INSERT INTO User (UserID, Username, Password, Role) VALUES ('{user_id}', '{username}', '{password}', '{role}');\n")
             print(f" Statement#{num}: Insert statements created for admin user")
@@ -37,7 +37,7 @@ try:
             username = name.replace(" ", "").lower()
             password = fake.password(length=10, special_chars=True, digits=True, upper_case=True, lower_case=True)
             role = "lecturer"
-            lecturer_ids.append((user_id, name))
+            lecturer_ids.append((user_id, name, username))
             users.append((user_id, username, password, role))
             f.write(f"INSERT INTO User (UserID, Username, Password, Role) VALUES ('{user_id}', '{username}', '{password}', '{role}');\n")
             print(f" Statement#{num}: Insert statements created for lecturer user")
@@ -46,10 +46,10 @@ try:
         for i in range(61, 100061):
             user_id = "USER-" + str(i).zfill(6)
             name = fake.name()
-            username = name.replace(" ", "").lower() 
+            username = name.replace(" ", "").lower()
             password = fake.password(length=10, special_chars=True, digits=True, upper_case=True, lower_case=True)
             role = "student"
-            student_ids.append((user_id, name))
+            student_ids.append((user_id, name, username))
             users.append((user_id, username, password, role))
             f.write(f"INSERT INTO User (UserID, Username, Password, Role) VALUES ('{user_id}', '{username}', '{password}', '{role}');\n")
             print(f" Statement#{num}: Insert statements created for student user")
@@ -61,9 +61,10 @@ try:
         admins = []
         for i in range(1, 11):
             admin_id = i
-            admin_user_id, admin_name = admin_ids.pop(0)
-            admins.append((admin_id, admin_user_id, admin_name))
-            f.write(f"INSERT INTO Admin (AdminID, UserID, AdminName) VALUES ({admin_id}, '{admin_user_id}', '{admin_name}');\n")
+            admin_user_id, admin_name, admin_username = admin_ids.pop(0)
+            email = f"{admin_username}@admin.uwi"
+            admins.append((admin_id, admin_user_id, admin_name, email))
+            f.write(f"INSERT INTO Admin (AdminID, UserID, AdminName, Email) VALUES ({admin_id}, '{admin_user_id}', '{admin_name}', '{email}');\n")
             print(f" Statement#{num}: Insert statements created for admin")
             num += 1
 
@@ -73,9 +74,10 @@ try:
         lecturers = []
         for i in range(1, 51):
             lec_id = i
-            l_user_id, lec_name = lecturer_ids.pop(0)
-            lecturers.append((lec_id, l_user_id, lec_name))
-            f.write(f"INSERT INTO Lecturer (LecturerID, UserID, LecturerName) VALUES ({lec_id}, '{l_user_id}', '{lec_name}');\n")
+            l_user_id, lec_name, lec_username = lecturer_ids.pop(0)
+            email = f"{lec_username}@uwimona.edu"
+            lecturers.append((lec_id, l_user_id, lec_name, email))
+            f.write(f"INSERT INTO Lecturer (LecturerID, UserID, LecturerName, Email) VALUES ({lec_id}, '{l_user_id}', '{lec_name}', '{email}');\n")
             print(f" Statement#{num}: Insert statements created for lecturer")
             num += 1
 
@@ -85,13 +87,15 @@ try:
         students = []
         for i in range(1, 100001):
             student_id = int("620" + (str(i).zfill(6)))
-            s_user_id, student_name = student_ids.pop(0)
-            students.append((student_id, s_user_id, student_name))
-            f.write(f"INSERT INTO Student (StudentID, UserID, StudentName) VALUES ({student_id}, '{s_user_id}', '{student_name}');\n")
+            s_user_id, student_name, student_username = student_ids.pop(0)
+            email = f"{student_username}@mymona.uwi.edu"
+            students.append((student_id, s_user_id, student_name, email))
+            f.write(f"INSERT INTO Student (StudentID, UserID, StudentName, Email) VALUES ({student_id}, '{s_user_id}', '{student_name}', '{email}');\n")
             print(f" Statement#{num}: Insert statements created for student")
             num += 1
 
         f.write("\n")
+
 
             
             

@@ -48,5 +48,5 @@
 - Develop SQL **queries for reports** (e.g., students with 5+ courses, top 10 students).
 - Create and test the **Postman collection** to verify all API endpoints work properly.
 
-### **Roshae: Website (Bonus) (*Deadline: April 20*)**
-- Create and design website for bonus marks  
+### **Roshae: (Bonus) (*Deadline: April 20*)**
+- JWT Authentication and Authorization
