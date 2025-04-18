@@ -16,6 +16,7 @@
 - Update **ERD diagram** based on the project requirements.
 - Convert the ERD into **normalized relational tables**. ✅
 - Write **SQL scripts** to create the database and tables.✅
+- Create **views for reports** (most enrolled courses, top students, etc.). ✅
 - **Bonus**: JWT Authentication and Authorization ✅
 - **Bonus**: Stored Procedures and Indexes ✅
 
@@ -23,7 +24,6 @@
 
 - Insert **100,000 students, 200 courses**, and other required data while following constraints. ✅
 - Write SQL **queries to insert** data efficiently (bulk inserts). ✅
-- Create **views for reports** (most enrolled courses, top students, etc.). ✅
 - **Bonus**: JWT Authentication and Authorization ✅
 
 ### **Vedang: Backend API Development (User & Course Management)**
@@ -43,6 +43,5 @@
 ### **Jada: Assignments, Reports & Postman Collection**
 
 - Implement **assignment submission, grading, and final average calculation**.
-- Develop SQL **queries for reports** (e.g., students with 5+ courses, top 10 students).
 - Create and test the **Postman collection** to verify all API endpoints work properly.
 - **Bonus**: JWT Authentication and Authorization 
