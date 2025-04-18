@@ -18,36 +18,38 @@
 
 **P.S. - You can run the report queries if you feel curious (more than likely Vedang)**
 
-### **Roshae: Database Design & ERD (*Deadline: March 24*)**
+### **Roshae: Database Design & ERD**
 
 - Update **ERD diagram** based on the project requirements.
 - Convert the ERD into **normalized relational tables**. ✅
 - Write **SQL scripts** to create the database and tables.✅
+- **Bonus**: JWT Authentication and Authorization ✅
+- **Bonus**: Stored Procedures and Indexes ✅
 
-### **Keshawn: Data Insertion & SQL Queries (*Deadline: April 2*)**
+### **Keshawn: Data Insertion & SQL Queries**
 
 - Insert **100,000 students, 200 courses**, and other required data while following constraints. ✅
 - Write SQL **queries to insert** data efficiently (bulk inserts). ✅
 - Create **views for reports** (most enrolled courses, top students, etc.). ✅
+- **Bonus**: JWT Authentication and Authorization ✅
 
-### **Vedang: Backend API Development (User & Course Management) (*Deadline: April 9*)**
+### **Vedang: Backend API Development (User & Course Management)**
 
 - Implement **User Registration & Login**. ✅
 - Implement **Course-related endpoints** (create, retrieve, register students). ✅
 - Ensure **admin-only restrictions** for course creation. ✅
+- **Bonus**: JWT Authentication and Authorization ✅
 
-### **Brianna: Backend API Development (Features & Functionality) (*Deadline: April 12*)**
+### **Brianna: Backend API Development (Features & Functionality)**
 
 - Implement **calendar events** (create, retrieve for courses/students). ✅
 - Implement **forums & discussion threads** (support replies). ✅
 - Implement **course content upload & retrieval** (handle files, links, slides). ✅
+- **Bonus**: JWT Authentication and Authorization ✅
 
-### **Jada: Assignments, Reports & Postman Collection (*Deadline: April 16*)**
+### **Jada: Assignments, Reports & Postman Collection**
 
 - Implement **assignment submission, grading, and final average calculation**.
 - Develop SQL **queries for reports** (e.g., students with 5+ courses, top 10 students).
 - Create and test the **Postman collection** to verify all API endpoints work properly.
-
-### **Roshae: (Bonus) (*Deadline: April 20*)**
-- JWT Authentication and Authorization
-- Stored Procedures and Indexes
+- **Bonus**: JWT Authentication and Authorization 
