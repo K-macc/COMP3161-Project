@@ -50,3 +50,4 @@
 
 ### **Roshae: (Bonus) (*Deadline: April 20*)**
 - JWT Authentication and Authorization
+- Stored Procedures and Indexes
