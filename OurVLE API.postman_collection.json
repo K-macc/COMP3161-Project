@@ -1,0 +1,434 @@
+{
+	"info": {
+		"_postman_id": "5e98c994-2879-4d8b-b41c-de9312c8ad02",
+		"name": "OurVLE API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "43363708",
+		"_collection_link": "https://crimson-capsule-554717.postman.co/workspace/Team-Workspace~081b29af-804f-4819-8f3a-a75ac0021162/collection/43363708-5e98c994-2879-4d8b-b41c-de9312c8ad02?action=share&source=collection_link&creator=43363708"
+	},
+	"item": [
+		{
+			"name": "login",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "create_event",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc0NTIwNjU2NywianRpIjoiOTYyOGVhMTktMjNhOC00YzhiLWJiMTUtYjU4ZDc3NGNlYjFiIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IlVTRVItMDAwMDAxIiwibmJmIjoxNzQ1MjA2NTY3LCJjc3JmIjoiMWU4NWM2OTYtYWE4My00YWUzLTgxNzEtYjU2ZDhjYWQwNmYyIiwiZXhwIjoxNzQ1MjA3NDY3LCJyb2xlIjoiYWRtaW4ifQ.63FSflYEDRLimmLH1wVhKi89RMcLpMTO46IhEaiJKnA",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"title\": \"Final Project Submission\",\r\n  \"description\": \"Submit your group project deliverables\",\r\n  \"event_date\": \"2025-05-22\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5500/api/courses/COMP1721/events",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5500",
+					"path": [
+						"api",
+						"courses",
+						"COMP1721",
+						"events"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "course_event",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5500/api/courses/COMP1721/events",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5500",
+					"path": [
+						"api",
+						"courses",
+						"COMP1721",
+						"events"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "student_event",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:5500/api/students/620000001/events?date=2023-12-15",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5500",
+					"path": [
+						"api",
+						"students",
+						"620000001",
+						"events"
+					],
+					"query": [
+						{
+							"key": "date",
+							"value": "2023-12-15"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "create_content",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "multipart/form-data",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "content_type",
+							"value": "file",
+							"type": "text"
+						},
+						{
+							"key": "title",
+							"value": "Example",
+							"type": "text"
+						},
+						{
+							"key": "file",
+							"type": "file",
+							"src": "/C:/Users/behar/Downloads/COMP3161  2023 Final Project (2).pdf"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5500/api/section/258/content",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5500",
+					"path": [
+						"api",
+						"section",
+						"258",
+						"content"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get_section_content",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:5500/api/section/330/content",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5500",
+					"path": [
+						"api",
+						"section",
+						"330",
+						"content"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "create_thread",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"title\": \"API\",\r\n    \"post\": \"APIs are mechanisms that enable two software components to communicate with each other using a set of definitions and protocols. For example, the weather bureau's software system contains daily weather data. The weather app on your phone “talks” to this system via APIs and shows you daily weather updates on your phone.\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5500/api/forums/130/threads",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5500",
+					"path": [
+						"api",
+						"forums",
+						"130",
+						"threads"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get_thread",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:5500/api/forums/130/threads",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5500",
+					"path": [
+						"api",
+						"forums",
+						"130",
+						"threads"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "create_reply",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"reply\": \"This is a test reply to the thread.\",\r\n    \"reply_to\": null\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5500/api/threads/2400/replies",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5500",
+					"path": [
+						"api",
+						"threads",
+						"2400",
+						"replies"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get_thread_replies",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:5500/api/threads/135/replies",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5500",
+					"path": [
+						"api",
+						"threads",
+						"135",
+						"replies"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "create_forum",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"subject\": \"Course Announcements\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5500/api/courses/LAW1220/forums",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5500",
+					"path": [
+						"api",
+						"courses",
+						"LAW1220",
+						"forums"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get_forums",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:5500/api/courses/LAW1220/forums",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5500",
+					"path": [
+						"api",
+						"courses",
+						"LAW1220",
+						"forums"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc0NTIwNjU2NywianRpIjoiOTYyOGVhMTktMjNhOC00YzhiLWJiMTUtYjU4ZDc3NGNlYjFiIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IlVTRVItMDAwMDAxIiwibmJmIjoxNzQ1MjA2NTY3LCJjc3JmIjoiMWU4NWM2OTYtYWE4My00YWUzLTgxNzEtYjU2ZDhjYWQwNmYyIiwiZXhwIjoxNzQ1MjA3NDY3LCJyb2xlIjoiYWRtaW4ifQ.63FSflYEDRLimmLH1wVhKi89RMcLpMTO46IhEaiJKnA",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
