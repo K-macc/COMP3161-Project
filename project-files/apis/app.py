@@ -9,6 +9,8 @@ from calendar_events import calendar_bp
 from forums import forum_bp
 from discussion_threads import thread_bp
 from course_content import content_bp  
+from submissions import submissions_bp
+from grades import grades_bp  
 from flask_sqlalchemy import SQLAlchemy
 
 
@@ -32,6 +34,8 @@ app.register_blueprint(calendar_bp, url_prefix='/api')
 app.register_blueprint(forum_bp, url_prefix='/api')
 app.register_blueprint(thread_bp, url_prefix='/api')
 app.register_blueprint(content_bp, url_prefix='/api')
+app.register_blueprint(submissions_bp, url_prefix='/api')
+app.register_blueprint(grades_bp, url_prefix='/api')
 
 if __name__ == "__main__":
     with app.app_context():
