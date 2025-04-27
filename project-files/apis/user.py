@@ -98,7 +98,8 @@ def register():
                 })
                 db.session.commit()
 
-        return jsonify({'message': 'User registered successfully'}), 201
+        return jsonify({'message': 'User registered successfully',
+                        "user_id": user_id}), 201
 
     except Exception as e:
         db.session.rollback()

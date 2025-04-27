@@ -1,10 +1,18 @@
 from flask import Blueprint, request, jsonify, current_app
+import mysql
 from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
-from db import db
-from sqlalchemy import text
 from werkzeug.utils import secure_filename
 
 grades_bp = Blueprint('grades', __name__)
+
+def get_db_connection():
+    """Create a new database connection."""
+    return mysql.connector.connect(
+        host="localhost",
+        user="vle_admin",
+        password="admin123",
+        database="ourvle"
+    )
 
 @grades_bp.route('/<int:assignment_id>/<int:student_id>/grade/', methods=['POST'])
 @jwt_required()
@@ -21,35 +29,35 @@ def grade_assignment(assignment_id, student_id):
     if user_role not in ['lecturer', 'admin']:
         return jsonify({'message': 'Access denied. Only lecturers and admins can grade assignments.'}), 403
 
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+
     # Check if user is a lecturer and is authorized to grade this assignment
     if user_role == 'lecturer':
-        sql = text("""
-            SELECT 1 FROM Teaches 
-            WHERE LecturerID = (SELECT LecturerID FROM Lecturer WHERE UserID = :user_id)
-            AND CourseID = (SELECT CourseID FROM Assignments WHERE AssignmentID = :assignment_id)
-        """)
-        result = db.session.execute(sql, {'user_id': current_user_id, 'assignment_id': assignment_id})
-        if not result.fetchone():
-            return jsonify({'message': 'Not authorized to grade this assignment'}), 403
+        cursor.execute("""
+            SELECT 1 FROM Teaches
+            WHERE LecturerID = (SELECT LecturerID FROM Lecturer WHERE UserID = %s)
+            AND CourseID = (SELECT CourseID FROM Assignments WHERE AssignmentID = %s)
+        """, (current_user_id, assignment_id))
+        result = cursor.fetchone()
+        return jsonify({'message': 'Not authorized to grade this assignment'}), 403
 
     # Check if the assignment exists
-    sql = text("""
+    cursor.execute("""
         SELECT 1 FROM Assignments
-        WHERE AssignmentID = :assignment_id
-    """)
-    result = db.session.execute(sql, {'assignment_id': assignment_id})
-    if not result.fetchone():
+        WHERE AssignmentID = %s
+    """, (assignment_id,))
+    if not cursor.fetchone():
         return jsonify({'message': 'Assignment not found'}), 404
 
     # Check if the student exists
-    sql = text("""
+    cursor.execute("""
         SELECT 1 FROM Student
-        WHERE StudentID = :student_id
-    """)
-    result = db.session.execute(sql, {'student_id': student_id})
-    if not result.fetchone():
+        WHERE StudentID = %s
+    """, (student_id,))
+    if not cursor.fetchone():
         return jsonify({'message': 'Student not found'}), 404
-
 
     data = request.get_json()
 
@@ -73,33 +81,29 @@ def grade_assignment(assignment_id, student_id):
         return jsonify({'message': 'Grade must be between 0 and 100'}), 400
     
     # Check if the assignment has already been graded
-    sql = text("""
+    cursor.execute("""
         SELECT 1 FROM Submits
-        WHERE AssignmentID = :assignment_id AND StudentID = :student_id AND Grade IS NOT NULL
-    """)
-    result = db.session.execute(sql, {'assignment_id': assignment_id, 'student_id': student_id})
-    if result.fetchone():
+        WHERE AssignmentID = %s AND StudentID = %s AND Grade IS NOT NULL
+    """, (assignment_id, student_id))
+    if cursor.fetchone():
         return jsonify({'message': 'Assignment has already been graded'}), 400
-    
+
     # Update the grade in the database
     try:
-        sql = text("""
+        cursor.execute("""
             UPDATE Submits
-            SET Grade = :grade
-            WHERE AssignmentID = :assignment_id AND StudentID = :student_id
-        """)
-
-        db.session.execute(sql, {
-            'grade': grade,
-            'assignment_id': assignment_id,
-            'student_id': student_id
-        })
-        db.session.commit()
-
+            SET Grade = %s
+            WHERE AssignmentID = %s AND StudentID = %s
+        """, (grade, assignment_id, student_id))
+        conn.commit()
         return jsonify({'message': 'Grade updated successfully'}), 200
     except Exception as e:
-        db.session.rollback()
+        conn.rollback()
         return jsonify({'message': f'Error updating grade: {str(e)}'}), 500
+    finally:
+        cursor.close()
+        conn.close()
+        
     
 
 @grades_bp.route('/<int:student_id>/final_average', methods=['GET'])
@@ -107,6 +111,9 @@ def grade_assignment(assignment_id, student_id):
 def get_final_average(student_id):
     current_user_id = get_jwt_identity()
     user_role = get_jwt().get('role')
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
 
     # Error Catching
 
@@ -121,23 +128,26 @@ def get_final_average(student_id):
         return jsonify({'message': 'Access denied. Students can only view their own final average.'}), 403
 
     # Check if the student exists
-    sql = text("""
+    cursor.execute("""
         SELECT 1 FROM Student
-        WHERE StudentID = :student_id
-    """)
-    result = db.session.execute(sql, {'student_id': student_id})
-    if not result.fetchone():
+        WHERE StudentID = %s
+    """, (student_id,))
+    if not cursor.fetchone():
         return jsonify({'message': 'Student not found'}), 404
 
     # Calculate the final average for the student
-    sql = text("""
+    cursor.execute("""
         SELECT AVG(Grade) AS FinalAverage FROM Grades
-        WHERE StudentID = :student_id AND Grade IS NOT NULL
-    """)
-    result = db.session.execute(sql, {'student_id': student_id})
-    final_average = result.scalar()
+        WHERE StudentID = %s AND Grade IS NOT NULL
+    """, (student_id,))
+
+    result = cursor.fetchone()
+    final_average = result[0] if result else None
+
+    cursor.close()
 
     if final_average is None:
         return jsonify({'message': 'No grades found for this student', 'final_average': None}), 200
 
     return jsonify({'final_average': round(final_average, 2)}), 200
+
