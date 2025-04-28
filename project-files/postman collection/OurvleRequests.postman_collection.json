@@ -1,9 +1,9 @@
 {
 	"info": {
-		"_postman_id": "f20f334e-5cec-4454-92c9-9404a93430f1",
+		"_postman_id": "64974f4e-7281-4491-9a9f-dc924ce9059c",
 		"name": "OurvleRequests",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "43137561"
+		"_exporter_id": "43257963"
 	},
 	"item": [
 		{
@@ -116,7 +116,10 @@
 			"name": "Get Course",
 			"request": {
 				"method": "GET",
-				"header": []
+				"header": [],
+				"url": {
+					"raw": ""
+				}
 			},
 			"response": []
 		},
@@ -157,6 +160,60 @@
 					"path": [
 						"course",
 						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Submissions",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "Grade Assignment",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "Make Assignment",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "Final Average",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc0NTg3NTkwMywianRpIjoiZjVlODA1ZDYtYjUyYy00Yzk3LTg4ZjgtNTBhZmMyZGQyNjcwIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IlVTRVItMDAwMDExIiwibmJmIjoxNzQ1ODc1OTAzLCJjc3JmIjoiNWYwZTQ0YzAtNDM1NS00YWExLWJmZjktZmJjMzEzZjFjYjllIiwiZXhwIjoxNzQ1ODc2ODAzLCJyb2xlIjoibGVjdHVyZXIifQ.EFHo7Rbv4nl1verYAnWVypUDZXB8WxNxwbw23D9Eu6w",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://127.0.0.1:5500/api/620000040/final_average",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5500",
+					"path": [
+						"api",
+						"620000040",
+						"final_average"
 					]
 				}
 			},

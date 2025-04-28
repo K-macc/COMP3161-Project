@@ -14,7 +14,7 @@ def get_db_connection():
         database="ourvle"
     )
 
-@grades_bp.route('/<int:assignment_id>/<int:student_id>/grade/', methods=['POST'])
+@grades_bp.route('/<int:assignment_id>/<int:student_id>/grade', methods=['POST'])
 @jwt_required()
 def grade_assignment(assignment_id, student_id):
     current_user_id = get_jwt_identity()
@@ -38,14 +38,15 @@ def grade_assignment(assignment_id, student_id):
         cursor.execute("""
             SELECT 1 FROM Teaches
             WHERE LecturerID = (SELECT LecturerID FROM Lecturer WHERE UserID = %s)
-            AND CourseID = (SELECT CourseID FROM Assignments WHERE AssignmentID = %s)
+            AND CourseID = (SELECT CourseID FROM Assignment WHERE AssignmentID = %s)
         """, (current_user_id, assignment_id))
         result = cursor.fetchone()
-        return jsonify({'message': 'Not authorized to grade this assignment'}), 403
+        if not result:  # Only return the error if the query result is empty
+            return jsonify({'message': 'Not authorized to grade this assignment'}), 403
 
     # Check if the assignment exists
     cursor.execute("""
-        SELECT 1 FROM Assignments
+        SELECT 1 FROM Assignment
         WHERE AssignmentID = %s
     """, (assignment_id,))
     if not cursor.fetchone():
@@ -82,7 +83,7 @@ def grade_assignment(assignment_id, student_id):
     
     # Check if the assignment has already been graded
     cursor.execute("""
-        SELECT 1 FROM Submits
+        SELECT 1 FROM Grades
         WHERE AssignmentID = %s AND StudentID = %s AND Grade IS NOT NULL
     """, (assignment_id, student_id))
     if cursor.fetchone():

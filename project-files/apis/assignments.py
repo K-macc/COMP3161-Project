@@ -1,7 +1,6 @@
 from flask import Blueprint, request, jsonify, current_app
 import mysql
 from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
-# from db import db
 from werkzeug.utils import secure_filename
 import os
 
@@ -25,12 +24,12 @@ def next_id():
     # Get the next available AssignmentID for a new assignment.
     conn = get_db_connection()
     cursor = conn.cursor()
-    cursor.execute("SELECT MAX(AssignmentID) FROM Assignments")
+    cursor.execute("SELECT MAX(AssignmentID) FROM Assignment")
     max_id = cursor.fetchone()[0]
     conn.close()
     return 1 if max_id is None else max_id + 1
 
-@assignments_bp.route('/<string:course_id>/assignments/', methods=['POST'])
+@assignments_bp.route('/<string:course_id>/assignments', methods=['POST'])
 @jwt_required()
 def create_assignment(course_id):
     current_user_id = get_jwt_identity()
@@ -67,24 +66,45 @@ def create_assignment(course_id):
 
     data = request.form
     file = request.files.get('file')
+    link = request.form.get('link')
+
+    upload_folder = current_app.config.get('UPLOAD_FOLDER', 'uploads')
+    if not os.path.exists(upload_folder):
+        os.makedirs(upload_folder)
+    assignments_folder = os.path.join(upload_folder, 'assignments')
+    if not os.path.exists(assignments_folder):
+        os.makedirs(assignments_folder)
+
+    assignment_file = None
+    assignment_link = None
     assignment_id = next_id()
 
+
+    # Handle file upload if provided
     if file and allowed_file(file.filename):
-        filename = secure_filename(file.filename)
-        file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
-        file.save(file_path)
-        assignment_file = file_path
-    else:
-        assignment_file = None
-
-    assignment_link = data.get('link')
-
-    cursor.execute("""
-        INSERT INTO Assignments (AssignmentID, Title, Description, DueDate, CourseID, AssignmentFile, AssignmentLink)
-        VALUES (%s, %s, %s, %s, %s, %s, %s)
-    """, (assignment_id, data['title'], data['description'], data['due_date'], course_id, assignment_file, assignment_link))
-    conn.commit()
-    cursor.close()
-    conn.close()
-    return jsonify({'message': 'Assignment created successfully', 'assignment_id': assignment_id}), 201
+        filename = f"{assignment_id}_{secure_filename(file.filename)}"
+        filepath = os.path.join(assignments_folder, filename)
+        file.save(filepath)
+        assignment_file = filepath
+    # Handle link if provided
+    if link:
+        assignment_link = link
     
+    if not assignment_file and not assignment_link:
+        return jsonify({'message': 'Either a file or a link must be provided.'}), 400
+
+    try:
+        cursor.execute("""
+            INSERT INTO Assignment (AssignmentID, AssignmentName, DueDate, CourseID, AssignmentFile, AssignmentLink)
+            VALUES (%s, %s, %s, %s, %s, %s)
+        """, (assignment_id, data['assignment_name'], data['due_date'], course_id, assignment_file, assignment_link))
+        conn.commit()
+        cursor.close()
+        conn.close()
+        return jsonify({'message': 'Assignment created successfully', 'assignment_id': assignment_id}), 201
+    except Exception as e:
+        conn.rollback()
+        return jsonify({'message': 'Error creating assignment', 'error': str(e)}), 500
+    finally:
+        cursor.close()
+        conn.close()

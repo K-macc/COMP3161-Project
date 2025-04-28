@@ -1,7 +1,6 @@
 from flask import Blueprint, request, jsonify, current_app
 import mysql
 from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
-# from db import db
 from werkzeug.utils import secure_filename
 import os
 
@@ -45,15 +44,21 @@ def submit_assignment(assignment_id):
     if user_role not in ['student']:
         return jsonify({'message': 'Access denied. Only students can submit assignments.'}), 403
 
-    # Check if the assignment exists
     conn = get_db_connection()
     cursor = conn.cursor()
+
+    # Check if the assignment exists
     cursor.execute("SELECT AssignmentID FROM Assignment WHERE AssignmentID = %s", (assignment_id,))
     assignment = cursor.fetchone()
     if not assignment:
         return jsonify({'message': 'Assignment not found'}), 404
+    
+    # Fetch the CourseID from the assignment
+    cursor.execute("SELECT AssignmentID, CourseID FROM Assignment WHERE AssignmentID = %s", (assignment_id,))
+    assignment = cursor.fetchone()
+    if not assignment:
+        return jsonify({'message': 'Assignment not found'}), 404
     course_id = assignment[1]
-
 
     # Fetch the StudentID using the UserID
     conn = get_db_connection()
@@ -91,10 +96,10 @@ def submit_assignment(assignment_id):
         filepath = os.path.join(submissions_folder, filename)
         file.save(filepath)
         submission_file = filepath
-    elif content_type == 'link' and link:
+    if content_type == 'link' and link:
         submission_link = link
-    else:
-        return jsonify({'message': 'Invalid content type or missing file/link'}), 400
+    if not submission_file and not submission_link:
+        return jsonify({'message': 'No file or link provided'}), 400
 
     try:
         cursor.execute(
