@@ -312,6 +312,28 @@ def get_members(course_id):
         cursor.close()
         conn.close()
 
+@app.route('/get_course/<course_id>', methods=['GET'])
+def get_course(course_id):
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+
+    try:
+        cursor.execute("SELECT * FROM Course WHERE CourseID = %s", (course_id,))
+        course = cursor.fetchone()
+
+        if not course:
+            return jsonify({'message': 'Course not found'}), 404
+
+        return jsonify(course), 200
+
+    except Exception as e:
+        return jsonify({'message': f'Error fetching course: {str(e)}'}), 500
+
+    finally:
+        cursor.close()
+        conn.close()
+
+
 @app.route('/get_courses', methods=['GET'])
 def get_courses():
     conn = get_db_connection()
