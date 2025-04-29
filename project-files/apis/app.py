@@ -8,10 +8,10 @@ from werkzeug.utils import secure_filename
 import datetime
 
 app = Flask(__name__)
-
 jwt = JWTManager(app)
-
 app.config.from_object(Config)
+
+ALLOWED_EXTENSIONS = {'pdf', 'docx', 'pptx', 'txt', 'png', 'jpg', 'jpeg'}   
 
 def get_db_connection():
     return mysql.connector.connect(
@@ -40,6 +40,32 @@ def create_user(user_id, username, password, role):
     conn.commit()
     cursor.close()
     conn.close()
+
+def next_id():
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    try:
+        cursor.execute("SELECT MAX(SubmissionID) FROM Submits")
+        max_id = cursor.fetchone()[0]
+        return 1 if max_id is None else max_id + 1
+    finally:
+        cursor.close()
+        conn.close()
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+def next_id_assign():
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    try:
+        cursor.execute("SELECT MAX(AssignmentID) FROM Assignment")
+        max_id = cursor.fetchone()[0]
+        return 1 if max_id is None else max_id + 1
+    finally:
+        cursor.close()
+        conn.close()
+
 
 # USER REGISTRATION AND LOGIN
 @app.route('/register', methods=['POST'])
@@ -930,7 +956,6 @@ def upload_section_content(section_id):
         cursor.close()
         conn.close()
 
-# Get section content
 @app.route('/section/<int:section_id>/content', methods=['GET'])
 def get_section_content(section_id):
     conn = get_db_connection()
@@ -952,6 +977,296 @@ def get_section_content(section_id):
 
     except Exception as e:
         return jsonify({'message': 'Failed to fetch section content', 'error': str(e)}), 500
+
+    finally:
+        cursor.close()
+        conn.close()
+
+# ASSIGNMENTS
+@app.route('/<string:course_id>/assignments', methods=['POST'])
+@jwt_required()
+def create_assignment(course_id):
+    current_user_id = get_jwt_identity()
+    user_role = get_jwt().get('role')
+
+    if not current_user_id:
+        return jsonify({'message': 'User not found'}), 404
+
+    if user_role not in ['lecturer', 'admin']:
+        return jsonify({'message': 'Access denied. Only lecturers and admins can create assignments.'}), 403
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    try:
+        # Check if the course exists
+        cursor.execute("SELECT 1 FROM Course WHERE CourseID = %s", (course_id,))
+        if not cursor.fetchone():
+            return jsonify({'message': 'Course not found'}), 404
+
+        # If lecturer, check if they teach the course
+        if user_role == 'lecturer':
+            cursor.execute("""
+                SELECT 1 FROM Teaches
+                WHERE LecturerID = (SELECT LecturerID FROM Lecturer WHERE UserID = %s)
+                AND CourseID = %s
+            """, (current_user_id, course_id))
+            if not cursor.fetchone():
+                return jsonify({'message': 'You are not authorized to create assignments for this course'}), 403
+
+        data = request.form
+        file = request.files.get('file')
+        link = request.form.get('link')
+
+        upload_folder = current_app.config.get('UPLOAD_FOLDER', 'uploads')
+        if not os.path.exists(upload_folder):
+            os.makedirs(upload_folder)
+
+        assignments_folder = os.path.join(upload_folder, 'assignments')
+        if not os.path.exists(assignments_folder):
+            os.makedirs(assignments_folder)
+
+        assignment_file = None
+        assignment_link = None
+        assignment_id = next_id_assign()
+
+        # Handle file upload
+        if file and allowed_file(file.filename):
+            filename = f"{assignment_id}_{secure_filename(file.filename)}"
+            filepath = os.path.join(assignments_folder, filename)
+            file.save(filepath)
+            assignment_file = filepath
+
+        if link:
+            assignment_link = link
+
+        if not assignment_file and not assignment_link:
+            return jsonify({'message': 'Either a file or a link must be provided.'}), 400
+
+        # Insert the assignment
+        cursor.execute("""
+            INSERT INTO Assignment (AssignmentID, AssignmentName, DueDate, CourseID, AssignmentFile, AssignmentLink)
+            VALUES (%s, %s, %s, %s, %s, %s)
+        """, (
+            assignment_id,
+            data.get('assignment_name'),
+            data.get('due_date'),
+            course_id,
+            assignment_file,
+            assignment_link
+        ))
+        
+        conn.commit()
+
+        return jsonify({'message': 'Assignment created successfully', 'assignment_id': assignment_id}), 201
+
+    except Exception as e:
+        conn.rollback()
+        return jsonify({'message': 'Error creating assignment', 'error': str(e)}), 500
+
+    finally:
+        cursor.close()
+        conn.close()
+
+
+# GRADES
+@jwt_required()
+def grade_assignment(assignment_id, student_id):
+    current_user_id = get_jwt_identity()
+    user_role = get_jwt().get('role')
+
+    if not current_user_id:
+        return jsonify({'message': 'User not found'}), 404
+
+    if user_role not in ['lecturer', 'admin']:
+        return jsonify({'message': 'Access denied. Only lecturers and admins can grade assignments.'}), 403
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    try:
+        if user_role == 'lecturer':
+            cursor.execute("""
+                SELECT 1 FROM Teaches
+                WHERE LecturerID = (SELECT LecturerID FROM Lecturer WHERE UserID = %s)
+                AND CourseID = (SELECT CourseID FROM Assignment WHERE AssignmentID = %s)
+            """, (current_user_id, assignment_id))
+            if not cursor.fetchone():
+                return jsonify({'message': 'Not authorized to grade this assignment'}), 403
+
+        # Check assignment exists
+        cursor.execute("SELECT 1 FROM Assignment WHERE AssignmentID = %s", (assignment_id,))
+        if not cursor.fetchone():
+            return jsonify({'message': 'Assignment not found'}), 404
+
+        # Check student exists
+        cursor.execute("SELECT 1 FROM Student WHERE StudentID = %s", (student_id,))
+        if not cursor.fetchone():
+            return jsonify({'message': 'Student not found'}), 404
+
+        data = request.get_json()
+
+        if not data or 'grade' not in data:
+            return jsonify({'message': 'Missing required fields'}), 400
+
+        try:
+            grade = float(data['grade'])
+        except (TypeError, ValueError):
+            return jsonify({'message': 'Grade must be a valid number'}), 400
+
+        if grade < 0 or grade > 100:
+            return jsonify({'message': 'Grade must be between 0 and 100'}), 400
+
+        # Check if already graded
+        cursor.execute("""
+            SELECT 1 FROM Grades
+            WHERE AssignmentID = %s AND StudentID = %s AND Grade IS NOT NULL
+        """, (assignment_id, student_id))
+        if cursor.fetchone():
+            return jsonify({'message': 'Assignment has already been graded'}), 400
+
+        # Update grade
+        cursor.execute("""
+            UPDATE Submits
+            SET Grade = %s
+            WHERE AssignmentID = %s AND StudentID = %s
+        """, (grade, assignment_id, student_id))
+        conn.commit()
+
+        return jsonify({'message': 'Grade updated successfully'}), 200
+
+    except Exception as e:
+        conn.rollback()
+        return jsonify({'message': f'Error updating grade: {str(e)}'}), 500
+
+    finally:
+        cursor.close()
+        conn.close()
+
+# FINAL AVERAGE
+@jwt_required()
+def get_final_average(student_id):
+    current_user_id = get_jwt_identity()
+    user_role = get_jwt().get('role')
+
+    if not current_user_id:
+        return jsonify({'message': 'User not found'}), 404
+
+    if user_role not in ['lecturer', 'admin', 'student']:
+        return jsonify({'message': 'Access denied. Invalid user role.'}), 403
+
+    if user_role == 'student' and int(current_user_id) != student_id:
+        return jsonify({'message': 'Access denied. Students can only view their own final average.'}), 403
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    try:
+        # Check student exists
+        cursor.execute("SELECT 1 FROM Student WHERE StudentID = %s", (student_id,))
+        if not cursor.fetchone():
+            return jsonify({'message': 'Student not found'}), 404
+
+        # Calculate final average
+        cursor.execute("""
+            SELECT AVG(Grade) AS FinalAverage
+            FROM Grades
+            WHERE StudentID = %s AND Grade IS NOT NULL
+        """, (student_id,))
+        result = cursor.fetchone()
+
+        final_average = result[0] if result else None
+
+        if final_average is None:
+            return jsonify({'message': 'No grades found for this student', 'final_average': None}), 200
+
+        return jsonify({'final_average': round(final_average, 2)}), 200
+
+    except Exception as e:
+        return jsonify({'message': f'Error retrieving final average: {str(e)}'}), 500
+
+    finally:
+        cursor.close()
+        conn.close()
+
+#ASSIGNMENT SUBMISSION
+@app.route('/assignments/<int:assignment_id>/submit', methods=['POST'])
+@jwt_required()
+def submit_assignment(assignment_id):
+    current_user_id = get_jwt_identity()
+    user_role = get_jwt().get('role')
+
+    if not current_user_id:
+        return jsonify({'message': 'User missing'}), 404
+
+    if not assignment_id:
+        return jsonify({'message': 'Assignment missing'}), 404
+
+    if user_role != 'student':
+        return jsonify({'message': 'Access denied. Only students can submit assignments.'}), 403
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    try:
+        cursor.execute("SELECT AssignmentID, CourseID FROM Assignment WHERE AssignmentID = %s", (assignment_id,))
+        assignment = cursor.fetchone()
+        if not assignment:
+            return jsonify({'message': 'Assignment not found'}), 404
+        course_id = assignment[1]
+
+        cursor.execute("SELECT StudentID FROM Student WHERE UserID = %s", (current_user_id,))
+        result = cursor.fetchone()
+        if not result:
+            return jsonify({'message': 'Student not found'}), 404
+        student_id = result[0]
+
+        cursor.execute("SELECT 1 FROM Enrols WHERE StudentID = %s AND CourseID = %s", (student_id, course_id))
+        if not cursor.fetchone():
+            return jsonify({'message': 'Student is not enrolled in the course for this assignment'}), 403
+
+        content_type = request.form.get('content_type')
+        file = request.files.get('file')
+        link = request.form.get('link')
+
+        upload_folder = current_app.config.get('UPLOAD_FOLDER', 'uploads')
+        if not os.path.exists(upload_folder):
+            os.makedirs(upload_folder)
+
+        submissions_folder = os.path.join(upload_folder, 'submissions')
+        if not os.path.exists(submissions_folder):
+            os.makedirs(submissions_folder)
+
+        submission_file = None
+        submission_link = None
+        submission_id = next_id()
+
+        if content_type == 'file' and file and allowed_file(file.filename):
+            filename = f"{student_id}_{secure_filename(file.filename)}"
+            filepath = os.path.join(submissions_folder, filename)
+            file.save(filepath)
+            submission_file = filepath
+
+        if content_type == 'link' and link:
+            submission_link = link
+
+        if not submission_file and not submission_link:
+            return jsonify({'message': 'No file or link provided'}), 400
+
+        cursor.execute("""
+            INSERT INTO Submits 
+                (SubmissionID, StudentID, AssignmentID, SubmissionFile, SubmissionLink)
+            VALUES 
+                (%s, %s, %s, %s, %s)
+        """, (submission_id, student_id, assignment_id, submission_file, submission_link))
+
+        conn.commit()
+
+        return jsonify({'message': 'Assignment submitted successfully'}), 200
+
+    except Exception as e:
+        conn.rollback()
+        return jsonify({'message': f'Database error: {str(e)}'}), 500
 
     finally:
         cursor.close()
