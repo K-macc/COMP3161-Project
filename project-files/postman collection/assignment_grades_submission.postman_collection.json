@@ -1,0 +1,223 @@
+{
+	"info": {
+		"_postman_id": "64974f4e-7281-4491-9a9f-dc924ce9059c",
+		"name": "OurvleRequests",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "43257963"
+	},
+	"item": [
+		{
+			"name": "Register New User",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"UserID\": \"620176854\",\r\n    \"Username\": \"Joanna Donaye\",\r\n    \"Password\": \"s3c!ur3)p1ss\",\r\n    \"Role\": \"student\"\r\n}\r\n\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5500/auth/register",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5500",
+					"path": [
+						"auth",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login User",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"UserID\": \"USER-100061\",\r\n    \"Password\": \"s3c!ur3)p1ss\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5500/auth/login",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5500",
+					"path": [
+						"auth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Course",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc0MzI4NjE1MCwianRpIjoiZWVmYjVlOWMtYjYwZC00NzU5LTlkNzgtYzczMzdlM2UxNTI3IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IlVTRVItMDAwMDAyIiwibmJmIjoxNzQzMjg2MTUwLCJjc3JmIjoiNDM4YWUyNWMtMzJjYS00NjQwLWJiNDEtYmM5YTEyNTM4MTZhIiwiZXhwIjoxNzQzMjg3MDUwLCJyb2xlIjoiYWRtaW4ifQ._gxkgwXOcmcxd6OXPhLvi-Id1aZHUzcDX_PfKsBwGAA",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"CourseID\": \"COMP3162\",\r\n  \"CourseName\": \"Data Science Principles\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5500/course/create",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5500",
+					"path": [
+						"course",
+						"create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Course",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": ""
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Register Student in Course",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc0MzMwMzg4NCwianRpIjoiZGI0OWZjZjgtNTNjNC00NDk2LThhYmItYjQxMzU2Zjc4N2EwIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IlVTRVItMTAwMDYyIiwibmJmIjoxNzQzMzAzODg0LCJjc3JmIjoiNzA3MGZkMGUtN2U3Mi00YjVhLWJjNWItM2I5OThjY2QyN2I5IiwiZXhwIjoxNzQzMzA0Nzg0LCJyb2xlIjoic3R1ZGVudCJ9.78zXyguysiAsZPAysClISI8EeEGqeYqVX4pW3BYdgmU",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"CourseID\": \"COMP3161\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5500/course/register",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5500",
+					"path": [
+						"course",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Submissions",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "Grade Assignment",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "Make Assignment",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "Final Average",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc0NTg3NTkwMywianRpIjoiZjVlODA1ZDYtYjUyYy00Yzk3LTg4ZjgtNTBhZmMyZGQyNjcwIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IlVTRVItMDAwMDExIiwibmJmIjoxNzQ1ODc1OTAzLCJjc3JmIjoiNWYwZTQ0YzAtNDM1NS00YWExLWJmZjktZmJjMzEzZjFjYjllIiwiZXhwIjoxNzQ1ODc2ODAzLCJyb2xlIjoibGVjdHVyZXIifQ.EFHo7Rbv4nl1verYAnWVypUDZXB8WxNxwbw23D9Eu6w",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://127.0.0.1:5500/api/620000040/final_average",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5500",
+					"path": [
+						"api",
+						"620000040",
+						"final_average"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

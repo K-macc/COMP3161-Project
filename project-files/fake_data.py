@@ -581,9 +581,18 @@ try:
             course_id = course[0]
             for i in range(1,4):
                 assignment_name = fake.text(max_nb_chars = 20)
-                assignments.append((assignment_id, course_id, assignment_name))
-                f.write(f"INSERT INTO Assignment (AssignmentID, AssignmentName, CourseID) VALUES ({assignment_id}, '{assignment_name}', '{course_id}');\n")
+                due_date = fake.date_between(start_date='+1d', end_date='+60d')  # Due within the next 2 months
+                assignment_file = f"{fake.word()}.pdf"  
+                assignment_link = fake.url()
+
+                assignments.append((assignment_id, assignment_name, due_date, assignment_file, assignment_link, course_id))
+                f.write(
+                            f"INSERT INTO Assignment (AssignmentID, AssignmentName, DueDate, AssignmentFile, AssignmentLink, CourseID) "
+                            f"VALUES ({assignment_id}, '{assignment_name}', '{due_date}', '{assignment_file}', '{assignment_link}', '{course_id}');\n"
+                        )  
+                
                 assignment_id += 1
+
                 print(f" Statement#{num}: Insert statements created for assignment")
                 num += 1
         
@@ -594,12 +603,19 @@ try:
         assignment_submissions = []
         submission_id = 1
         for student_id, course_id in enrollments:
-            course_assignments = [x for x in assignments if x[1] == course_id]
+            course_assignments = [x for x in assignments if x[5] == course_id]            
             assign_no = random.randint(0,2)
             assign = course_assignments[assign_no]
             assignment_id = assign[0]
-            assignment_submissions.append((submission_id, student_id, assignment_id))
-            f.write(f"INSERT INTO Submits (SubmissionID, StudentID, AssignmentID) VALUES ({submission_id}, {student_id}, {assignment_id});\n")
+
+            submission_file = f"{fake.word()}_submission.pdf"
+            submission_link = fake.url()
+
+            assignment_submissions.append((submission_id, student_id, assignment_id, submission_file, submission_link))
+            f.write(
+                f"INSERT INTO Submits (SubmissionID, SubmissionFile, SubmissionLink, StudentID, AssignmentID) "
+                f"VALUES ({submission_id}, '{submission_file}', '{submission_link}', {student_id}, {assignment_id});\n"
+            )
             submission_id += 1
             print(f" Statement#{num}: Insert statements created for submits")
             num += 1
