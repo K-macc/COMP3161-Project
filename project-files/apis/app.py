@@ -1,8 +1,8 @@
+import os
 from flask import Flask, request, jsonify, current_app
 from flask_jwt_extended import JWTManager, create_access_token, get_jwt_identity, get_jwt, jwt_required
 import mysql.connector
-from models import create_user, get_user_by_userid
-import os
+from models import create_user, get_user_by_userid, allowed_file, next_id, next_id_assign, standard_response, validate_date, get_next_thread_id
 from config import Config
 from werkzeug.utils import secure_filename
 import datetime
@@ -10,8 +10,6 @@ import datetime
 app = Flask(__name__)
 jwt = JWTManager(app)
 app.config.from_object(Config)
-
-ALLOWED_EXTENSIONS = {'pdf', 'docx', 'pptx', 'txt', 'png', 'jpg', 'jpeg'}   
 
 def get_db_connection():
     return mysql.connector.connect(
@@ -21,54 +19,9 @@ def get_db_connection():
         database = "ourvle"
     )
 
-def get_user_by_userid(user_id):
-    conn = get_db_connection()
-    cursor = conn.cursor(dictionary=True)
-    cursor.execute("SELECT * FROM user WHERE UserID = %s", (user_id,))
-    user = cursor.fetchone()
-    cursor.close()
-    conn.close()
-    return user
-
-def create_user(user_id, username, password, role):
-    conn = get_db_connection()
-    cursor = conn.cursor()
-    cursor.execute(
-        "INSERT INTO user (UserID, Username, Password, Role) VALUES (%s, %s, %s, %s)",
-        (user_id, username, password, role)
-    )
-    conn.commit()
-    cursor.close()
-    conn.close()
-
-def next_id():
-    conn = get_db_connection()
-    cursor = conn.cursor()
-    try:
-        cursor.execute("SELECT MAX(SubmissionID) FROM Submits")
-        max_id = cursor.fetchone()[0]
-        return 1 if max_id is None else max_id + 1
-    finally:
-        cursor.close()
-        conn.close()
-
-def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
-def next_id_assign():
-    conn = get_db_connection()
-    cursor = conn.cursor()
-    try:
-        cursor.execute("SELECT MAX(AssignmentID) FROM Assignment")
-        max_id = cursor.fetchone()[0]
-        return 1 if max_id is None else max_id + 1
-    finally:
-        cursor.close()
-        conn.close()
-
-
-# USER REGISTRATION AND LOGIN
+# USER
 @app.route('/register', methods=['POST'])
+@jwt_required()
 def register():
     conn = get_db_connection()
     cursor = conn.cursor()
@@ -152,6 +105,7 @@ def register():
         conn.close()
 
 @app.route('/login', methods=['POST'])
+@jwt_required()
 def login():
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
@@ -198,6 +152,7 @@ def protected():
     }), 200
 
 @app.route('/search_user', methods=['GET'])
+@jwt_required()
 def search_user():
     user_id = request.args.get('user_id')
     role = request.args.get('role')
@@ -225,7 +180,7 @@ def search_user():
         conn.close()
 
 
-
+# COURSES
 @app.route('/create_course', methods=['POST'])
 @jwt_required()
 def create_course():
@@ -313,6 +268,7 @@ def register_student():
         conn.close()
 
 @app.route('/course_members/<string:course_id>', methods=['GET'])
+@jwt_required()
 def get_members(course_id):
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
@@ -339,6 +295,7 @@ def get_members(course_id):
         conn.close()
 
 @app.route('/get_course/<course_id>', methods=['GET'])
+@jwt_required()
 def get_course(course_id):
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
@@ -359,8 +316,8 @@ def get_course(course_id):
         cursor.close()
         conn.close()
 
-
 @app.route('/get_courses', methods=['GET'])
+@jwt_required()
 def get_courses():
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
@@ -379,6 +336,7 @@ def get_courses():
         conn.close()
 
 @app.route('/student_courses/<int:student_id>', methods=['GET'])
+@jwt_required()
 def get_student_courses(student_id):
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
@@ -415,6 +373,7 @@ def get_student_courses(student_id):
         conn.close()
 
 @app.route('/lecturer_courses/<int:lecturer_id>', methods=['GET'])
+@jwt_required()
 def get_lecturer_courses(lecturer_id):
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
@@ -564,6 +523,7 @@ def create_forum(course_id):
         conn.close()
 
 @app.route('/courses/<string:course_id>/forums', methods=['GET'])
+@jwt_required()
 def get_course_forums(course_id):
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
@@ -600,18 +560,6 @@ def get_course_forums(course_id):
         cursor.close()
         conn.close()
 
-def get_next_thread_id():
-    conn = get_db_connection()
-    cursor = conn.cursor()
-
-    try:
-        cursor.execute("SELECT MAX(ThreadID) FROM DiscussionThread")
-        max_id = cursor.fetchone()[0]
-        return 1 if max_id is None else max_id + 1
-    finally:
-        cursor.close()
-        conn.close()
-
 @app.route('/forums/<int:forum_id>/threads', methods=['POST'])
 @jwt_required()
 def create_thread(forum_id):
@@ -643,6 +591,7 @@ def create_thread(forum_id):
         conn.close()
 
 @app.route('/forums/<int:forum_id>/threads', methods=['GET'])
+@jwt_required()
 def get_forum_threads(forum_id):
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
@@ -697,6 +646,7 @@ def add_reply(thread_id):
         conn.close()
 
 @app.route('/threads/<int:thread_id>/replies', methods=['GET'])
+@jwt_required()
 def get_thread_replies(thread_id):
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
@@ -719,19 +669,6 @@ def get_thread_replies(thread_id):
         cursor.close()
         conn.close()
 
-
-def standard_response(data=None, message="Success", status_code=200, success=True):
-    return jsonify({
-        "success": success,
-        "message": message,
-        "data": data
-    }), status_code
-
-def validate_date(date_string):
-    try:
-        return datetime.datetime.strptime(date_string, '%Y-%m-%d').date()
-    except ValueError:
-        return None
 
 # CALENDAR EVENT
 @app.route('/courses/<string:course_id>/events', methods=['POST'])
@@ -889,8 +826,6 @@ def get_student_events(student_id):
         cursor.close()
         conn.close()
 
-def allowed_file(filename):
-    return '.' in filename and '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS # type: ignore
 
 # COURSE SECTIONS
 @app.route('/section/<int:section_id>/content', methods=['POST'])
@@ -957,6 +892,7 @@ def upload_section_content(section_id):
         conn.close()
 
 @app.route('/section/<int:section_id>/content', methods=['GET'])
+@jwt_required()
 def get_section_content(section_id):
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
@@ -1068,128 +1004,6 @@ def create_assignment(course_id):
         cursor.close()
         conn.close()
 
-
-# GRADES
-@jwt_required()
-def grade_assignment(assignment_id, student_id):
-    current_user_id = get_jwt_identity()
-    user_role = get_jwt().get('role')
-
-    if not current_user_id:
-        return jsonify({'message': 'User not found'}), 404
-
-    if user_role not in ['lecturer', 'admin']:
-        return jsonify({'message': 'Access denied. Only lecturers and admins can grade assignments.'}), 403
-
-    conn = get_db_connection()
-    cursor = conn.cursor()
-
-    try:
-        if user_role == 'lecturer':
-            cursor.execute("""
-                SELECT 1 FROM Teaches
-                WHERE LecturerID = (SELECT LecturerID FROM Lecturer WHERE UserID = %s)
-                AND CourseID = (SELECT CourseID FROM Assignment WHERE AssignmentID = %s)
-            """, (current_user_id, assignment_id))
-            if not cursor.fetchone():
-                return jsonify({'message': 'Not authorized to grade this assignment'}), 403
-
-        # Check assignment exists
-        cursor.execute("SELECT 1 FROM Assignment WHERE AssignmentID = %s", (assignment_id,))
-        if not cursor.fetchone():
-            return jsonify({'message': 'Assignment not found'}), 404
-
-        # Check student exists
-        cursor.execute("SELECT 1 FROM Student WHERE StudentID = %s", (student_id,))
-        if not cursor.fetchone():
-            return jsonify({'message': 'Student not found'}), 404
-
-        data = request.get_json()
-
-        if not data or 'grade' not in data:
-            return jsonify({'message': 'Missing required fields'}), 400
-
-        try:
-            grade = float(data['grade'])
-        except (TypeError, ValueError):
-            return jsonify({'message': 'Grade must be a valid number'}), 400
-
-        if grade < 0 or grade > 100:
-            return jsonify({'message': 'Grade must be between 0 and 100'}), 400
-
-        # Check if already graded
-        cursor.execute("""
-            SELECT 1 FROM Grades
-            WHERE AssignmentID = %s AND StudentID = %s AND Grade IS NOT NULL
-        """, (assignment_id, student_id))
-        if cursor.fetchone():
-            return jsonify({'message': 'Assignment has already been graded'}), 400
-
-        # Update grade
-        cursor.execute("""
-            UPDATE Submits
-            SET Grade = %s
-            WHERE AssignmentID = %s AND StudentID = %s
-        """, (grade, assignment_id, student_id))
-        conn.commit()
-
-        return jsonify({'message': 'Grade updated successfully'}), 200
-
-    except Exception as e:
-        conn.rollback()
-        return jsonify({'message': f'Error updating grade: {str(e)}'}), 500
-
-    finally:
-        cursor.close()
-        conn.close()
-
-# FINAL AVERAGE
-@jwt_required()
-def get_final_average(student_id):
-    current_user_id = get_jwt_identity()
-    user_role = get_jwt().get('role')
-
-    if not current_user_id:
-        return jsonify({'message': 'User not found'}), 404
-
-    if user_role not in ['lecturer', 'admin', 'student']:
-        return jsonify({'message': 'Access denied. Invalid user role.'}), 403
-
-    if user_role == 'student' and int(current_user_id) != student_id:
-        return jsonify({'message': 'Access denied. Students can only view their own final average.'}), 403
-
-    conn = get_db_connection()
-    cursor = conn.cursor()
-
-    try:
-        # Check student exists
-        cursor.execute("SELECT 1 FROM Student WHERE StudentID = %s", (student_id,))
-        if not cursor.fetchone():
-            return jsonify({'message': 'Student not found'}), 404
-
-        # Calculate final average
-        cursor.execute("""
-            SELECT AVG(Grade) AS FinalAverage
-            FROM Grades
-            WHERE StudentID = %s AND Grade IS NOT NULL
-        """, (student_id,))
-        result = cursor.fetchone()
-
-        final_average = result[0] if result else None
-
-        if final_average is None:
-            return jsonify({'message': 'No grades found for this student', 'final_average': None}), 200
-
-        return jsonify({'final_average': round(final_average, 2)}), 200
-
-    except Exception as e:
-        return jsonify({'message': f'Error retrieving final average: {str(e)}'}), 500
-
-    finally:
-        cursor.close()
-        conn.close()
-
-#ASSIGNMENT SUBMISSION
 @app.route('/assignments/<int:assignment_id>/submit', methods=['POST'])
 @jwt_required()
 def submit_assignment(assignment_id):
