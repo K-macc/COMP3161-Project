@@ -864,7 +864,7 @@ def get_student_events(student_id):
         conn.close()
 
 def allowed_file(filename):
-    return '.' in filename and '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+    return '.' in filename and '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS # type: ignore
 
 # COURSE SECTIONS
 @app.route('/section/<int:section_id>/content', methods=['POST'])
