@@ -21,7 +21,6 @@ def get_db_connection():
 
 # USER
 @app.route('/register', methods=['POST'])
-@jwt_required()
 def register():
     conn = get_db_connection()
     cursor = conn.cursor()
@@ -105,7 +104,6 @@ def register():
         conn.close()
 
 @app.route('/login', methods=['POST'])
-@jwt_required()
 def login():
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
@@ -1207,4 +1205,4 @@ def get_final_average(student_id):
         conn.close()
 
 if __name__ == '__main__':
-    app.run(port=5000)
+    app.run(port=5000, debug=True)
