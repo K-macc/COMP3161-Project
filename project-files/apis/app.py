@@ -19,9 +19,12 @@ def get_db_connection():
         database = "ourvle"
     )
 
+@app.route('/')
+def index():
+    return "Hello, World!"
+
 # USER
-@app.route('/register', methods=['POST'])
-@jwt_required()
+@app.route('/api/register', methods=['POST'])
 def register():
     conn = get_db_connection()
     cursor = conn.cursor()
@@ -104,8 +107,7 @@ def register():
         cursor.close()
         conn.close()
 
-@app.route('/login', methods=['POST'])
-@jwt_required()
+@app.route('/api/login', methods=['POST'])
 def login():
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
@@ -115,6 +117,7 @@ def login():
 
         if not data or 'user_id' not in data or 'password' not in data:
             return jsonify({'message': 'Missing required fields'}), 400
+            
 
         cursor.execute("SELECT * FROM user WHERE UserID = %s", (data['user_id'],))
         user = cursor.fetchone()
@@ -139,7 +142,7 @@ def login():
         cursor.close()
         conn.close()
 
-@app.route('/protected', methods=['GET'])
+@app.route('/api/protected', methods=['GET'])
 @jwt_required()
 def protected():
     user_id = get_jwt_identity()
@@ -151,7 +154,7 @@ def protected():
         'role': role
     }), 200
 
-@app.route('/search_user', methods=['GET'])
+@app.route('/api/search_user', methods=['GET'])
 @jwt_required()
 def search_user():
     user_id = request.args.get('user_id')
@@ -181,7 +184,7 @@ def search_user():
 
 
 # COURSES
-@app.route('/create_course', methods=['POST'])
+@app.route('/api/create_course', methods=['POST'])
 @jwt_required()
 def create_course():
     current_user_role = get_jwt().get('role')
@@ -216,7 +219,7 @@ def create_course():
         cursor.close()
         conn.close()
 
-@app.route('/register_student', methods=['POST'])
+@app.route('/api/register_student', methods=['POST'])
 @jwt_required()
 def register_student():
     current_user_id = get_jwt_identity()
@@ -267,7 +270,7 @@ def register_student():
         cursor.close()
         conn.close()
 
-@app.route('/course_members/<string:course_id>', methods=['GET'])
+@app.route('/api/course_members/<string:course_id>', methods=['GET'])
 @jwt_required()
 def get_members(course_id):
     conn = get_db_connection()
@@ -294,7 +297,7 @@ def get_members(course_id):
         cursor.close()
         conn.close()
 
-@app.route('/get_course/<course_id>', methods=['GET'])
+@app.route('/api/get_course/<course_id>', methods=['GET'])
 @jwt_required()
 def get_course(course_id):
     conn = get_db_connection()
@@ -316,7 +319,7 @@ def get_course(course_id):
         cursor.close()
         conn.close()
 
-@app.route('/get_courses', methods=['GET'])
+@app.route('/api/get_courses', methods=['GET'])
 @jwt_required()
 def get_courses():
     conn = get_db_connection()
@@ -335,7 +338,7 @@ def get_courses():
         cursor.close()
         conn.close()
 
-@app.route('/student_courses/<int:student_id>', methods=['GET'])
+@app.route('/api/student_courses/<int:student_id>', methods=['GET'])
 @jwt_required()
 def get_student_courses(student_id):
     conn = get_db_connection()
@@ -372,11 +375,12 @@ def get_student_courses(student_id):
         cursor.close()
         conn.close()
 
-@app.route('/lecturer_courses/<int:lecturer_id>', methods=['GET'])
+@app.route('/api/lecturer_courses/<int:lecturer_id>', methods=['GET'])
 @jwt_required()
 def get_lecturer_courses(lecturer_id):
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
+    
 
     try:
         cursor.execute("""
@@ -409,7 +413,7 @@ def get_lecturer_courses(lecturer_id):
         cursor.close()
         conn.close()
 
-@app.route('/specific_courses', methods=['GET'])
+@app.route('/api/specific_courses', methods=['GET'])
 @jwt_required()
 def get_lecturer_login_courses():
     current_user_id = get_jwt_identity()
@@ -470,7 +474,7 @@ def get_lecturer_login_courses():
         conn.close()
 
 # FORUMS
-@app.route('/courses/<string:course_id>/forums', methods=['POST'])
+@app.route('/api/courses/<string:course_id>/forums', methods=['POST'])
 @jwt_required()
 def create_forum(course_id):
     conn = get_db_connection()

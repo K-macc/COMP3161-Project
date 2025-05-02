@@ -33,7 +33,7 @@ export default function Login() {
 
     try {
       const response = await axios.post<Login>(
-        "http://localhost:5000/auth/login",
+        "http://localhost:5000/api/login",
         formData
       );
 
