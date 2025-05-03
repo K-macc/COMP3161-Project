@@ -13,28 +13,32 @@ const Login = () => {
       localStorage.setItem("token", res.data.access_token);
       navigate("/dashboard");
     } catch (err) {
-      alert("Login failed: " + (err.response?.data?.message || "Unknown error"));
+      alert(
+        "Login failed: " + (err.response?.data?.message || "Unknown error")
+      );
     }
   };
 
   return (
-    <div className="container mt-5 col-md-6">
-      <h3 className="mb-4">Login</h3>
-      <form onSubmit={handleLogin}>
-        {["user_id", "password"].map((field) => (
-          <div className="mb-3" key={field}>
-            <input
-              type={field === "password" ? "password" : "text"}
-              className="form-control"
-              placeholder={field}
-              value={form[field]}
-              onChange={(e) => setForm({ ...form, [field]: e.target.value })}
-              required
-            />
-          </div>
-        ))}
-        <button className="btn btn-success w-100">Login</button>
-      </form>
+    <div className="d-flex justify-content-center align-items-center vh-100">
+      <div className="card p-4 shadow-lg login-container">
+        <h3 className="mb-4">Login</h3>
+        <form onSubmit={handleLogin}>
+          {["user_id", "password"].map((field) => (
+            <div className="mb-3" key={field}>
+              <input
+                type={field === "password" ? "password" : "text"}
+                className="form-control"
+                placeholder={field}
+                value={form[field]}
+                onChange={(e) => setForm({ ...form, [field]: e.target.value })}
+                required
+              />
+            </div>
+          ))}
+          <button className="btn btn-success w-100">Login</button>
+        </form>
+      </div>
     </div>
   );
 };

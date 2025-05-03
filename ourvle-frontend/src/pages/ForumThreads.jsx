@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import { Card, ListGroup, Button } from 'react-bootstrap';
+import { useParams, useNavigate } from 'react-router-dom';
+import { Card, Row, Col, Button, Alert } from 'react-bootstrap';
 import axios from 'axios';
 
 const ForumThreads = () => {
   const { forumId } = useParams();
+  const navigate = useNavigate();
   const [threads, setThreads] = useState([]);
   const [error, setError] = useState('');
 
@@ -26,24 +27,29 @@ const ForumThreads = () => {
 
   return (
     <div className="container mt-4">
-      <Card>
-        <Card.Header>Forum Threads</Card.Header>
-        <Card.Body>
-          {error && <div className="alert alert-danger">{error}</div>}
-          <ListGroup variant="flush">
-            {threads.map((thread) => (
-              <ListGroup.Item key={thread.ThreadID}>
-                <h5>{thread.Title}</h5>
-                <p>{thread.CreationDate}</p>
-                <p>{thread.Post}</p>
-                <Button variant="link" href={`/threads/${thread.ThreadID}/replies`}>
-                  View Replies
-                </Button>
-              </ListGroup.Item>
-            ))}
-          </ListGroup>
-        </Card.Body>
-      </Card>
+      <h3 className="mb-4">Forum Threads</h3>
+      {error && <Alert variant="danger">{error}</Alert>}
+      {threads.length === 0 && !error && <p>No threads available.</p>}
+
+      <Row>
+        {threads.map((thread) => (
+          <Col md={12} className="mb-3" key={thread.ThreadID}>
+            <Card
+              className="shadow-sm thread-tile"
+              style={{ cursor: 'pointer' }}
+              onClick={() => navigate(`/threads/${thread.ThreadID}/replies`)}
+            >
+              <Card.Body>
+                <Card.Title className="mb-2">{thread.Title}</Card.Title>
+                <Card.Subtitle className="text-muted mb-2">
+                  {new Date(thread.CreationDate).toLocaleString()}
+                </Card.Subtitle>
+                <Card.Text>{thread.Post}</Card.Text>
+              </Card.Body>
+            </Card>
+          </Col>
+        ))}
+      </Row>
     </div>
   );
 };
