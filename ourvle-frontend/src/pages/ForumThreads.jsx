@@ -11,7 +11,7 @@ const ForumThreads = () => {
   useEffect(() => {
     const fetchThreads = async () => {
       try {
-        const response = await axios.get(`/forums/${forumId}/threads`, {
+        const response = await axios.get(`/api/forums/${forumId}/threads`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
           },
@@ -35,6 +35,7 @@ const ForumThreads = () => {
               <ListGroup.Item key={thread.ThreadID}>
                 <h5>{thread.Title}</h5>
                 <p>{thread.CreationDate}</p>
+                <p>{thread.Post}</p>
                 <Button variant="link" href={`/threads/${thread.ThreadID}/replies`}>
                   View Replies
                 </Button>

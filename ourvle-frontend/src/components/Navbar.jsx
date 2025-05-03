@@ -65,7 +65,6 @@ export default function Navbar() {
 
               {role === "lecturer" && (
                 <>
-                  <li className="nav-item"><Link className="nav-link" to="/create-forum">Create Forum</Link></li>
                   <li className="nav-item"><Link className="nav-link" to="/my-courses">My Courses</Link></li>
                 </>
               )}

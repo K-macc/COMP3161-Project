@@ -11,7 +11,7 @@ const CourseForums = () => {
   useEffect(() => {
     const fetchForums = async () => {
       try {
-        const response = await axios.get(`/courses/${courseId}/forums`, {
+        const response = await axios.get(`/api/courses/${courseId}/forums`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
           },

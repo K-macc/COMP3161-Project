@@ -34,6 +34,7 @@ const CourseDetail = () => {
             <Card.Title>{course.CourseID}</Card.Title>
             <Button variant="primary" href={`/course-members/${course.CourseID}`}>Get Members</Button>
             <Button variant="primary" href={`/create-forum/${course.CourseID}`}>Create New Forum</Button>
+            <Button variant="primary" href={`/get-forums/${course.CourseID}`}>Get All Forums</Button>
           </Card.Body>
         </Card>
       )}

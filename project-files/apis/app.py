@@ -526,7 +526,7 @@ def create_forum(course_id):
         cursor.close()
         conn.close()
 
-@app.route('/courses/<string:course_id>/forums', methods=['GET'])
+@app.route('/api/courses/<string:course_id>/forums', methods=['GET'])
 @jwt_required()
 def get_course_forums(course_id):
     conn = get_db_connection()
@@ -564,7 +564,7 @@ def get_course_forums(course_id):
         cursor.close()
         conn.close()
 
-@app.route('/forums/<int:forum_id>/threads', methods=['POST'])
+@app.route('/api/forums/<int:forum_id>/threads', methods=['POST'])
 @jwt_required()
 def create_thread(forum_id):
     conn = get_db_connection()
@@ -594,7 +594,7 @@ def create_thread(forum_id):
         cursor.close()
         conn.close()
 
-@app.route('/forums/<int:forum_id>/threads', methods=['GET'])
+@app.route('/api/forums/<int:forum_id>/threads', methods=['GET'])
 @jwt_required()
 def get_forum_threads(forum_id):
     conn = get_db_connection()
@@ -618,7 +618,7 @@ def get_forum_threads(forum_id):
         cursor.close()
         conn.close()
 
-@app.route('/threads/<int:thread_id>/replies', methods=['POST'])
+@app.route('/api/threads/<int:thread_id>/replies', methods=['POST'])
 @jwt_required()
 def add_reply(thread_id):
     conn = get_db_connection()
@@ -649,7 +649,7 @@ def add_reply(thread_id):
         cursor.close()
         conn.close()
 
-@app.route('/threads/<int:thread_id>/replies', methods=['GET'])
+@app.route('/api/threads/<int:thread_id>/replies', methods=['GET'])
 @jwt_required()
 def get_thread_replies(thread_id):
     conn = get_db_connection()
@@ -763,7 +763,7 @@ def get_course_events(course_id):
 
         return standard_response(data=events)
 
-    except Exception as e:
+    except Exception:
         return standard_response(
             message='Failed to fetch events',
             status_code=500,
@@ -819,7 +819,7 @@ def get_student_events(student_id):
 
         return standard_response(data=events)
 
-    except Exception as e:
+    except Exception:
         return standard_response(
             message='Failed to fetch student events',
             status_code=500,
