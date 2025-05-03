@@ -15,13 +15,14 @@ import CreateForumPage from "./pages/forum/CreateForumPage";
 import CourseForums from "./pages/forum/CourseForums";
 import CreateThread from "./pages/forum/thread/CreateThread";
 import ForumThreads from "./pages/forum/thread/ForumThreads";
-import AddReply from "./pages/forum/thread/reply/AddReply";
 import Replies from "./pages/forum/thread/reply/Replies";
 import CreateEvent from "./pages/calendar_event/CreateEvent";
 import CourseEvents from "./pages/calendar_event/CourseEvents";
 import StudentEvents from "./pages/calendar_event/StudentEvents";
 import CreateSection from "./pages/course/section/CreateSection";
 import CreateAssignment from "./pages/assignment/CreateAssignment";
+import CourseAssignments from "./pages/assignment/CourseAssignments";
+import AssignmentSubmissions from "./pages/assignment/AssignmentSubmissions";
 import SubmitAssignment from "./pages/assignment/SubmitAssignment";
 import GradeAssignment from "./pages/assignment/GradeAssignment";
 import FinalAverage from "./pages/assignment/FinalAverage";
@@ -32,7 +33,6 @@ function App() {
       <Navbar />
       <Routes>
         <Route path="/" element={<Login />} />
-        {/* <Route path="/home" element={<HomePage />} /> */}
         <Route path="/register" element={<Register />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/register-course" element={<CourseRegistration />} />
@@ -47,19 +47,16 @@ function App() {
         <Route path="/forums/:forumId/threads" element={<ForumThreads />} />
         <Route path="/threads/:threadId/replies" element={<Replies />} />
         <Route path="/create-section/:courseId" element={<CreateSection />} />
-        <Route
-          path="/forums/:forumId/threads/create-thread"
-          element={<CreateThread />}
-        />
-        "
-        {/* 
-        <Route path="/forums/:forumId/threads/:threadId/replies" element={<AddReply />} />
+        <Route path="/forums/:forumId/threads/create-thread" element={<CreateThread />} />
         <Route path="/create-event/:courseId" element={<CreateEvent />} />
-        
+        <Route path="/get-events/:courseId" element={<CourseEvents />} />
+        <Route path="/student-events" element={<StudentEvents />} />
         <Route path="/create-assignment/:courseId" element={<CreateAssignment />} />
+        <Route path="/get-assignments/:courseId" element={<CourseAssignments />} />
+        <Route path="/assignment-submissions/:assignmentId" element={<AssignmentSubmissions />} />
         <Route path="/submit-assignment/:courseId" element={<SubmitAssignment />} />
-        <Route path="/grade-assignment/:courseId" element={<GradeAssignment />} />
-        <Route path="/final-average/:courseId" element={<FinalAverage />} /> */}
+        <Route path="/grade-assignment/:assignmentId/:studentId" element={<GradeAssignment />} />
+        <Route path="/final-average/:studentId" element={<FinalAverage />} />
         <Route path="/my-courses" element={<MyCourses />} />
       </Routes>
     </Router>

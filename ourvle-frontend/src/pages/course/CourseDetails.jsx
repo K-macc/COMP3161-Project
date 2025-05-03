@@ -10,6 +10,7 @@ const CourseDetail = () => {
   const [showSidebar, setShowSidebar] = useState(false);
   const [sectionContent, setSectionContent] = useState(null);
   const [sectionError, setSectionError] = useState("");
+  const payload = localStorage.getItem('token') ? JSON.parse(atob(localStorage.getItem('token').split(".")[1])) : null;
 
   useEffect(() => {
     const fetchCourse = async () => {
@@ -168,7 +169,12 @@ const CourseDetail = () => {
         <Offcanvas.Body>
           <Button variant="primary" className="mb-2 w-100" href={`/course-members/${courseId}`}> Get Members </Button>
           <Button variant="primary" className="mb-2 w-100" href={`/get-forums/${courseId}`}> View Forums </Button>
+          <Button variant="primary" className="mb-2 w-100" href={`/get-events/${courseId}`}> View Events </Button>
           <Button variant="primary" className="mb-2 w-100" href={`/create-section/${courseId}`}> Add A New Section </Button>
+          <Button variant="primary" className="mb-2 w-100" href={`/create-assignment/${courseId}`}> Create Assignment </Button>
+          <Button variant="primary" className="mb-2 w-100" href={`/get-assignments/${courseId}`}> View Assignments </Button>
+          <Button variant="primary" className="mb-2 w-100" href={`/submit-assignment/${courseId}`}> Submit Assignment </Button>
+          <Button variant="primary" className="mb-2 w-100" href={`/final-average/${payload.id}`}> Calculate My Average Grade </Button>
         </Offcanvas.Body>
       </Offcanvas>
     </div>

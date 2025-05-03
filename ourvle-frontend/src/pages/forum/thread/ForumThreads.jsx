@@ -40,7 +40,10 @@ const ForumThreads = () => {
             <Card
               className="shadow-sm thread-tile"
               style={{ cursor: 'pointer' }}
-              onClick={() => navigate(`/threads/${thread.ThreadID}/replies`)}
+              onClick={() => {
+                localStorage.setItem('threadTitle',thread.Title);
+                localStorage.setItem('threadPost',thread.Post);
+                navigate(`/threads/${thread.ThreadID}/replies`)}}
             >
               <Card.Body>
                 <Card.Title className="mb-2">{thread.Title}</Card.Title>
