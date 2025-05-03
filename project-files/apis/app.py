@@ -742,7 +742,7 @@ def create_event(course_id):
 
     except Exception as e:
         conn.rollback()
-        return jsonify({'message': f'Failed to create event', 'error': str(e)}), 500
+        return jsonify({'message': 'Failed to create event', 'error': str(e)}), 500
 
     finally:
         cursor.close()
@@ -934,7 +934,7 @@ def get_section_content(course_id):
         conn.close()
 
 # ASSIGNMENTS
-@app.route('/<string:course_id>/create_assignment', methods=['POST'])
+@app.route('/api/<string:course_id>/create_assignment', methods=['POST'])
 @jwt_required()
 def create_assignment(course_id):
     current_user_id = get_jwt_identity()
@@ -1018,8 +1018,59 @@ def create_assignment(course_id):
     finally:
         cursor.close()
         conn.close()
+        
+@app.route('/api/courses/<string:course_id>/assignments', methods=['GET'])
+@jwt_required()
+def get_assignments(course_id):
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
 
-@app.route('/assignments/<int:assignment_id>/submit', methods=['POST'])
+        cursor.execute('''
+            SELECT *
+            FROM assignment
+            WHERE CourseID = %s
+        ''', (course_id,))
+
+        assignments = cursor.fetchall()
+
+        if not assignments:
+            return jsonify({'message': 'No assignments found for this course'}), 404
+
+        return jsonify(assignments), 200
+
+    except Exception as e:
+        return jsonify({'message': f'Error: {str(e)}'}), 500
+
+    finally:
+        if conn.is_connected():
+            cursor.close()
+            conn.close()
+            
+@app.route('/api/assignments/<int:assignment_id>/submissions', methods=['GET'])
+@jwt_required()
+def get_submissions(assignment_id):
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+
+    try:
+        cursor.execute("""
+            SELECT *
+            FROM submits s
+            WHERE AssignmentID = %s
+            ORDER BY SubmissionDate DESC
+        """, (assignment_id,))
+
+        submissions = cursor.fetchall()
+        return jsonify(submissions), 200
+
+    except mysql.connector.Error as err:
+        return jsonify({"message": str(err)}), 500
+    finally:
+        cursor.close()
+        conn.close()
+
+@app.route('/api/assignments/<int:assignment_id>/submit', methods=['POST'])
 @jwt_required()
 def submit_assignment(assignment_id):
     current_user_id = get_jwt_identity()
@@ -1101,7 +1152,7 @@ def submit_assignment(assignment_id):
         cursor.close()
         conn.close()
 
-@app.route('/<int:assignment_id>/<int:student_id>/grade', methods=['POST'])
+@app.route('/api/<int:assignment_id>/<int:student_id>/grade', methods=['POST'])
 @jwt_required()
 def grade_assignment(assignment_id, student_id):
     current_user_id = get_jwt_identity()
@@ -1175,23 +1226,27 @@ def grade_assignment(assignment_id, student_id):
         cursor.close()
         conn.close()
 
-@app.route('/<int:student_id>/final_average', methods=['GET'])
+@app.route('/api/<int:student_id>/final_average', methods=['GET'])
 @jwt_required()
 def get_final_average(student_id):
     current_user_id = get_jwt_identity()
     user_role = get_jwt().get('role')
+    
+    conn = get_db_connection()
+    cursor = conn.cursor()
 
     if not current_user_id:
         return jsonify({'message': 'User not found'}), 404
 
     if user_role not in ['lecturer', 'admin', 'student']:
         return jsonify({'message': 'Access denied. Invalid user role.'}), 403
+    
+    cursor.execute("SELECT UserID FROM student WHERE StudentID = %s", (student_id, ))
+    load_user = cursor.fetchone()[0]
 
-    if user_role == 'student' and int(current_user_id) != student_id:
+    if user_role == 'student' and current_user_id != load_user:
         return jsonify({'message': 'Access denied. Students can only view their own final average.'}), 403
 
-    conn = get_db_connection()
-    cursor = conn.cursor()
 
     try:
         # Check student exists
