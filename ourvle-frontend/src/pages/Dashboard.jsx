@@ -1,21 +1,55 @@
 import React from "react";
+import { Card, Container, Row, Col, Badge } from "react-bootstrap";
+import { FaUserCircle, FaIdBadge, FaUserShield } from "react-icons/fa";
 
 const Dashboard = () => {
   const token = localStorage.getItem("token");
   const payload = token ? JSON.parse(atob(token.split(".")[1])) : null;
 
   return (
-    <div className="container mt-5">
-      <h3>Dashboard</h3>
+    <Container className="mt-5">
+      <h2 className="mb-4">Welcome to Your Dashboard</h2>
+
       {payload ? (
-        <div className="card p-3">
-          <p><strong>User ID:</strong> {payload.sub}</p>
-          <p><strong>Role:</strong> {payload.role}</p>
-        </div>
+        <Card className="p-4 shadow-sm">
+          <Row>
+            <Col md={2} className="d-flex justify-content-center align-items-center">
+              <FaUserCircle size={80} className="text-primary" />
+            </Col>
+
+            <Col md={10}>
+              <h4>
+                Hello, <strong>{payload.name || "User"}</strong>
+              </h4>
+              <p className="mb-2">
+                <FaIdBadge className="me-2" />
+                <strong>ID:</strong> {payload.id}
+              </p>
+              <p>
+                <FaUserShield className="me-2" />
+                <strong>Role:</strong>{" "}
+                <Badge bg="success" className="text-uppercase">
+                  {payload.role}
+                </Badge>
+              </p>
+            </Col>
+          </Row>
+
+          <hr />
+
+          <h5 className="mt-4">General Information</h5>
+          <ul>
+            <li>This is your main dashboard page.</li>
+            <li>Your role determines what actions you can take.</li>
+            <li>Use the navbar to navigate to different sections.</li>
+          </ul>
+        </Card>
       ) : (
-        <p>No user logged in.</p>
+        <Card className="p-4 text-center shadow-sm">
+          <p className="text-muted">No user logged in.</p>
+        </Card>
       )}
-    </div>
+    </Container>
   );
 };
 

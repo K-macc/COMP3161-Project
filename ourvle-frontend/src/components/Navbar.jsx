@@ -1,50 +1,16 @@
 import { Link, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useContext } from "react";
+import { AuthContext } from "../context/AuthContext";
 
 export default function Navbar() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [role, setRole] = useState(null);
+  const { isAuthenticated, role, setIsAuthenticated, setRole } = useContext(AuthContext);
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      try {
-        const payload = JSON.parse(atob(token.split(".")[1]));
-        setIsAuthenticated(true);
-        setRole(payload.role);
-      } catch (e) {
-        console.error("Invalid token");
-        setIsAuthenticated(false);
-        setRole(null);
-      }
-    } else {
-      setIsAuthenticated(false);
-      setRole(null);
-    }
-
-    // Listen for login/logout storage changes (e.g., across tabs)
-    const handleStorageChange = () => {
-      const newToken = localStorage.getItem("token");
-      if (newToken) {
-        const payload = JSON.parse(atob(newToken.split(".")[1]));
-        setIsAuthenticated(true);
-        setRole(payload.role);
-      } else {
-        setIsAuthenticated(false);
-        setRole(null);
-      }
-    };
-    window.addEventListener("storage", handleStorageChange);
-
-    return () => window.removeEventListener("storage", handleStorageChange);
-  }, []);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
     setIsAuthenticated(false);
     setRole(null);
-    navigate("/"); // Redirect to login
+    navigate("/");
   };
 
   return (
@@ -64,9 +30,7 @@ export default function Navbar() {
               )}
 
               {role === "lecturer" && (
-                <>
-                  <li className="nav-item"><Link className="nav-link" to="/my-courses">My Courses</Link></li>
-                </>
+                <li className="nav-item"><Link className="nav-link" to="/my-courses">My Courses</Link></li>
               )}
 
               {role === "admin" && (

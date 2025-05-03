@@ -1,16 +1,19 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../../context/AuthContext";
 
 const Login = () => {
   const [form, setForm] = useState({ user_id: "", password: "" });
   const navigate = useNavigate();
+  const { syncAuth } = useContext(AuthContext);
 
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
       const res = await axios.post("/api/login", form);
       localStorage.setItem("token", res.data.access_token);
+      syncAuth();
       navigate("/dashboard");
     } catch (err) {
       alert(

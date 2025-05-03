@@ -127,9 +127,21 @@ def login():
 
         if user['Password'] != data['password']:
             return jsonify({'message': 'Invalid Password'}), 401
-
-        access_token = create_access_token(identity=user['UserID'], additional_claims={'role': user['Role']})
-
+        
+        if user['Role'] == "student":
+            cursor.execute("SELECT * FROM student WHERE UserID = %s", (data['user_id'],))
+            student = cursor.fetchone()
+            access_token = create_access_token(identity=user['UserID'], additional_claims={'role': user['Role'], 'name': student['StudentName'], 'email': student['Email'], 'id': student['StudentID']})
+        elif user['Role'] == 'lecturer':
+            cursor.execute("SELECT * FROM lecturer WHERE UserID = %s", (data['user_id'],))
+            lecturer = cursor.fetchone()
+            access_token = create_access_token(identity=user['UserID'], additional_claims={'role': user['Role'], 'name': lecturer['LecturerName'], 'email': lecturer['Email'], 'id': lecturer['LecturerID']})
+        else:
+            cursor.execute("SELECT * FROM admin WHERE UserID = %s", (data['user_id'],))
+            admin = cursor.fetchone()
+            access_token = create_access_token(identity=user['UserID'], additional_claims={'role': user['Role'], 'name': admin['AdminName'], 'email': admin['Email'], 'id': admin['AdminID']}) 
+            
+            
         return jsonify({
             'message': 'Login successful',
             'access_token': access_token
@@ -675,7 +687,7 @@ def get_thread_replies(thread_id):
 
 
 # CALENDAR EVENT
-@app.route('/courses/<string:course_id>/events', methods=['POST'])
+@app.route('/api/courses/<string:course_id>/events', methods=['POST'])
 @jwt_required()
 def create_event(course_id):
     conn = get_db_connection()
@@ -736,7 +748,7 @@ def create_event(course_id):
         cursor.close()
         conn.close()
 
-@app.route('/courses/<string:course_id>/events', methods=['GET'])
+@app.route('/api/courses/<string:course_id>/events', methods=['GET'])
 @jwt_required()
 def get_course_events(course_id):
     conn = get_db_connection()
@@ -774,7 +786,7 @@ def get_course_events(course_id):
         cursor.close()
         conn.close()
 
-@app.route('/students/<int:student_id>/events', methods=['GET'])
+@app.route('/api/students/<int:student_id>/events', methods=['GET'])
 @jwt_required()
 def get_student_events(student_id):
     conn = get_db_connection()
@@ -832,14 +844,13 @@ def get_student_events(student_id):
 
 
 # COURSE SECTIONS
-@app.route('/section/<int:section_id>/content', methods=['POST'])
+@app.route('/api/section/<int:section_id>/content', methods=['POST'])
 @jwt_required()
 def upload_section_content(section_id):
     conn = get_db_connection()
     cursor = conn.cursor()
 
     try:
-        current_user_id = get_jwt_identity()
         user_role = get_jwt().get('role')
 
         if user_role not in ['lecturer', 'admin']:
@@ -889,15 +900,15 @@ def upload_section_content(section_id):
 
     except Exception as e:
         conn.rollback()
-        return jsonify({'message': f'Failed to upload content', 'error': str(e)}), 500
+        return jsonify({'message': 'Failed to upload content', 'error': str(e)}), 500
 
     finally:
         cursor.close()
         conn.close()
 
-@app.route('/section/<int:section_id>/content', methods=['GET'])
+@app.route('/api/section/<string:course_id>/content', methods=['GET'])
 @jwt_required()
-def get_section_content(section_id):
+def get_section_content(course_id):
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
 
@@ -905,10 +916,10 @@ def get_section_content(section_id):
         query = """
             SELECT LectureSlides, Files, Links
             FROM Section
-            WHERE SectionID = %s
+            WHERE CourseID = %s
         """
-        cursor.execute(query, (section_id,))
-        result = cursor.fetchone()
+        cursor.execute(query, (course_id,))
+        result = cursor.fetchall()
 
         if not result:
             return jsonify({'message': 'Section not found'}), 404

@@ -27,9 +27,12 @@ const ForumThreads = () => {
 
   return (
     <div className="container mt-4">
+      <div className="d-flex justify-content-between align-items-center">
       <h3 className="mb-4">Forum Threads</h3>
       {error && <Alert variant="danger">{error}</Alert>}
       {threads.length === 0 && !error && <p>No threads available.</p>}
+      <Button href={`/forums/${forumId}/threads/create-thread`} className="mb-3"> Create New Thread </Button>
+    </div>
 
       <Row>
         {threads.map((thread) => (
