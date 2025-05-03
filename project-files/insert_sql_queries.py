@@ -1,75 +1,71 @@
 import mysql.connector
-"""
-This script connects to a MySQL database and executes a series of SQL INSERT statements 
-from a specified `.sql` file. It reads the file line by line, ignoring comments and empty lines, 
-and executes each valid SQL statement.
-Modules:
-    mysql.connector: Provides the MySQL database connection and cursor functionality.
-Functionality:
-    - Establishes a connection to a MySQL database using the provided credentials.
-    - Reads SQL statements from a file (`insert_sql_queries.sql`) located at a specified path.
-    - Executes each valid SQL INSERT statement in the file.
-    - Logs the success or failure of each statement execution, including the line number.
-    - Commits all changes to the database after successful execution of all statements.
-    - Handles and reports database connection and execution errors.
-File Requirements:
-    - The SQL file (`insert_sql_queries.sql`) should contain valid SQL statements, 
-      with each statement on a new line.
-    - Lines starting with `--` are treated as comments and ignored.
-Error Handling:
-    - If a database connection error occurs, it is caught and reported.
-    - If an error occurs while executing a specific SQL statement, the error is logged 
-      along with the line number, and the script exits.
-Note:
-    - Ensure the database credentials and file paths are correctly configured before running the script.
-    - The script uses hardcoded file paths and credentials, which should be updated as needed.
-    - There are more than 1,599,794 insert statements in the sql script. Based on the type of machine that you possess, it may take 
-      between 15 to 20 minutes for all of the statements to be inserted. Allocate the necessary time for that.
-"""
-
-# Import os for environment variable access
-# Import dotenv to load environment variables from a .env file
-import os
+import re
 from dotenv import load_dotenv
 
 load_dotenv()  # Load environment variables from .env file
 
+BATCH_SIZE = 1000
+
+def chunked(data, size):
+    """Yield successive chunks of data of specified size."""
+    for i in range(0, len(data), size):
+        yield data[i:i + size]
+
 try:
     conn = mysql.connector.connect(
-        host = "localhost",
-        user = "vle_admin",
-        password = "admin123",
-        database = "ourvle"
+        host="localhost",
+        user="vle_admin",
+        password="admin123",
+        database="ourvle"
     )
     cursor = conn.cursor()
 
-    
-    with open("project-files/insert_sql_queries.sql","r") as f:
-        sql_statements = f.readlines()
-        sql_statements = [line for line in sql_statements if line.strip()]
+    with open("project-files/insert_sql_queries.sql", "r") as f:
+        sql_lines = f.readlines()
+        sql_lines = [line.strip() for line in sql_lines if line.strip() and not line.startswith("--")]
 
-        total_records = len(sql_statements)  # Count total statements
-        
-        for line_num, statement in enumerate(sql_statements, start = 1):
-            statement = statement.strip()
-            
-            if statement and not statement.startswith("--"):
-                try:
-                    cursor.execute(statement)
-                    print(f"Inserted record {line_num}/{total_records} into the database.")  # Print each insert
-                except mysql.connector.Error as e:
-                    print(f"Error on line {line_num}: {e}")
-                    exit(1)
-                
-        conn.commit()
-        print("INSERT statements for insert_sql_queries.sql have been executed successfully✅.")
-        
+    statement_batches = {}  # Map: insert_template -> list of values
 
-        
+    insert_pattern = re.compile(r"INSERT INTO\s+(\w+)\s*\((.*?)\)\s*VALUES\s*\((.*?)\);", re.IGNORECASE)
+
+    for line_num, statement in enumerate(sql_lines, start=1):
+        match = insert_pattern.match(statement)
+        if not match:
+            print(f"Skipping invalid statement at line {line_num}")
+            continue
+
+        table, columns, values = match.groups()
+        columns = columns.strip()
+        values = values.strip()
+
+        # Prepare the template and parameter tuple
+        param_template = f"INSERT INTO {table} ({columns}) VALUES ({', '.join(['%s'] * len(values.split(',')))})"
+        # Evaluate values safely
+        value_tuple = tuple(eval(v.strip()) if v.strip().lower() != "null" else None for v in values.split(','))
+
+        if param_template not in statement_batches:
+            statement_batches[param_template] = []
+
+        statement_batches[param_template].append(value_tuple)
+
+    total_inserted = 0
+
+    for template, value_list in statement_batches.items():
+        for batch in chunked(value_list, BATCH_SIZE):
+            try:
+                cursor.executemany(template, batch)
+                total_inserted += len(batch)
+                print(f"Inserted {len(batch)} records into: {template.split('(')[0]}")
+            except mysql.connector.Error as e:
+                print(f"Error during batch insert: {e}")
+                exit(1)
+
+    conn.commit()
+    print(f"✅ Successfully inserted {total_inserted} total records in batches of {BATCH_SIZE}.")
+
 except mysql.connector.Error as e:
-    print(f"Error: {e}")
-    
+    print(f"❌ Database error: {e}")
+
 finally:
     cursor.close()
     conn.close()
-
