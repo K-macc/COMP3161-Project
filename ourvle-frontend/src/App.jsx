@@ -54,7 +54,7 @@ function App() {
         <Route path="/create-assignment/:courseId" element={<CreateAssignment />} />
         <Route path="/get-assignments/:courseId" element={<CourseAssignments />} />
         <Route path="/assignment-submissions/:assignmentId" element={<AssignmentSubmissions />} />
-        <Route path="/submit-assignment/:courseId" element={<SubmitAssignment />} />
+        <Route path="/submit-assignment/:assignmentId" element={<SubmitAssignment />} />
         <Route path="/grade-assignment/:assignmentId/:studentId" element={<GradeAssignment />} />
         <Route path="/final-average/:studentId" element={<FinalAverage />} />
         <Route path="/my-courses" element={<MyCourses />} />

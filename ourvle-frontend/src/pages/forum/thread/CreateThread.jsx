@@ -13,7 +13,7 @@ const CreateThread = () => {
     e.preventDefault();
     try {
       await axios.post(
-        `/forums/${forumId}/threads`,
+        `/api/forums/${forumId}/threads`,
         { title, post },
         {
           headers: {

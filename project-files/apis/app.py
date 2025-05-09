@@ -10,6 +10,7 @@ import datetime
 app = Flask(__name__)
 jwt = JWTManager(app)
 app.config.from_object(Config)
+upload_folder = r"C:\Users\mkesh\OneDrive\Documents\UWI\Year 3\Semester 2\COMP3161\COMP3161-Project\ourvle-frontend\uploads"
 
 def get_db_connection():
     return mysql.connector.connect(
@@ -600,7 +601,7 @@ def create_thread(forum_id):
 
     except Exception as e:
         conn.rollback()
-        return jsonify({'message': f'Error creating thread: {str(e)}'}), 500
+        return jsonify({'error': f'Error creating thread: {str(e)}'}), 500
 
     finally:
         cursor.close()
@@ -969,7 +970,6 @@ def create_assignment(course_id):
         file = request.files.get('file')
         link = request.form.get('link')
 
-        upload_folder = current_app.config.get('UPLOAD_FOLDER', 'uploads')
         if not os.path.exists(upload_folder):
             os.makedirs(upload_folder)
 
@@ -990,6 +990,7 @@ def create_assignment(course_id):
 
         if link:
             assignment_link = link
+            
 
         if not assignment_file and not assignment_link:
             return jsonify({'message': 'Either a file or a link must be provided.'}), 400
@@ -1210,13 +1211,11 @@ def grade_assignment(assignment_id, student_id):
 
         # Update grade
         cursor.execute("""
-            UPDATE Submits
-            SET Grade = %s
-            WHERE AssignmentID = %s AND StudentID = %s
-        """, (grade, assignment_id, student_id))
+            INSERT INTO Grades (AssignmentID, StudentID, Grade)
+            VALUES (%s, %s, %s)""", (assignment_id, student_id, grade))
         conn.commit()
 
-        return jsonify({'message': 'Grade updated successfully'}), 200
+        return jsonify({'message': 'Grade submitted successfully'}), 200
 
     except Exception as e:
         conn.rollback()

@@ -96,6 +96,7 @@ const CourseAssignments = () => {
                   )}
                   <div className="mt-3 text-start">
                     <Button variant="primary" href={`/assignment-submissions/${assignment.AssignmentID}`}> Submissions </Button>
+                    <Button variant="primary" href={`/submit-assignment/${assignment.AssignmentID}`}> Submit Assignment </Button>
                   </div>
                 </ListGroup.Item>
               ))}

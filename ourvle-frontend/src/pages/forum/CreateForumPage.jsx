@@ -14,7 +14,7 @@ const CreateForum = () => {
     setError('');
     setSuccess('');
     try {
-      const response = await axios.post(
+      await axios.post(
         `/api/courses/${courseId}/forums`,
         { subject },
         {
