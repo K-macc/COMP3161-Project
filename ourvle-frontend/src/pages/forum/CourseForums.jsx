@@ -15,6 +15,7 @@ const CourseForums = () => {
   const { courseId } = useParams();
   const [forums, setForums] = useState([]);
   const [error, setError] = useState("");
+  const role = localStorage.getItem("role");
 
   useEffect(() => {
     const fetchForums = async () => {
@@ -41,7 +42,9 @@ const CourseForums = () => {
 
             {error && <Alert variant="danger">{error}</Alert>}
 
+            {role != "student" && (
             <Button href={`/create-forum/${courseId}`} className="mb-3"> Create New Forum </Button>
+            )}
           </div>
 
           <Card className="shadow-sm">

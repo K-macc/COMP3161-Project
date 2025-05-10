@@ -8,6 +8,7 @@ const ForumThreads = () => {
   const navigate = useNavigate();
   const [threads, setThreads] = useState([]);
   const [error, setError] = useState('');
+  const role = localStorage.getItem("role");
 
   useEffect(() => {
     const fetchThreads = async () => {
@@ -31,7 +32,10 @@ const ForumThreads = () => {
       <h3 className="mb-4">Forum Threads</h3>
       {error && <Alert variant="danger">{error}</Alert>}
       {threads.length === 0 && !error && <p>No threads available.</p>}
+
+      {role != "student" && (
       <Button href={`/forums/${forumId}/threads/create-thread`} className="mb-3"> Create New Thread </Button>
+      )}
     </div>
 
       <Row>

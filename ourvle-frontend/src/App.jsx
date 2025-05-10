@@ -50,11 +50,11 @@ function App() {
         <Route path="/forums/:forumId/threads/create-thread" element={<CreateThread />} />
         <Route path="/create-event/:courseId" element={<CreateEvent />} />
         <Route path="/get-events/:courseId" element={<CourseEvents />} />
-        <Route path="/student-events" element={<StudentEvents />} />
+        <Route path="/my-events" element={<StudentEvents />} />
         <Route path="/create-assignment/:courseId" element={<CreateAssignment />} />
         <Route path="/get-assignments/:courseId" element={<CourseAssignments />} />
         <Route path="/assignment-submissions/:assignmentId" element={<AssignmentSubmissions />} />
-        <Route path="/submit-assignment/:courseId" element={<SubmitAssignment />} />
+        <Route path="/submit-assignment/:assignmentId" element={<SubmitAssignment />} />
         <Route path="/grade-assignment/:assignmentId/:studentId" element={<GradeAssignment />} />
         <Route path="/final-average/:studentId" element={<FinalAverage />} />
         <Route path="/my-courses" element={<MyCourses />} />

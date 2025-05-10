@@ -1,14 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react'; // include useRef
 import { Form, Button, Card, Alert } from 'react-bootstrap';
 import axios from 'axios';
+import { useParams } from 'react-router-dom';
 
-function CreateAssignment({ courseId }) {
+function CreateAssignment() {
   const [assignmentName, setAssignmentName] = useState('');
   const [dueDate, setDueDate] = useState('');
   const [file, setFile] = useState(null);
   const [link, setLink] = useState('');
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
+  const { courseId } = useParams();
+  const fileInputRef = useRef(); // 👈 create ref
 
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
@@ -24,7 +27,7 @@ function CreateAssignment({ courseId }) {
     formData.append('link', link);
 
     try {
-      const response = await axios.post(`/api/course/${courseId}/create_assignment`, formData, {
+      const response = await axios.post(`/api/${courseId}/create_assignment`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
           Authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -36,6 +39,7 @@ function CreateAssignment({ courseId }) {
       setDueDate('');
       setFile(null);
       setLink('');
+      fileInputRef.current.value = ''; // 👈 reset file input
     } catch (err) {
       setMessage('');
       setError(err.response?.data?.message || 'An error occurred');
@@ -46,7 +50,7 @@ function CreateAssignment({ courseId }) {
     <div className="container mt-4">
       <Card className="shadow-sm border-0">
         <Card.Header className="bg-primary text-white">
-          <h4 className="mb-0">📘 Create Assignment for Course {courseId}</h4>
+          <h4 className="mb-0">📘 Create New Assignment</h4>
         </Card.Header>
         <Card.Body className="bg-light">
           {message && <Alert variant="success">{message}</Alert>}
@@ -79,6 +83,7 @@ function CreateAssignment({ courseId }) {
               <Form.Control
                 type="file"
                 onChange={handleFileChange}
+                ref={fileInputRef} // 👈 attach ref
               />
             </Form.Group>
 

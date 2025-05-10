@@ -4,7 +4,7 @@ import { Card, ListGroup, Form, Button } from 'react-bootstrap';
 import axios from 'axios';
 
 const StudentEvents = () => {
-  const { studentId } = useParams();
+  const studentId  = localStorage.getItem('ID');
   const [events, setEvents] = useState([]);
   const [date, setDate] = useState('');
   const [error, setError] = useState('');

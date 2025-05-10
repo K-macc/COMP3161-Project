@@ -10,6 +10,7 @@ import datetime
 app = Flask(__name__)
 jwt = JWTManager(app)
 app.config.from_object(Config)
+upload_folder = r"C:\Users\mkesh\OneDrive\Documents\UWI\Year 3\Semester 2\COMP3161\COMP3161-Project\ourvle-frontend\uploads"
 
 def get_db_connection():
     return mysql.connector.connect(
@@ -427,7 +428,7 @@ def get_lecturer_courses(lecturer_id):
 
 @app.route('/api/specific_courses', methods=['GET'])
 @jwt_required()
-def get_lecturer_login_courses():
+def get_specific_courses():
     current_user_id = get_jwt_identity()
     current_user_role = get_jwt().get('role')
 
@@ -600,7 +601,7 @@ def create_thread(forum_id):
 
     except Exception as e:
         conn.rollback()
-        return jsonify({'message': f'Error creating thread: {str(e)}'}), 500
+        return jsonify({'error': f'Error creating thread: {str(e)}'}), 500
 
     finally:
         cursor.close()
@@ -844,9 +845,9 @@ def get_student_events(student_id):
 
 
 # COURSE SECTIONS
-@app.route('/api/section/<int:section_id>/content', methods=['POST'])
+@app.route('/api/section/<string:course_id>/content', methods=['POST'])
 @jwt_required()
-def upload_section_content(section_id):
+def create_section_content(course_id):
     conn = get_db_connection()
     cursor = conn.cursor()
 
@@ -856,51 +857,39 @@ def upload_section_content(section_id):
         if user_role not in ['lecturer', 'admin']:
             return jsonify({'message': 'Access denied. Only lecturers and admins can upload content.'}), 403
 
-        content_type = request.form.get('content_type')
-        title = request.form.get('title', 'Unnamed Content')
+        slide = request.files.get('slides')
         file = request.files.get('file')
         link = request.form.get('link')
 
-        upload_folder = current_app.config.get('UPLOAD_FOLDER', 'uploads')
         if not os.path.exists(upload_folder):
             os.makedirs(upload_folder)
 
-        update_column = None
-        update_value = None
+        
+        slidename = secure_filename(slide.filename)
+        filepath = os.path.join(upload_folder, slidename)
+        slide.save(filepath)
+        
 
-        if content_type == 'slides' and file and allowed_file(file.filename):
-            filename = secure_filename(file.filename)
-            filepath = os.path.join(upload_folder, filename)
-            file.save(filepath)
-            update_column = 'LectureSlides'
-            update_value = filepath
+        filename = secure_filename(file.filename)
+        filepath = os.path.join(upload_folder, filename)
+        file.save(filepath)
+        
+        cursor.execute("SELECT COALESCE(MAX(SectionID), 0) FROM Section")
+        max_id = cursor.fetchone()[0]
+        new_id = max_id + 1
 
-        elif content_type == 'file' and file and allowed_file(file.filename):
-            filename = secure_filename(file.filename)
-            filepath = os.path.join(upload_folder, filename)
-            file.save(filepath)
-            update_column = 'Files'
-            update_value = filepath
-
-        elif content_type == 'link' and link:
-            update_column = 'Links'
-            update_value = link
-
-        else:
-            return jsonify({'message': 'Invalid content type or missing file/link'}), 400
-
-        update_query = f"""
-            UPDATE Section SET {update_column} = %s
-            WHERE SectionID = %s
+        query = """
+            INSERT INTO Section (SectionID, CourseID, LectureSlides, Files, Links) 
+            VALUES (%s, %s, %s, %s, %s)
         """
-        cursor.execute(update_query, (update_value, section_id))
+        cursor.execute(query, (new_id, course_id, slidename, filename, link))
         conn.commit()
 
-        return jsonify({'message': f'{content_type.capitalize()} uploaded to section {section_id}'}), 200
+        return jsonify({'message': 'Section created successfully'}), 200
 
     except Exception as e:
         conn.rollback()
-        return jsonify({'message': 'Failed to upload content', 'error': str(e)}), 500
+        return jsonify({'message': 'Failed to create section', 'error': str(e)}), 500
 
     finally:
         cursor.close()
@@ -969,7 +958,6 @@ def create_assignment(course_id):
         file = request.files.get('file')
         link = request.form.get('link')
 
-        upload_folder = current_app.config.get('UPLOAD_FOLDER', 'uploads')
         if not os.path.exists(upload_folder):
             os.makedirs(upload_folder)
 
@@ -990,6 +978,7 @@ def create_assignment(course_id):
 
         if link:
             assignment_link = link
+            
 
         if not assignment_file and not assignment_link:
             return jsonify({'message': 'Either a file or a link must be provided.'}), 400
@@ -1210,13 +1199,11 @@ def grade_assignment(assignment_id, student_id):
 
         # Update grade
         cursor.execute("""
-            UPDATE Submits
-            SET Grade = %s
-            WHERE AssignmentID = %s AND StudentID = %s
-        """, (grade, assignment_id, student_id))
+            INSERT INTO Grades (AssignmentID, StudentID, Grade)
+            VALUES (%s, %s, %s)""", (assignment_id, student_id, grade))
         conn.commit()
 
-        return jsonify({'message': 'Grade updated successfully'}), 200
+        return jsonify({'message': 'Grade submitted successfully'}), 200
 
     except Exception as e:
         conn.rollback()

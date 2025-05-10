@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Card, Row, Col, Form, Button, Spinner, Alert } from 'react-bootstrap';
+import { Card, Row, Col, Form, Button, Spinner, Alert, Container } from 'react-bootstrap';
 import axios from 'axios';
 
 const StudentCourses = () => {
@@ -31,57 +31,72 @@ const StudentCourses = () => {
   };
 
   return (
-    <div className="container mt-5">
-      <Card className="shadow p-4">
-        <h3 className="mb-3 text-center">View Student Courses</h3>
+    <Container className="mt-5">
+      <Row className="justify-content-center">
+        <Col md={8} lg={6}>
+          <Card className="shadow-lg border-0">
+            <Card.Body>
+              <h3 className="text-center mb-4">🎓 View Student Courses</h3>
+              <Form onSubmit={handleSubmit}>
+                <Form.Group controlId="studentId" className="mb-3">
+                  <Form.Label><strong>Student ID</strong></Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="e.g., 620000000"
+                    value={studentId}
+                    onChange={(e) => setStudentId(e.target.value)}
+                    required
+                    className="shadow-sm"
+                  />
+                </Form.Group>
+                <div className="d-grid">
+                  <Button type="submit" variant="primary" size="lg" className="shadow-sm">
+                    {loading ? <Spinner animation="border" size="sm" /> : '🔍 Fetch Courses'}
+                  </Button>
+                </div>
+              </Form>
+            </Card.Body>
+          </Card>
+        </Col>
+      </Row>
 
-        <Form onSubmit={handleSubmit}>
-          <Form.Group controlId="studentId">
-            <Form.Label>Student ID</Form.Label>
-            <Form.Control
-              type="text"
-              placeholder="620000000"
-              value={studentId}
-              onChange={(e) => setStudentId(e.target.value)}
-              required
-            />
-          </Form.Group>
-          <div className="d-flex justify-content-end mt-3">
-            <Button type="submit" variant="primary">
-              {loading ? <Spinner animation="border" size="sm" /> : 'Fetch Courses'}
-            </Button>
-          </div>
-        </Form>
-      </Card>
+      <Row className="mt-4">
+        <Col>
+          {error && <Alert variant="danger">{error}</Alert>}
 
-      <div className="mt-4">
-        {error && <Alert variant="danger">{error}</Alert>}
+          {studentCourses.length > 0 && (
+            <>
+              <h5 className="mb-3">📚 Enrolled Courses:</h5>
+              <Row xs={1} md={2} lg={3} className="g-4">
+                {studentCourses.map((course) => (
+                  <Col key={course.CourseID}>
+                    <Card className="h-100 shadow-sm card-info">
+                      <Card.Body>
+                        <Card.Title className="text-primary">{course.CourseName}</Card.Title>
+                        <Card.Text><strong>Course ID:</strong> {course.CourseID}</Card.Text>
+                        <Button
+                          variant="primary"
+                          href={`/courses/${course.CourseID}`}
+                          className="w-100 mt-2"
+                        >
+                          🔗 View Course
+                        </Button>
+                      </Card.Body>
+                    </Card>
+                  </Col>
+                ))}
+              </Row>
+            </>
+          )}
 
-        {studentCourses.length > 0 && (
-          <Row xs={1} md={2} lg={3} className="g-4 mt-2">
-            {studentCourses.map((course) => (
-              <Col key={course.CourseID}>
-                <Card className="h-100 shadow-sm border-0 hover-zoom">
-                  <Card.Body>
-                    <Card.Title>{course.CourseName}</Card.Title>
-                    <Card.Text><strong>ID:</strong> {course.CourseID}</Card.Text>
-                    <Button variant="outline-primary" href={`/courses/${course.CourseID}`}>
-                      View Course
-                    </Button>
-                  </Card.Body>
-                </Card>
-              </Col>
-            ))}
-          </Row>
-        )}
-
-        {submitted && studentCourses.length === 0 && !error && !loading && (
-          <Alert variant="info" className="mt-3">
-            No courses found for this student.
-          </Alert>
-        )}
-      </div>
-    </div>
+          {submitted && studentCourses.length === 0 && !error && !loading && (
+            <Alert variant="info" className="mt-3 text-center">
+              ℹ️ No courses found for this student.
+            </Alert>
+          )}
+        </Col>
+      </Row>
+    </Container>
   );
 };
 

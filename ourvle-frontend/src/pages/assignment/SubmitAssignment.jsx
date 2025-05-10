@@ -1,13 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Form, Button, Card, Alert } from 'react-bootstrap';
 import axios from 'axios';
+import { useParams } from "react-router-dom";
 
-function SubmitAssignment({ assignmentId }) {
+function SubmitAssignment() {
   const [file, setFile] = useState(null);
   const [link, setLink] = useState('');
   const [contentType, setContentType] = useState('');
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
+  const { assignmentId } = useParams();
+
+  const fileInputRef = useRef();
 
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
@@ -28,7 +32,7 @@ function SubmitAssignment({ assignmentId }) {
     formData.append('link', link);
 
     try {
-      const response = await axios.post(`/assignments/${assignmentId}/submit`, formData, {
+      const response = await axios.post(`/api/assignments/${assignmentId}/submit`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
           Authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -36,6 +40,7 @@ function SubmitAssignment({ assignmentId }) {
       });
       setMessage(response.data.message);
       setError('');
+      fileInputRef.current.value = '';
     } catch (err) {
       setMessage('');
       setError(err.response?.data?.message || 'An error occurred');
@@ -46,7 +51,7 @@ function SubmitAssignment({ assignmentId }) {
     <div className="container mt-4">
       <Card className="shadow-sm border-0">
         <Card.Header className="bg-primary text-white">
-          <h4 className="mb-0">📤 Submit Assignment {assignmentId}</h4>
+          <h4 className="mb-0">📤 Submit Assignment</h4>
         </Card.Header>
         <Card.Body className="bg-light">
           {message && <Alert variant="success">{message}</Alert>}

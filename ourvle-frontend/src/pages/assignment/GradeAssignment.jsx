@@ -20,7 +20,7 @@ function GradeAssignment() {
 
     try {
       const response = await axios.post(
-        `/api/assignments/${assignmentId}/${studentId}/grade`,
+        `/api/${assignmentId}/${studentId}/grade`,
         { grade },
         {
           headers: {
