@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Form, Button, Card, Alert } from 'react-bootstrap';
 import axios from 'axios';
 import { useParams } from "react-router-dom";
@@ -10,6 +10,8 @@ function SubmitAssignment() {
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
   const { assignmentId } = useParams();
+
+  const fileInputRef = useRef();
 
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
@@ -38,6 +40,7 @@ function SubmitAssignment() {
       });
       setMessage(response.data.message);
       setError('');
+      fileInputRef.current.value = '';
     } catch (err) {
       setMessage('');
       setError(err.response?.data?.message || 'An error occurred');

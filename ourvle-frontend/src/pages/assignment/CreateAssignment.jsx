@@ -50,7 +50,7 @@ function CreateAssignment() {
     <div className="container mt-4">
       <Card className="shadow-sm border-0">
         <Card.Header className="bg-primary text-white">
-          <h4 className="mb-0">📘 Create Assignment for Course {courseId}</h4>
+          <h4 className="mb-0">📘 Create New Assignment</h4>
         </Card.Header>
         <Card.Body className="bg-light">
           {message && <Alert variant="success">{message}</Alert>}

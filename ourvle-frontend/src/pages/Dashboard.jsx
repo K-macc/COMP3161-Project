@@ -5,6 +5,9 @@ import { FaUserCircle, FaIdBadge, FaUserShield } from "react-icons/fa";
 const Dashboard = () => {
   const token = localStorage.getItem("token");
   const payload = token ? JSON.parse(atob(token.split(".")[1])) : null;
+  localStorage.setItem('role',payload.role);
+  localStorage.setItem('ID',payload.id);
+
 
   return (
     <Container className="mt-5">

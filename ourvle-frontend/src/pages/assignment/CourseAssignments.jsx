@@ -15,6 +15,7 @@ const CourseAssignments = () => {
   const [assignments, setAssignments] = useState([]);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
+  const role = localStorage.getItem("role");
 
   useEffect(() => {
     const fetchAssignments = async () => {
@@ -95,8 +96,13 @@ const CourseAssignments = () => {
                     </p>
                   )}
                   <div className="mt-3 text-start">
+
+                  {role != "student" && (
                     <Button variant="primary" href={`/assignment-submissions/${assignment.AssignmentID}`}> Submissions </Button>
+                  )}
+                  {role == "student" && (
                     <Button variant="primary" href={`/submit-assignment/${assignment.AssignmentID}`}> Submit Assignment </Button>
+                  )}
                   </div>
                 </ListGroup.Item>
               ))}

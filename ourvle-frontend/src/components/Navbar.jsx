@@ -24,8 +24,9 @@ export default function Navbar() {
 
               {role === "student" && (
                 <>
-                  <li className="nav-item"><Link className="nav-link" to="/register-course">Register Course</Link></li>
+                  <li className="nav-item"><Link className="nav-link" to="/register-course">Course Registration</Link></li>
                   <li className="nav-item"><Link className="nav-link" to="/my-courses">My Courses</Link></li>
+                  <li className="nav-item"><Link className="nav-link" to="/my-events">My Events</Link></li>
                 </>
               )}
 
