@@ -2,7 +2,7 @@ import mysql.connector
 import re
 from dotenv import load_dotenv
 
-load_dotenv()  # Load environment variables from .env file
+load_dotenv()  
 
 BATCH_SIZE = 1000
 
@@ -24,7 +24,7 @@ try:
         sql_lines = f.readlines()
         sql_lines = [line.strip() for line in sql_lines if line.strip() and not line.startswith("--")]
 
-    statement_batches = {}  # Map: insert_template -> list of values
+    statement_batches = {}  
 
     insert_pattern = re.compile(r"INSERT INTO\s+(\w+)\s*\((.*?)\)\s*VALUES\s*\((.*?)\);", re.IGNORECASE)
 
@@ -38,9 +38,9 @@ try:
         columns = columns.strip()
         values = values.strip()
 
-        # Prepare the template and parameter tuple
+        
         param_template = f"INSERT INTO {table} ({columns}) VALUES ({', '.join(['%s'] * len(values.split(',')))})"
-        # Evaluate values safely
+        
         value_tuple = tuple(eval(v.strip()) if v.strip().lower() != "null" else None for v in values.split(','))
 
         if param_template not in statement_batches:
