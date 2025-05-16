@@ -13,6 +13,8 @@ function GradeAssignment() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setMessage("");
+    setMessageType("");
 
     try {
       const response = await authFetch(
@@ -31,11 +33,6 @@ function GradeAssignment() {
         setGrade("");
       }
       setMessage(data.message);
-
-      setTimeout(() => {
-        setMessage("");
-        setMessageType("");
-      }, 5000);
     } catch (err) {
       setMessageType("danger");
       setMessage("An error occurred while grading!");

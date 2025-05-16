@@ -20,6 +20,8 @@ function CreateAssignment() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setMessage("");
+    setMessageType("");
 
     const formData = new FormData();
     formData.append("assignment_name", assignmentName);
@@ -45,11 +47,6 @@ function CreateAssignment() {
       }
 
       setMessage(data.message);
-
-      setTimeout(() => {
-        setMessage("");
-        setMessageType("");
-      }, 5000);
     } catch (err) {
       setMessageType("danger");
       setMessage("Error creating Assignment!");
@@ -105,7 +102,7 @@ function CreateAssignment() {
               <Form.Control
                 type="file"
                 onChange={handleFileChange}
-                ref={fileInputRef} // 👈 attach ref
+                ref={fileInputRef} 
               />
             </Form.Group>
 

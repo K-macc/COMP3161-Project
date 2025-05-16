@@ -18,6 +18,7 @@ function CreateSectionContent() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage("");
+    setMessageType("");
 
     const formData = new FormData();
     if (slides) formData.append("slides", slides);
@@ -41,11 +42,6 @@ function CreateSectionContent() {
         fileInputRef.current.value = "";
       }
       setMessage(data.message);
-
-      setTimeout(() => {
-        setMessage("");
-        setMessageType("");
-      }, 5000);
     } catch (err) {
       setMessageType("danger");
       setMessage("Upload failed!");

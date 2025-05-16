@@ -10,6 +10,8 @@ const CourseRegistration = () => {
 
   const handleRegister = async (e) => {
     e.preventDefault();
+    setMessage("");
+    setMessageType("");
     try {
       const response = await authFetch("/api/register_student", {
         body: JSON.stringify({ CourseID: courseID }),
@@ -24,11 +26,6 @@ const CourseRegistration = () => {
         setCourseID("");
       }
       setMessage(data.message);
-
-      setTimeout(() => {
-        setMessage("");
-        setMessageType("");
-      }, 5000);
     } catch (err) {
       setMessageType("danger");
       setMessage("Registration failed!");

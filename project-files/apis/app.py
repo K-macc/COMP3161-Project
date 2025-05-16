@@ -31,10 +31,10 @@ def register():
     cursor = conn.cursor()
 
     try:
-        data = request.get_json()
+        data = request.form
 
-        if not data or 'name' not in data or 'username' not in data or 'password' not in data or 'role' not in data:
-            return jsonify({'message': 'Missing required fields'}), 400
+        if data['name'] == "" or data['username'] == "" or data['password'] == "" or data['role'] == "":
+            return jsonify({'message': 'Missing required fields!'}), 400
 
         name = data['name']
         username = data['username']
@@ -61,7 +61,7 @@ def register():
 
         existing_user = get_user_by_userid(user_id)
         if existing_user:
-            return jsonify({'message': 'User already exists'}), 400
+            return jsonify({'message': 'User already exists!'}), 400
 
         create_user(user_id, username, password, role)
 
@@ -98,7 +98,7 @@ def register():
             )
             conn.commit()
 
-        return jsonify({'message': 'User registered successfully'}), 201
+        return jsonify({'message': 'User registered successfully!'}), 201
 
     except Exception as e:
         conn.rollback()
@@ -114,9 +114,9 @@ def login():
     cursor = conn.cursor(dictionary=True)
 
     try:
-        data = request.get_json()
+        data = request.form
 
-        if not data or 'user_id' not in data or 'password' not in data:
+        if data['user_id'] == "" or data['password'] == "":
             return jsonify({'message': 'Missing required fields'}), 400
             
 
@@ -144,7 +144,7 @@ def login():
             
             
         return jsonify({
-            'message': 'Login successful',
+            'message': 'Login successful!',
             'access_token': access_token
         }), 200
 

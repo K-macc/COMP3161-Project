@@ -20,6 +20,8 @@ function SubmitAssignment() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setMessage("");
+    setMessageType("");
 
     if (!contentType) {
       setMessageType("danger");
@@ -53,11 +55,6 @@ function SubmitAssignment() {
         }
       }
       setMessage(data.message);
-
-      setTimeout(() => {
-        setMessage("");
-        setMessageType("");
-      }, 5000);
     } catch (err) {
       setMessageType("danger");
       setMessage("Error submitting Assignment!");

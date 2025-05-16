@@ -13,6 +13,8 @@ const CreateThread = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setMessage("");
+    setMessageType("");
     try {
       const response = await authFetch(`/api/forums/${forumId}/threads`, {
         body: JSON.stringify({ title: title, post: post }),
@@ -28,11 +30,6 @@ const CreateThread = () => {
         setPost("");
       }
       setMessage(data.message);
-
-      setTimeout(() => {
-        setMessage("");
-        setMessageType("");
-      }, 5000);
     } catch (err) {
       setMessageType("danger");
       setMessage("Error creating thread!");

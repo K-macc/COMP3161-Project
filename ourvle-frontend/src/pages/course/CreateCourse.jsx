@@ -11,6 +11,8 @@ const CreateCourse = () => {
 
   const handleCreate = async (e) => {
     e.preventDefault();
+    setMessage("");
+    setMessageType("");
     try {
       const response = await authFetch("/api/create_course", {
         method: "POST",
@@ -25,11 +27,6 @@ const CreateCourse = () => {
         setCourse({ CourseID: "", CourseName: "" });
       }
       setMessage(data.message);
-      
-      setTimeout(() => {
-        setMessage("");
-        setMessageType("");
-      }, 5000);
     } catch (err) {
       setMessageType("danger");
       setMessage("Error creating course!");

@@ -47,18 +47,6 @@
   transition: all 0.2s ease-in-out;
 }
 
-.login-container {
-  width: 400px;
-}
-
-.form-control:focus {
-   box-shadow: none;
-  border-color: #0d6efd;
-}
-
-.login-container input::placeholder {
-  font-style: italic;
-}
 
 
 .card-info {
