@@ -30,7 +30,7 @@ const CourseAssignments = () => {
             },
           }
         );
-        const data = response.json();
+        const data = await response.json();
         setAssignments(data);
       } catch (err) {
         setError(err.data?.message || "Error fetching assignments");

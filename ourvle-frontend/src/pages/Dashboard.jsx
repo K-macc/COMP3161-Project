@@ -22,7 +22,7 @@ const Dashboard = () => {
 
             <Col md={10}>
               <h4>
-                Hello, <strong>{payload.name || "User"}</strong>
+                Hello, <strong>{payload.name || "User"} <span className="wave">👋</span></strong>
               </h4>
               <p className="mb-2">
                 <FaIdBadge className="me-2" />

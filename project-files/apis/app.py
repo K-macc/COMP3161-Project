@@ -202,11 +202,11 @@ def search_user():
 def create_course():
     current_user_role = get_jwt().get('role')
     if current_user_role != 'admin':
-        return jsonify({'message': 'Admin access required'}), 403
+        return jsonify({'message': 'Admin access required!'}), 403
 
     data = request.get_json()
     if not data or 'CourseID' not in data or 'CourseName' not in data:
-        return jsonify({'message': 'Missing required fields'}), 400
+        return jsonify({'message': 'Missing required fields!'}), 400
 
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
@@ -216,13 +216,13 @@ def create_course():
         cursor.execute("SELECT * FROM course WHERE CourseID = %s OR CourseName = %s", (data['CourseID'], data['CourseName']))
         course = cursor.fetchone()
         if course:
-            return jsonify({'message': 'Course already exists'}), 400
+            return jsonify({'message': 'Course already exists!'}), 400
 
         # Insert new course
         cursor.execute("INSERT INTO course (CourseID, CourseName) VALUES (%s, %s)", (data['CourseID'], data['CourseName']))
         conn.commit()
 
-        return jsonify({'message': 'Course created successfully'}), 201
+        return jsonify({'message': 'Course created successfully!'}), 201
 
     except Exception as e:
         conn.rollback()
@@ -238,11 +238,11 @@ def register_student():
     current_user_id = get_jwt_identity()
 
     if not current_user_id:
-        return jsonify({'message': 'Invalid user identity format'}), 400
+        return jsonify({'message': 'Invalid user identity format!'}), 400
 
     data = request.get_json()
     if not data or 'CourseID' not in data:
-        return jsonify({'message': 'Missing CourseID'}), 400
+        return jsonify({'message': 'Missing CourseID!'}), 400
 
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
@@ -253,7 +253,7 @@ def register_student():
         student = cursor.fetchone()
 
         if not student:
-            return jsonify({'message': 'Student not found'}), 404
+            return jsonify({'message': 'Student not found!'}), 404
 
         student_id = student['StudentID']
 
@@ -261,19 +261,19 @@ def register_student():
         cursor.execute("SELECT * FROM Course WHERE CourseID = %s", (data['CourseID'],))
         course = cursor.fetchone()
         if not course:
-            return jsonify({'message': 'Course not found'}), 404
+            return jsonify({'message': 'Course not found!'}), 404
 
         # Check if already enrolled
         cursor.execute("SELECT * FROM Enrols WHERE StudentID = %s AND CourseID = %s", (student_id, data['CourseID']))
         enrolment = cursor.fetchone()
         if enrolment:
-            return jsonify({'message': 'Already enrolled in this course'}), 400
+            return jsonify({'message': 'Already enrolled in this course!'}), 400
 
         # Enroll student
         cursor.execute("INSERT INTO Enrols (StudentID, CourseID) VALUES (%s, %s)", (student_id, data['CourseID']))
         conn.commit()
 
-        return jsonify({'message': 'Successfully enrolled in the course'}), 201
+        return jsonify({'message': 'Successfully enrolled in the course!'}), 201
 
     except Exception as e:
         conn.rollback()
@@ -498,7 +498,7 @@ def create_forum(course_id):
         current_user_role = get_jwt().get('role')
 
         if not current_user_role:
-            return jsonify({'message': 'Invalid user role'}), 400
+            return jsonify({'message': 'Invalid user role!'}), 400
 
         if current_user_role == 'lecturer':
             query = """
@@ -510,13 +510,13 @@ def create_forum(course_id):
             cursor.execute(query, (current_user_id, course_id))
             result = cursor.fetchone()
             if not result:
-                return jsonify({'message': 'Not authorized to create forums for this course'}), 403
+                return jsonify({'message': 'Not authorized to create forums for this course!'}), 403
         elif current_user_role != 'admin':
-            return jsonify({'message': 'Admin or lecturer access required'}), 403
+            return jsonify({'message': 'Admin or lecturer access required!'}), 403
 
         data = request.get_json()
         if not data or 'subject' not in data or not data['subject'].strip():
-            return jsonify({'message': 'Forum subject is required'}), 400
+            return jsonify({'message': 'Forum subject is required!'}), 400
 
         cursor.execute("SELECT COALESCE(MAX(ForumID), 0) + 1 AS NextForumID FROM DiscussionForum")
         next_id_result = cursor.fetchone()
@@ -529,7 +529,7 @@ def create_forum(course_id):
         cursor.execute(insert_query, (next_id, course_id, data['subject'].strip()))
         conn.commit()
 
-        return jsonify({'message': 'Forum created successfully', 'ForumID': next_id}), 201
+        return jsonify({'message': 'Forum created successfully!', 'ForumID': next_id}), 201
 
     except Exception as e:
         conn.rollback()
@@ -586,7 +586,7 @@ def create_thread(forum_id):
     try:
         data = request.get_json()
         if not data or 'title' not in data or 'post' not in data:
-            return jsonify({'message': 'Title and post are required'}), 400
+            return jsonify({'message': 'Title and post are required!'}), 400
 
         thread_id = get_next_thread_id()
 
@@ -597,7 +597,7 @@ def create_thread(forum_id):
         cursor.execute(insert_query, (thread_id, forum_id, data['title'], data['post']))
         conn.commit()
 
-        return jsonify({'message': 'Thread created successfully', 'thread_id': thread_id}), 201
+        return jsonify({'message': 'Thread created successfully!', 'thread_id': thread_id}), 201
 
     except Exception as e:
         conn.rollback()
@@ -640,7 +640,7 @@ def add_reply(thread_id):
     try:
         data = request.get_json()
         if not data or 'reply' not in data:
-            return jsonify({'message': 'Reply text is required'}), 400
+            return jsonify({'message': 'Reply is required!'}), 400
 
         cursor.execute("SELECT COALESCE(MAX(ReplyID), 0) + 1 FROM Reply")
         next_id = cursor.fetchone()[0]
@@ -652,7 +652,7 @@ def add_reply(thread_id):
         cursor.execute(insert_query, (next_id, thread_id, data['reply'], data.get('reply_to')))
         conn.commit()
 
-        return jsonify({'message': 'Reply added successfully', 'reply_id': next_id}), 201
+        return jsonify({'message': 'Reply added successfully!', 'reply_id': next_id}), 201
 
     except Exception as e:
         conn.rollback()
@@ -706,15 +706,14 @@ def create_event(course_id):
             """
             cursor.execute(auth_query, (current_user_id, course_id))
             if not cursor.fetchone():
-                return jsonify({'message': 'Not authorized to create events for this course'}), 403
+                return jsonify({'message': 'Not authorized to create events for this course!'}), 403
         elif user_role != 'admin':
-            return jsonify({'message': 'Admin or lecturer access required'}), 403
+            return jsonify({'message': 'Admin or lecturer access required!'}), 403
 
         data = request.get_json()
 
-        required_fields = ['title', 'description', 'event_date']
-        if not all(field in data for field in required_fields):
-            return jsonify({'message': 'Missing required fields'}), 400
+        if data['title'] == "" or data['description'] == "" or data['event_date'] == "":
+            return jsonify({'message': 'Missing required fields!'}), 400
 
         cursor.execute("SELECT COALESCE(MAX(CalendarID), 0) FROM CalendarEvent")
         max_id = cursor.fetchone()['COALESCE(MAX(CalendarID), 0)']
@@ -723,7 +722,7 @@ def create_event(course_id):
         try:
             event_date = datetime.datetime.fromisoformat(data['event_date']).date()
         except ValueError:
-            return jsonify({'message': 'Invalid date format. Use YYYY-MM-DD'}), 400
+            return jsonify({'message': 'Invalid date format. Use YYYY-MM-DD!'}), 400
 
         insert_query = """
             INSERT INTO CalendarEvent 
@@ -739,7 +738,7 @@ def create_event(course_id):
         ))
         conn.commit()
 
-        return jsonify({'message': 'Event created successfully', 'calendar_id': new_id}), 201
+        return jsonify({'message': 'Event created successfully!', 'calendar_id': new_id}), 201
 
     except Exception as e:
         conn.rollback()
@@ -855,7 +854,7 @@ def create_section_content(course_id):
         user_role = get_jwt().get('role')
 
         if user_role not in ['lecturer', 'admin']:
-            return jsonify({'message': 'Access denied. Only lecturers and admins can upload content.'}), 403
+            return jsonify({'message': 'Access denied. Only lecturers and admins can upload content!'}), 403
 
         slide = request.files.get('slides')
         file = request.files.get('file')
@@ -864,16 +863,20 @@ def create_section_content(course_id):
         if not os.path.exists(upload_folder):
             os.makedirs(upload_folder)
 
-        
+        if not slide:
+            return jsonify({'message': 'Upload a slide'}), 400        
         slidename = secure_filename(slide.filename)
         filepath = os.path.join(upload_folder, slidename)
         slide.save(filepath)
         
-
+        if not file:
+            return jsonify({'message': 'Upload a file'}), 400
         filename = secure_filename(file.filename)
         filepath = os.path.join(upload_folder, filename)
         file.save(filepath)
         
+        if not link:
+            return jsonify({'message': 'Upload a link!'}),400
         cursor.execute("SELECT COALESCE(MAX(SectionID), 0) FROM Section")
         max_id = cursor.fetchone()[0]
         new_id = max_id + 1
@@ -885,11 +888,11 @@ def create_section_content(course_id):
         cursor.execute(query, (new_id, course_id, slidename, filename, link))
         conn.commit()
 
-        return jsonify({'message': 'Section created successfully'}), 200
+        return jsonify({'message': 'Section created successfully!'}), 200
 
     except Exception as e:
         conn.rollback()
-        return jsonify({'message': 'Failed to create section', 'error': str(e)}), 500
+        return jsonify({'message': str(e)}), 500
 
     finally:
         cursor.close()
@@ -930,10 +933,10 @@ def create_assignment(course_id):
     user_role = get_jwt().get('role')
 
     if not current_user_id:
-        return jsonify({'message': 'User not found'}), 404
+        return jsonify({'message': 'User not found!'}), 404
 
     if user_role not in ['lecturer', 'admin']:
-        return jsonify({'message': 'Access denied. Only lecturers and admins can create assignments.'}), 403
+        return jsonify({'message': 'Access denied. Only lecturers and admins can create assignments!'}), 403
 
     conn = get_db_connection()
     cursor = conn.cursor()
@@ -942,7 +945,7 @@ def create_assignment(course_id):
         # Check if the course exists
         cursor.execute("SELECT 1 FROM Course WHERE CourseID = %s", (course_id,))
         if not cursor.fetchone():
-            return jsonify({'message': 'Course not found'}), 404
+            return jsonify({'message': 'Course not found!'}), 404
 
         # If lecturer, check if they teach the course
         if user_role == 'lecturer':
@@ -952,7 +955,7 @@ def create_assignment(course_id):
                 AND CourseID = %s
             """, (current_user_id, course_id))
             if not cursor.fetchone():
-                return jsonify({'message': 'You are not authorized to create assignments for this course'}), 403
+                return jsonify({'message': 'You are not authorized to create assignments for this course!'}), 403
 
         data = request.form
         file = request.files.get('file')
@@ -981,7 +984,7 @@ def create_assignment(course_id):
             
 
         if not assignment_file and not assignment_link:
-            return jsonify({'message': 'Either a file or a link must be provided.'}), 400
+            return jsonify({'message': 'Either a file or a link must be provided!'}), 400
 
         # Insert the assignment
         cursor.execute("""
@@ -998,7 +1001,7 @@ def create_assignment(course_id):
         
         conn.commit()
 
-        return jsonify({'message': 'Assignment created successfully', 'assignment_id': assignment_id}), 201
+        return jsonify({'message': 'Assignment created successfully!', 'assignment_id': assignment_id}), 201
 
     except Exception as e:
         conn.rollback()
@@ -1066,13 +1069,13 @@ def submit_assignment(assignment_id):
     user_role = get_jwt().get('role')
 
     if not current_user_id:
-        return jsonify({'message': 'User missing'}), 404
+        return jsonify({'message': 'User missing!'}), 404
 
     if not assignment_id:
-        return jsonify({'message': 'Assignment missing'}), 404
+        return jsonify({'message': 'Assignment missing!'}), 404
 
     if user_role != 'student':
-        return jsonify({'message': 'Access denied. Only students can submit assignments.'}), 403
+        return jsonify({'message': 'Access denied. Only students can submit assignments!'}), 403
 
     conn = get_db_connection()
     cursor = conn.cursor()
@@ -1081,18 +1084,18 @@ def submit_assignment(assignment_id):
         cursor.execute("SELECT AssignmentID, CourseID FROM Assignment WHERE AssignmentID = %s", (assignment_id,))
         assignment = cursor.fetchone()
         if not assignment:
-            return jsonify({'message': 'Assignment not found'}), 404
+            return jsonify({'message': 'Assignment not found!'}), 404
         course_id = assignment[1]
 
         cursor.execute("SELECT StudentID FROM Student WHERE UserID = %s", (current_user_id,))
         result = cursor.fetchone()
         if not result:
-            return jsonify({'message': 'Student not found'}), 404
+            return jsonify({'message': 'Student not found!'}), 404
         student_id = result[0]
 
         cursor.execute("SELECT 1 FROM Enrols WHERE StudentID = %s AND CourseID = %s", (student_id, course_id))
         if not cursor.fetchone():
-            return jsonify({'message': 'Student is not enrolled in the course for this assignment'}), 403
+            return jsonify({'message': 'Student is not enrolled in the course for this assignment!'}), 403
 
         content_type = request.form.get('content_type')
         file = request.files.get('file')
@@ -1120,7 +1123,7 @@ def submit_assignment(assignment_id):
             submission_link = link
 
         if not submission_file and not submission_link:
-            return jsonify({'message': 'No file or link provided'}), 400
+            return jsonify({'message': 'No file or link provided!'}), 400
 
         cursor.execute("""
             INSERT INTO Submits 
@@ -1131,7 +1134,7 @@ def submit_assignment(assignment_id):
 
         conn.commit()
 
-        return jsonify({'message': 'Assignment submitted successfully'}), 200
+        return jsonify({'message': 'Assignment submitted successfully!'}), 201
 
     except Exception as e:
         conn.rollback()
@@ -1148,10 +1151,10 @@ def grade_assignment(assignment_id, student_id):
     user_role = get_jwt().get('role')
 
     if not current_user_id:
-        return jsonify({'message': 'User not found'}), 404
+        return jsonify({'message': 'User not found!'}), 404
 
     if user_role not in ['lecturer', 'admin']:
-        return jsonify({'message': 'Access denied. Only lecturers and admins can grade assignments.'}), 403
+        return jsonify({'message': 'Access denied. Only lecturers and admins can grade assignments!'}), 403
 
     conn = get_db_connection()
     cursor = conn.cursor()
@@ -1164,30 +1167,30 @@ def grade_assignment(assignment_id, student_id):
                 AND CourseID = (SELECT CourseID FROM Assignment WHERE AssignmentID = %s)
             """, (current_user_id, assignment_id))
             if not cursor.fetchone():
-                return jsonify({'message': 'Not authorized to grade this assignment'}), 403
+                return jsonify({'message': 'Not authorized to grade this assignment!'}), 403
 
         # Check assignment exists
         cursor.execute("SELECT 1 FROM Assignment WHERE AssignmentID = %s", (assignment_id,))
         if not cursor.fetchone():
-            return jsonify({'message': 'Assignment not found'}), 404
+            return jsonify({'message': 'Assignment not found!'}), 404
 
         # Check student exists
         cursor.execute("SELECT 1 FROM Student WHERE StudentID = %s", (student_id,))
         if not cursor.fetchone():
-            return jsonify({'message': 'Student not found'}), 404
+            return jsonify({'message': 'Student not found!'}), 404
 
         data = request.get_json()
 
         if not data or 'grade' not in data:
-            return jsonify({'message': 'Missing required fields'}), 400
+            return jsonify({'message': 'Missing required fields!'}), 400
 
         try:
             grade = float(data['grade'])
         except (TypeError, ValueError):
-            return jsonify({'message': 'Grade must be a valid number'}), 400
+            return jsonify({'message': 'Grade must be a valid number!'}), 400
 
         if grade < 0 or grade > 100:
-            return jsonify({'message': 'Grade must be between 0 and 100'}), 400
+            return jsonify({'message': 'Grade must be between 0 and 100!'}), 400
 
         # Check if already graded
         cursor.execute("""
@@ -1195,7 +1198,7 @@ def grade_assignment(assignment_id, student_id):
             WHERE AssignmentID = %s AND StudentID = %s AND Grade IS NOT NULL
         """, (assignment_id, student_id))
         if cursor.fetchone():
-            return jsonify({'message': 'Assignment has already been graded'}), 400
+            return jsonify({'message': 'Assignment has already been graded!'}), 400
 
         # Update grade
         cursor.execute("""
@@ -1203,7 +1206,7 @@ def grade_assignment(assignment_id, student_id):
             VALUES (%s, %s, %s)""", (assignment_id, student_id, grade))
         conn.commit()
 
-        return jsonify({'message': 'Grade submitted successfully'}), 200
+        return jsonify({'message': 'Grade submitted successfully!'}), 201
 
     except Exception as e:
         conn.rollback()

@@ -27,9 +27,8 @@ const ThreadReplies = () => {
   const fetchReplies = async () => {
     try {
       const response = await authFetch(`/api/threads/${threadId}/replies`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
       });
       const data = await response.json();
       setReplies(data);
@@ -63,25 +62,18 @@ const ThreadReplies = () => {
     if (!replyText) return;
 
     try {
-      const response = await axios.post(
-        `/api/threads/${threadId}/replies`,
-        {
-          reply: replyText,
-          reply_to: replyToId,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
-
-      setReplies([...replies, response.data]);
+      const response = await authFetch(`/api/threads/${threadId}/replies`, {
+        body: JSON.stringify({ reply: replyText, reply_to: replyToId }),
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+      });
+      const data = response.json();
+      setReplies([...replies, data]);
       setReplyInputs((prev) => ({ ...prev, [replyToId || "root"]: "" }));
       if (!replyToId) setShowTopLevelInput(false);
       fetchReplies();
     } catch (err) {
-      setError(err.response?.data?.message || "Error adding reply");
+      setError(err.data?.message || "Error adding reply");
     }
   };
 
@@ -153,7 +145,14 @@ const ThreadReplies = () => {
           </Card.Body>
         </Card>
 
-        {error && <Alert variant="danger">{error}</Alert>}
+        {error && (
+          <Alert
+            variant="danger"
+            className="fade-alert position-absolute top-0 end-0 m-3"
+          >
+            {error}
+          </Alert>
+        )}
 
         <Card className="shadow-sm">
           <Card.Body>

@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
-import { Form, Button, Card, Alert } from 'react-bootstrap';
-import { useParams } from 'react-router-dom';
-import useAuthFetch from '@/context/AuthFetch';
+import React, { useState } from "react";
+import { Form, Button, Card, Alert } from "react-bootstrap";
+import { useParams } from "react-router-dom";
+import useAuthFetch from "@/context/AuthFetch";
 
 function GradeAssignment() {
-  const [grade, setGrade] = useState('');
-  const [message, setMessage] = useState('');
-  const [error, setError] = useState('');
+  const [grade, setGrade] = useState("");
+  const [message, setMessage] = useState("");
+  const [messageType, setMessageType] = useState("");
   const { assignmentId } = useParams();
   const { studentId } = useParams();
   const authFetch = useAuthFetch();
@@ -14,27 +14,31 @@ function GradeAssignment() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (grade < 0 || grade > 100) {
-      setMessage('');
-      return setError('❗ Grade must be between 0 and 100');
-    }
-
     try {
       const response = await authFetch(
         `/api/${assignmentId}/${studentId}/grade`,
-        { grade },
         {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-          },
+          body: JSON.stringify({ grade: grade }),
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
         }
       );
       const data = await response.json();
+      if (response.status !== 201) {
+        setMessageType("danger");
+      } else {
+        setMessageType("success");
+        setGrade("");
+      }
       setMessage(data.message);
-      setError('');
+
+      setTimeout(() => {
+        setMessage("");
+        setMessageType("");
+      }, 5000);
     } catch (err) {
-      setMessage('');
-      setError(err.data?.message || 'An error occurred while grading');
+      setMessageType("danger");
+      setMessage("An error occurred while grading!");
     }
   };
 
@@ -45,15 +49,27 @@ function GradeAssignment() {
           <h4 className="mb-0">📊 Grade Assignment</h4>
         </Card.Header>
         <Card.Body className="bg-light">
-          <p><strong>Assignment ID:</strong> {assignmentId}</p>
-          <p><strong>Student ID:</strong> {studentId}</p>
+          <p>
+            <strong>Assignment ID:</strong> {assignmentId}
+          </p>
+          <p>
+            <strong>Student ID:</strong> {studentId}
+          </p>
 
-          {message && <Alert variant="success">{message}</Alert>}
-          {error && <Alert variant="danger">{error}</Alert>}
+          {message && (
+            <Alert
+              variant={messageType === "success" ? "success" : "danger"}
+              className="fade-alert position-absolute top-0 end-0 m-3"
+            >
+              {message}
+            </Alert>
+          )}
 
           <Form onSubmit={handleSubmit}>
             <Form.Group controlId="grade" className="mb-3">
-              <Form.Label><strong>Grade (0 - 100)</strong></Form.Label>
+              <Form.Label>
+                <strong>Grade (0 - 100)</strong>
+              </Form.Label>
               <Form.Control
                 type="number"
                 min="0"

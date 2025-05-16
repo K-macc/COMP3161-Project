@@ -8,14 +8,21 @@ const useAuthFetch = () => {
     const token = localStorage.getItem("token");
     const redirectPath = encodeURIComponent(location.pathname + location.search);
 
+    const method = options.method ? options.method.toUpperCase() : "GET";
+
     const headers = {
+      "Authorization": `Bearer ${token}`,
       ...options.headers,
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
+    };
+
+    const fetchOptions = {
+      ...options,
+      method,
+      headers,
     };
 
     try {
-      const response = await fetch(url, { ...options, headers });
+      const response = await fetch(url, fetchOptions);
 
       if (response.status === 401) {
         localStorage.removeItem("token");
@@ -25,7 +32,7 @@ const useAuthFetch = () => {
 
       return response;
     } catch (error) {
-      console.error("Fetch error:", error);
+      console.error(`${method} request error:`, error);
       return null;
     }
   };

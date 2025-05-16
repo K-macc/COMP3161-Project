@@ -1,15 +1,15 @@
-import React, { useState, useRef } from 'react'; 
-import { Form, Button, Card, Alert } from 'react-bootstrap';
-import { useParams } from 'react-router-dom';
-import useAuthFetch from '@/context/AuthFetch'; 
+import React, { useState, useRef } from "react";
+import { Form, Button, Card, Alert } from "react-bootstrap";
+import { useParams } from "react-router-dom";
+import useAuthFetch from "@/context/AuthFetch";
 
 function CreateAssignment() {
-  const [assignmentName, setAssignmentName] = useState('');
-  const [dueDate, setDueDate] = useState('');
+  const [assignmentName, setAssignmentName] = useState("");
+  const [dueDate, setDueDate] = useState("");
   const [file, setFile] = useState(null);
-  const [link, setLink] = useState('');
-  const [message, setMessage] = useState('');
-  const [error, setError] = useState('');
+  const [link, setLink] = useState("");
+  const [message, setMessage] = useState("");
+  const [messageType, setMessageType] = useState("");
   const { courseId } = useParams();
   const fileInputRef = useRef();
   const authFetch = useAuthFetch();
@@ -22,29 +22,37 @@ function CreateAssignment() {
     e.preventDefault();
 
     const formData = new FormData();
-    formData.append('assignment_name', assignmentName);
-    formData.append('due_date', dueDate);
-    formData.append('file', file);
-    formData.append('link', link);
+    formData.append("assignment_name", assignmentName);
+    formData.append("due_date", dueDate);
+    formData.append("file", file);
+    formData.append("link", link);
 
     try {
-      const response = await authFetch(`/api/${courseId}/create_assignment`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
+      const response = await authFetch(`/api/${courseId}/create_assignment`, {
+        body: formData,
+        method: "POST",
       });
       const data = await response.json();
+      if (response.status !== 201) {
+        setMessageType("danger");
+      } else {
+        setMessageType("success");
+        setAssignmentName("");
+        setDueDate("");
+        setFile(null);
+        setLink("");
+        fileInputRef.current.value = "";
+      }
+
       setMessage(data.message);
-      setError('');
-      setAssignmentName('');
-      setDueDate('');
-      setFile(null);
-      setLink('');
-      fileInputRef.current.value = ''; 
+
+      setTimeout(() => {
+        setMessage("");
+        setMessageType("");
+      }, 5000);
     } catch (err) {
-      setMessage('');
-      setError(err.data?.message || 'An error occurred');
+      setMessageType("danger");
+      setMessage("Error creating Assignment!");
     }
   };
 
@@ -55,12 +63,20 @@ function CreateAssignment() {
           <h4 className="mb-0">📘 Create New Assignment</h4>
         </Card.Header>
         <Card.Body className="bg-light">
-          {message && <Alert variant="success">{message}</Alert>}
-          {error && <Alert variant="danger">{error}</Alert>}
+          {message && (
+            <Alert
+              variant={messageType === "success" ? "success" : "danger"}
+              className="fade-alert position-absolute top-0 end-0 m-3"
+            >
+              {message}
+            </Alert>
+          )}
 
           <Form onSubmit={handleSubmit}>
             <Form.Group controlId="assignmentName" className="mb-3">
-              <Form.Label><strong>Assignment Name</strong></Form.Label>
+              <Form.Label>
+                <strong>Assignment Name</strong>
+              </Form.Label>
               <Form.Control
                 type="text"
                 placeholder="Enter assignment name"
@@ -71,7 +87,9 @@ function CreateAssignment() {
             </Form.Group>
 
             <Form.Group controlId="dueDate" className="mb-3">
-              <Form.Label><strong>Due Date</strong></Form.Label>
+              <Form.Label>
+                <strong>Due Date</strong>
+              </Form.Label>
               <Form.Control
                 type="date"
                 value={dueDate}
@@ -81,7 +99,9 @@ function CreateAssignment() {
             </Form.Group>
 
             <Form.Group controlId="fileUpload" className="mb-3">
-              <Form.Label><strong>Upload File</strong></Form.Label>
+              <Form.Label>
+                <strong>Upload File</strong>
+              </Form.Label>
               <Form.Control
                 type="file"
                 onChange={handleFileChange}
@@ -90,7 +110,9 @@ function CreateAssignment() {
             </Form.Group>
 
             <Form.Group controlId="assignmentLink" className="mb-4">
-              <Form.Label><strong>Assignment Link (optional)</strong></Form.Label>
+              <Form.Label>
+                <strong>Assignment Link (optional)</strong>
+              </Form.Label>
               <Form.Control
                 type="url"
                 placeholder="https://..."

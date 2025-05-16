@@ -1,10 +1,11 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
 
 export default function Navbar() {
   const { isAuthenticated, role, setIsAuthenticated, setRole } = useContext(AuthContext);
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -16,11 +17,14 @@ export default function Navbar() {
   return (
     <nav className="navbar navbar-expand-lg navbar-dark bg-primary px-4">
       <Link className="navbar-brand" to="/">AppVLE</Link>
-      <div className="collapse navbar-collapse">
-        <ul className="navbar-nav">
-          {isAuthenticated ? (
+      <div className="collapse navbar-collapse" id="navbarNav">
+        {/* Left-aligned navigation */}
+        <ul className="navbar-nav me-auto">
+          {isAuthenticated && (
             <>
-              <li className="nav-item"><Link className={`nav-link ${location.pathname === '/dashboard' ? 'active' : ''}`} to="/dashboard">Dashboard</Link></li>
+              <li className="nav-item">
+                <Link className={`nav-link ${location.pathname === '/dashboard' ? 'active' : ''}`} to="/dashboard">Dashboard</Link>
+              </li>
 
               {role === "student" && (
                 <>
@@ -44,18 +48,24 @@ export default function Navbar() {
                   <li className="nav-item"><Link className={`nav-link ${location.pathname === '/reports' ? 'active' : ''}`} to="/reports">View Reports</Link></li>
                 </>
               )}
-
-              <li className="nav-item">
-                <button className="btn btn-link nav-link" onClick={handleLogout}>Logout</button>
-              </li>
             </>
-          ) : (
+          )}
+
+          {!isAuthenticated && (
             <>
               <li className="nav-item"><Link className={`nav-link ${location.pathname === '/' ? 'active' : ''}`} to="/">Login</Link></li>
               <li className="nav-item"><Link className={`nav-link ${location.pathname === '/register' ? 'active' : ''}`} to="/register">Register</Link></li>
             </>
           )}
         </ul>
+
+        {isAuthenticated && (
+          <ul className="navbar-nav ms-auto">
+            <li className="nav-item">
+              <button className="btn btn-link nav-link" onClick={handleLogout}>Logout</button>
+            </li>
+          </ul>
+        )}
       </div>
     </nav>
   );

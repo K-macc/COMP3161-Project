@@ -1,14 +1,14 @@
-import React, { useState, useRef } from 'react';
-import { Form, Button, Card, Alert } from 'react-bootstrap';
+import React, { useState, useRef } from "react";
+import { Form, Button, Card, Alert } from "react-bootstrap";
 import { useParams } from "react-router-dom";
-import useAuthFetch from '@/context/AuthFetch';
+import useAuthFetch from "@/context/AuthFetch";
 
 function SubmitAssignment() {
   const [file, setFile] = useState(null);
-  const [link, setLink] = useState('');
-  const [contentType, setContentType] = useState('');
-  const [message, setMessage] = useState('');
-  const [error, setError] = useState('');
+  const [link, setLink] = useState("");
+  const [contentType, setContentType] = useState("");
+  const [message, setMessage] = useState("");
+  const [messageType, setMessageType] = useState("");
   const { assignmentId } = useParams();
   const authFetch = useAuthFetch();
 
@@ -22,30 +22,45 @@ function SubmitAssignment() {
     e.preventDefault();
 
     if (!contentType) {
-      setError('Please select a content type.');
-      setMessage('');
+      setMessageType("danger");
+      setMessage("Please select a content type.");
       return;
     }
 
     const formData = new FormData();
-    formData.append('content_type', contentType);
-    formData.append('file', file);
-    formData.append('link', link);
+    formData.append("content_type", contentType);
+    formData.append("file", file);
+    formData.append("link", link);
 
     try {
-      const response = await authFetch(`/api/assignments/${assignmentId}/submit`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
-      });
+      const response = await authFetch(
+        `/api/assignments/${assignmentId}/submit`,
+        {
+          body: formData,
+          method: "POST",
+        }
+      );
       const data = await response.json();
+      if (response.status !== 201) {
+        setMessageType("danger");
+      } else {
+        setMessageType("success");
+        setFile(null);
+        setLink("");
+        setContentType("");
+        if (fileInputRef.current) {
+          fileInputRef.current.value = "";
+        }
+      }
       setMessage(data.message);
-      setError('');
-      fileInputRef.current.value = '';
+
+      setTimeout(() => {
+        setMessage("");
+        setMessageType("");
+      }, 5000);
     } catch (err) {
-      setMessage('');
-      setError(err.data?.message || 'An error occurred');
+      setMessageType("danger");
+      setMessage("Error submitting Assignment!");
     }
   };
 
@@ -56,12 +71,20 @@ function SubmitAssignment() {
           <h4 className="mb-0">📤 Submit Assignment</h4>
         </Card.Header>
         <Card.Body className="bg-light">
-          {message && <Alert variant="success">{message}</Alert>}
-          {error && <Alert variant="danger">{error}</Alert>}
+          {message && (
+            <Alert
+              variant={messageType === "success" ? "success" : "danger"}
+              className="fade-alert position-absolute top-0 end-0 m-3"
+            >
+              {message}
+            </Alert>
+          )}
 
           <Form onSubmit={handleSubmit}>
             <Form.Group controlId="contentType" className="mb-3">
-              <Form.Label><strong>Content Type</strong></Form.Label>
+              <Form.Label>
+                <strong>Content Type</strong>
+              </Form.Label>
               <Form.Control
                 as="select"
                 value={contentType}
@@ -73,16 +96,24 @@ function SubmitAssignment() {
               </Form.Control>
             </Form.Group>
 
-            {contentType === 'file' && (
+            {contentType === "file" && (
               <Form.Group controlId="fileUpload" className="mb-3">
-                <Form.Label><strong>Upload File</strong></Form.Label>
-                <Form.Control type="file" onChange={handleFileChange} />
+                <Form.Label>
+                  <strong>Upload File</strong>
+                </Form.Label>
+                <Form.Control
+                  type="file"
+                  onChange={handleFileChange}
+                  ref={fileInputRef}
+                />
               </Form.Group>
             )}
 
-            {contentType === 'link' && (
+            {contentType === "link" && (
               <Form.Group controlId="assignmentLink" className="mb-3">
-                <Form.Label><strong>Assignment Link</strong></Form.Label>
+                <Form.Label>
+                  <strong>Assignment Link</strong>
+                </Form.Label>
                 <Form.Control
                   type="url"
                   value={link}

@@ -1,6 +1,6 @@
 import React, { useState, useContext } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { AuthContext } from "@/context/AuthContext";
 import { FaUser, FaLock } from "react-icons/fa";
 
@@ -8,11 +8,12 @@ const Login = () => {
   const [form, setForm] = useState({ user_id: "", password: "" });
   const navigate = useNavigate();
   const { syncAuth } = useContext(AuthContext);
+  const location = useLocation();
+  const params = new URLSearchParams(location.search);
+  const redirect = params.get("redirect");
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    const params = new URLSearchParams(location.search);
-    const redirect = params.get("redirect");
     try {
       const res = await axios.post("/api/login", form);
       localStorage.setItem("token", res.data.access_token);
@@ -29,7 +30,7 @@ const Login = () => {
     <div className="d-flex justify-content-center align-items-center vh-100 bg-light">
       <div className="card p-4 shadow-lg border-0 rounded-4 login-container">
         <h3 className="mb-3 text-center text-primary">Welcome Back!</h3>
-        <p className="text-muted text-center mb-4">Please login to your account</p>
+        <p className="text-muted text-center mb-4">{redirect ? "Session expired. Log in to continue" : "Please login to your account"}</p>
         <form onSubmit={handleLogin}>
           <div className="mb-3 input-group">
             <span className="input-group-text bg-white border-end-0">

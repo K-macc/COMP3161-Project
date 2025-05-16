@@ -1,30 +1,37 @@
 import React, { useState } from "react";
 import { Card, Form, Button, Alert } from "react-bootstrap";
-import useAuthFetch from "@/context/AuthFetch"; 
+import useAuthFetch from "@/context/AuthFetch";
 
 const CourseRegistration = () => {
   const [courseID, setCourseID] = useState("");
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
+  const [message, setMessage] = useState("");
+  const [messageType, setMessageType] = useState("");
   const authFetch = useAuthFetch();
 
   const handleRegister = async (e) => {
     e.preventDefault();
     try {
-      const token = localStorage.getItem("token");
-      await authFetch(
-        "/api/register_student",
-        { CourseID: courseID },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-      setSuccess("✅ Enrolled successfully!");
-      setError("");
-      setCourseID("");
+      const response = await authFetch("/api/register_student", {
+        body: JSON.stringify({ CourseID: courseID }),
+        method: "POST",
+        headers: { "Content-Type": "application/json" }
+      });
+      const data = await response.json();
+      if (response.status !== 201) {
+        setMessageType("danger");
+      } else {
+        setMessageType("success");
+        setCourseID("");
+      }
+      setMessage(data.message);
+
+      setTimeout(() => {
+        setMessage("");
+        setMessageType("");
+      }, 5000);
     } catch (err) {
-      setError(err.response?.data?.message || "Registration failed");
-      setSuccess("");
+      setMessageType("danger");
+      setMessage("Registration failed!");
     }
   };
 
@@ -35,17 +42,24 @@ const CourseRegistration = () => {
           <h4 className="mb-0">📚 Register for a Course</h4>
         </Card.Header>
         <Card.Body className="bg-light">
-          {error && <Alert variant="danger">{error}</Alert>}
-          {success && <Alert variant="success">{success}</Alert>}
+          {message && (
+            <Alert
+              variant={messageType === "success" ? "success" : "danger"}
+              className="fade-alert position-absolute top-0 end-0 m-3"
+            >
+              {message}
+            </Alert>
+          )}
           <Form onSubmit={handleRegister}>
             <Form.Group controlId="formCourseID" className="mb-3">
-              <Form.Label><strong>Course ID</strong></Form.Label>
+              <Form.Label>
+                <strong>Course ID</strong>
+              </Form.Label>
               <Form.Control
                 type="text"
                 placeholder="Enter Course ID (e.g., COMP3161)"
                 value={courseID}
                 onChange={(e) => setCourseID(e.target.value)}
-                required
               />
             </Form.Group>
             <div className="text-end">

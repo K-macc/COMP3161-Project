@@ -1,33 +1,41 @@
-import React, { useState } from 'react';
-import { useParams } from 'react-router-dom';
-import { Button, Form, Card } from 'react-bootstrap';
-import useAuthFetch from '@/context/AuthFetch';
+import React, { useState } from "react";
+import { useParams } from "react-router-dom";
+import { Button, Form, Card, Alert } from "react-bootstrap";
+import useAuthFetch from "@/context/AuthFetch";
 
 const CreateThread = () => {
   const { forumId } = useParams();
-  const [title, setTitle] = useState('');
-  const [post, setPost] = useState('');
-  const [error, setError] = useState('');
+  const [title, setTitle] = useState("");
+  const [post, setPost] = useState("");
+  const [message, setMessage] = useState("");
+  const [messageType, setMessageType] = useState("");
   const authFetch = useAuthFetch();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await authFetch(
-        `/api/forums/${forumId}/threads`,
-        { title, post },
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-          },
-        }
-      );
-      alert('Thread created successfully!');
-      setTitle('');
-      setPost('');
-      setError('');
+      const response = await authFetch(`/api/forums/${forumId}/threads`, {
+        body: JSON.stringify({ title: title, post: post }),
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+      });
+      const data = await response.json();
+      if (response.status !== 201) {
+        setMessageType("danger");
+      } else {
+        setMessageType("success");
+        setTitle("");
+        setPost("");
+      }
+      setMessage(data.message);
+
+      setTimeout(() => {
+        setMessage("");
+        setMessageType("");
+      }, 5000);
     } catch (err) {
-      setError(err.response?.data?.message || 'Error creating thread');
+      setMessageType("danger");
+      setMessage("Error creating thread!");
     }
   };
 
@@ -38,27 +46,36 @@ const CreateThread = () => {
           <h4 className="mb-0">📝 Create New Thread</h4>
         </Card.Header>
         <Card.Body className="bg-light">
-          {error && <div className="alert alert-danger">{error}</div>}
+          {message && (
+            <Alert
+              variant={messageType === "success" ? "success" : "danger"}
+              className="fade-alert position-absolute top-0 end-0 m-3"
+            >
+              {message}
+            </Alert>
+          )}
           <Form onSubmit={handleSubmit}>
             <Form.Group controlId="formTitle" className="mb-3">
-              <Form.Label><strong>Thread Title</strong></Form.Label>
+              <Form.Label>
+                <strong>Thread Title</strong>
+              </Form.Label>
               <Form.Control
                 type="text"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="Enter thread title"
-                required
               />
             </Form.Group>
             <Form.Group controlId="formPost" className="mb-4">
-              <Form.Label><strong>Post Content</strong></Form.Label>
+              <Form.Label>
+                <strong>Post Content</strong>
+              </Form.Label>
               <Form.Control
                 as="textarea"
                 rows={6}
                 value={post}
                 onChange={(e) => setPost(e.target.value)}
                 placeholder="Write your post here..."
-                required
               />
             </Form.Group>
             <div className="text-end">

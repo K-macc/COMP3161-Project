@@ -31,17 +31,18 @@ const CourseDetail = () => {
 
     const fetchSectionContent = async () => {
       try {
-        const response = await axios.get(`/api/section/${courseId}/content`, {
+        const response = await authFetch(`/api/section/${courseId}/content`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
         });
-        setSectionContent(response.data);
+        const data = await response.json();
+        setSectionContent(data);
         setSectionError("");
       } catch (err) {
         setSectionContent(null);
         setSectionError(
-          err.response?.data?.message || "Error fetching section content"
+          err.data?.message || "Error fetching section content"
         );
       }
     };
