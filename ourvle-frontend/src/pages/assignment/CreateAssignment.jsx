@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react'; // include useRef
 import { Form, Button, Card, Alert } from 'react-bootstrap';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
+import useAuthFetch from '@/context/AuthFetch'; 
 
 function CreateAssignment() {
   const [assignmentName, setAssignmentName] = useState('');
@@ -11,7 +12,8 @@ function CreateAssignment() {
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
   const { courseId } = useParams();
-  const fileInputRef = useRef(); // 👈 create ref
+  const fileInputRef = useRef();
+  const authFetch = useAuthFetch();
 
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
@@ -27,22 +29,23 @@ function CreateAssignment() {
     formData.append('link', link);
 
     try {
-      const response = await axios.post(`/api/${courseId}/create_assignment`, formData, {
+      const response = await authFetch(`/api/${courseId}/create_assignment`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
           Authorization: `Bearer ${localStorage.getItem('token')}`,
         },
       });
-      setMessage(response.data.message);
+      const data = await response.json();
+      setMessage(data.message);
       setError('');
       setAssignmentName('');
       setDueDate('');
       setFile(null);
       setLink('');
-      fileInputRef.current.value = ''; // 👈 reset file input
+      fileInputRef.current.value = ''; 
     } catch (err) {
       setMessage('');
-      setError(err.response?.data?.message || 'An error occurred');
+      setError(err.data?.message || 'An error occurred');
     }
   };
 

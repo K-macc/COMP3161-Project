@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react';
 import { Form, Button, Card, Alert } from 'react-bootstrap';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
+import useAuthFetch from '@/context/AuthFetch';
 
 function CreateSectionContent() {
   const [slides, setSlides] = useState(null);
@@ -10,6 +11,7 @@ function CreateSectionContent() {
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
   const { courseId } = useParams();
+  const authFetch = useAuthFetch();
 
   const slidesInputRef = useRef();
   const fileInputRef = useRef();
@@ -25,7 +27,7 @@ function CreateSectionContent() {
     formData.append('link', link);
 
     try {
-      const response = await axios.post(
+      const response = await authFetch(
         `/api/section/${courseId}/content`,
         formData,
         {
@@ -35,14 +37,15 @@ function CreateSectionContent() {
           },
         }
       );
-      setMessage(response.data.message);
+      const data = await response.json(); 
+      setMessage(data.message);
       setSlides(null);
       setFile(null);
       setLink('');
       slidesInputRef.current.value = '';
       fileInputRef.current.value = '';
     } catch (err) {
-      setError(err.response?.data?.message || 'Upload failed.');
+      setError(err.data?.message || 'Upload failed.');
     }
   };
 

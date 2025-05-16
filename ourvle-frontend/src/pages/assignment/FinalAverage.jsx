@@ -1,25 +1,27 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useParams } from 'react-router-dom';
 import { Container, Card, Alert, Spinner } from 'react-bootstrap';
+import useAuthFetch from "@/context/AuthFetch";
 
 function FinalAverage() {
   const [finalAverage, setFinalAverage] = useState(null);
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(true);
-  const { studentId } = useParams();
+  const studentId = localStorage.getItem("ID");
+  const authFetch = useAuthFetch();
 
   useEffect(() => {
     const fetchFinalAverage = async () => {
       try {
-        const response = await axios.get(`/api/${studentId}/final_average`, {
+        const response = await authFetch(`/api/${studentId}/final_average`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
           },
         });
-        setFinalAverage(response.data.final_average);
+        const data = await response.json();
+        setFinalAverage(data.final_average);
       } catch (error) {
-        setMessage(error.response?.data?.message || 'An error occurred');
+        setMessage(error.data?.message || 'An error occurred');
       } finally {
         setLoading(false);
       }
@@ -42,7 +44,7 @@ function FinalAverage() {
             <Alert variant="danger">{message}</Alert>
           ) : finalAverage !== null ? (
             <Alert variant="success">
-              Your final average for this course is: <strong>{finalAverage}</strong>
+              Your final average for all courses is: <strong>{finalAverage}%</strong>
             </Alert>
           ) : (
             <Alert variant="info">No grades found for this student.</Alert>

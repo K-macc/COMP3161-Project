@@ -2,19 +2,21 @@ import React, { useState } from 'react';
 import { Button, Form, Container, Alert, Row, Col, Card } from 'react-bootstrap';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
+import useAuthFetch from "@/context/AuthFetch";
 
 const CreateForum = () => {
   const [subject, setSubject] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const { courseId } = useParams();
+  const authFetch = useAuthFetch();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     setSuccess('');
     try {
-      await axios.post(
+      await authFetch(
         `/api/courses/${courseId}/forums`,
         { subject },
         {
@@ -23,10 +25,11 @@ const CreateForum = () => {
           },
         }
       );
+      const data = await response.json();
       setSuccess('✅ Forum created successfully!');
       setSubject('');
     } catch (err) {
-      setError(err.response?.data?.message || '❌ Error creating forum');
+      setError(err.data?.message || '❌ Error creating forum');
     }
   };
 

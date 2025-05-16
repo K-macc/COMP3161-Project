@@ -2,17 +2,19 @@ import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Button, Form, Card } from 'react-bootstrap';
 import axios from 'axios';
+import useAuthFetch from '@/context/AuthFetch';
 
 const CreateThread = () => {
   const { forumId } = useParams();
   const [title, setTitle] = useState('');
   const [post, setPost] = useState('');
   const [error, setError] = useState('');
+  const authFetch = useAuthFetch();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post(
+      await authFetch(
         `/api/forums/${forumId}/threads`,
         { title, post },
         {

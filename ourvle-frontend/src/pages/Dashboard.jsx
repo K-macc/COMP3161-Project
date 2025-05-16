@@ -11,7 +11,7 @@ const Dashboard = () => {
 
   return (
     <Container className="mt-5">
-      <h2 className="mb-4">Welcome to Your Dashboard</h2>
+      <h2 className="mb-4">Welcome to Your Dashboard!</h2>
 
       {payload ? (
         <Card className="p-4 shadow-sm">

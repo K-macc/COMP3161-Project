@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Form, Button, Card, Alert } from 'react-bootstrap';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
+import useAuthFetch from '@/context/AuthFetch';
 
 function GradeAssignment() {
   const [grade, setGrade] = useState('');
@@ -9,6 +10,7 @@ function GradeAssignment() {
   const [error, setError] = useState('');
   const { assignmentId } = useParams();
   const { studentId } = useParams();
+  const authFetch = useAuthFetch();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -19,7 +21,7 @@ function GradeAssignment() {
     }
 
     try {
-      const response = await axios.post(
+      const response = await authFetch(
         `/api/${assignmentId}/${studentId}/grade`,
         { grade },
         {
@@ -28,11 +30,12 @@ function GradeAssignment() {
           },
         }
       );
-      setMessage(response.data.message);
+      const data = await response.json();
+      setMessage(data.message);
       setError('');
     } catch (err) {
       setMessage('');
-      setError(err.response?.data?.message || 'An error occurred while grading');
+      setError(err.data?.message || 'An error occurred while grading');
     }
   };
 

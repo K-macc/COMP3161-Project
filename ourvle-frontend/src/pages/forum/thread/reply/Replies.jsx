@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import {
   Card,
   ListGroup,
@@ -9,6 +9,7 @@ import {
   Form,
 } from "react-bootstrap";
 import axios from "axios";
+import useAuthFetch from "@/context/AuthFetch";
 
 const ThreadReplies = () => {
   const { threadId } = useParams();
@@ -18,25 +19,28 @@ const ThreadReplies = () => {
   const [openReplies, setOpenReplies] = useState({});
   const [replyInputs, setReplyInputs] = useState({});
   const [showTopLevelInput, setShowTopLevelInput] = useState(false);
+  const navigate = useNavigate();
+  const authFetch = useAuthFetch();
 
   const threadTitle = localStorage.getItem("threadTitle");
   const threadPost = localStorage.getItem("threadPost");
 
   const fetchReplies = async () => {
     try {
-      const response = await axios.get(`/api/threads/${threadId}/replies`, {
+      const response = await authFetch(`/api/threads/${threadId}/replies`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
-      setReplies(response.data);
+      const data = await response.json();
+      setReplies(data);
     } catch (err) {
-      setError(err.response?.data?.message || "Error fetching replies");
+      setError(err.data?.message || "Error fetching replies");
     } finally {
       setLoading(false);
     }
   };
-  
+
   useEffect(() => {
     fetchReplies();
   }, [threadId]);
@@ -134,119 +138,128 @@ const ThreadReplies = () => {
   if (loading) return <div>Loading...</div>;
 
   return (
-    <div className="container mt-5">
-      <Card className="mb-4 shadow-lg">
-        <Card.Header as="h3" className="text-center bg-primary text-white">
-          {threadTitle}
-        </Card.Header>
-        <Card.Body>
-          <Card.Text>{threadPost}</Card.Text>
-        </Card.Body>
-      </Card>
+    <>
+      <div className="container mt-4">
+        <Button variant="primary" className="mb-3" onClick={() => navigate(-1)}>
+          ⬅️ Back
+        </Button>
+      </div>
+      <div className="container mt-5">
+        <Card className="mb-4 shadow-lg">
+          <Card.Header as="h3" className="text-center bg-primary text-white">
+            {threadTitle}
+          </Card.Header>
+          <Card.Body>
+            <Card.Text>{threadPost}</Card.Text>
+          </Card.Body>
+        </Card>
 
-      {error && <Alert variant="danger">{error}</Alert>}
+        {error && <Alert variant="danger">{error}</Alert>}
 
-      <Card className="shadow-sm">
-        <Card.Body>
-          {replies.length === 0 ? (
-            <>
-              <p>No replies yet. Be the first to reply!</p>
-              <Form.Control
-                as="textarea"
-                rows={2}
-                value={replyInputs["root"] || ""}
-                onChange={(e) => handleReplyChange("root", e.target.value)}
-                placeholder="Write your reply..."
-                className="mt-3"
-              />
-              <Button
-                variant="primary"
-                className="mt-2"
-                disabled={!replyInputs["root"]?.trim()}
-                onClick={() => handleReplySubmit(null)}
-              >
-                Start Thread
-              </Button>
-            </>
-          ) : (
-            <>
-              <Button
-                className="mb-3"
-                onClick={() => setShowTopLevelInput((prev) => !prev)}
-              >
-                {showTopLevelInput ? "Cancel" : "Reply To Thread"}
-              </Button>
+        <Card className="shadow-sm">
+          <Card.Body>
+            {replies.length === 0 ? (
+              <>
+                <p>No replies yet. Be the first to reply!</p>
+                <Form.Control
+                  as="textarea"
+                  rows={2}
+                  value={replyInputs["root"] || ""}
+                  onChange={(e) => handleReplyChange("root", e.target.value)}
+                  placeholder="Write your reply..."
+                  className="mt-3"
+                />
+                <Button
+                  variant="primary"
+                  className="mt-2"
+                  disabled={!replyInputs["root"]?.trim()}
+                  onClick={() => handleReplySubmit(null)}
+                >
+                  Start Thread
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button
+                  className="mb-3"
+                  onClick={() => setShowTopLevelInput((prev) => !prev)}
+                >
+                  {showTopLevelInput ? "Cancel" : "Reply To Thread"}
+                </Button>
 
-              {showTopLevelInput && (
-                <>
-                  <Form.Control
-                    as="textarea"
-                    rows={2}
-                    className="mb-2"
-                    placeholder="Write your reply..."
-                    value={replyInputs["root"] || ""}
-                    onChange={(e) => handleReplyChange("root", e.target.value)}
-                  />
-                  <Button
-                    className="mb-4"
-                    onClick={() => handleReplySubmit(null)}
-                    disabled={!replyInputs["root"]?.trim()}
-                  >
-                    Submit
-                  </Button>
-                </>
-              )}
-
-              <ListGroup variant="flush">
-                {replies
-                  .filter((reply) => reply.ReplyTo === null)
-                  .map((reply) => (
-                    <ListGroup.Item
-                      key={reply.ReplyID}
-                      className="border-bottom"
+                {showTopLevelInput && (
+                  <>
+                    <Form.Control
+                      as="textarea"
+                      rows={2}
+                      className="mb-2"
+                      placeholder="Write your reply..."
+                      value={replyInputs["root"] || ""}
+                      onChange={(e) =>
+                        handleReplyChange("root", e.target.value)
+                      }
+                    />
+                    <Button
+                      className="mb-4"
+                      onClick={() => handleReplySubmit(null)}
+                      disabled={!replyInputs["root"]?.trim()}
                     >
-                      <h5>{reply.UserName}</h5>
-                      <p>{reply.Reply}</p>
-                      {hasNestedReplies(reply.ReplyID) && (
-                        <Button
-                          variant="link"
-                          onClick={() => toggleReplyCollapse(reply.ReplyID)}
-                        >
-                          {openReplies[reply.ReplyID]
-                            ? "Hide replies"
-                            : "Show replies"}
-                        </Button>
-                      )}
-                      <Collapse in={openReplies[reply.ReplyID]}>
-                        <div>{renderNestedReplies(reply.ReplyID)}</div>
-                      </Collapse>
+                      Submit
+                    </Button>
+                  </>
+                )}
 
-                      <Form.Control
-                        as="textarea"
-                        rows={2}
-                        value={replyInputs[reply.ReplyID] || ""}
-                        onChange={(e) =>
-                          handleReplyChange(reply.ReplyID, e.target.value)
-                        }
-                        placeholder="Write your reply..."
-                        className="mt-3"
-                      />
-                      <Button
-                        variant="primary"
-                        className="mt-2"
-                        disabled={!replyInputs[reply.ReplyID]?.trim()}
-                        onClick={() => handleReplySubmit(reply.ReplyID)}
+                <ListGroup variant="flush">
+                  {replies
+                    .filter((reply) => reply.ReplyTo === null)
+                    .map((reply) => (
+                      <ListGroup.Item
+                        key={reply.ReplyID}
+                        className="border-bottom"
                       >
-                        Reply
-                      </Button>
-                    </ListGroup.Item>
-                  ))}
-              </ListGroup>
-            </>
-          )}
-        </Card.Body>
-      </Card>
-    </div>
+                        <h5>{reply.UserName}</h5>
+                        <p>{reply.Reply}</p>
+                        {hasNestedReplies(reply.ReplyID) && (
+                          <Button
+                            variant="link"
+                            onClick={() => toggleReplyCollapse(reply.ReplyID)}
+                          >
+                            {openReplies[reply.ReplyID]
+                              ? "Hide replies"
+                              : "Show replies"}
+                          </Button>
+                        )}
+                        <Collapse in={openReplies[reply.ReplyID]}>
+                          <div>{renderNestedReplies(reply.ReplyID)}</div>
+                        </Collapse>
+
+                        <Form.Control
+                          as="textarea"
+                          rows={2}
+                          value={replyInputs[reply.ReplyID] || ""}
+                          onChange={(e) =>
+                            handleReplyChange(reply.ReplyID, e.target.value)
+                          }
+                          placeholder="Write your reply..."
+                          className="mt-3"
+                        />
+                        <Button
+                          variant="primary"
+                          className="mt-2"
+                          disabled={!replyInputs[reply.ReplyID]?.trim()}
+                          onClick={() => handleReplySubmit(reply.ReplyID)}
+                        >
+                          Reply
+                        </Button>
+                      </ListGroup.Item>
+                    ))}
+                </ListGroup>
+              </>
+            )}
+          </Card.Body>
+        </Card>
+      </div>
+    </>
   );
 };
 

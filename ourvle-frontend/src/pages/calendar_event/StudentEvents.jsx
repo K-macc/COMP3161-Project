@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Card, ListGroup, Form, Button } from 'react-bootstrap';
 import axios from 'axios';
+import useAuthFetch from '@/context/AuthFetch';
 
 const StudentEvents = () => {
   const studentId  = localStorage.getItem('ID');
@@ -9,20 +10,22 @@ const StudentEvents = () => {
   const [date, setDate] = useState('');
   const [error, setError] = useState('');
   const [submitted, setSubmitted] = useState(false);
+  const authFetch = useAuthFetch();
 
   const fetchEvents = async () => {
     try {
-      const response = await axios.get(`/api/students/${studentId}/events`, {
+      const response = await authFetch(`/api/students/${studentId}/events`, {
         params: { date },
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
         },
       });
-      setEvents(response.data.data);
+      const data = await response.json();
+      setEvents(data.data);
       setError('');
     } catch (err) {
       setEvents([]);
-      setError(err.response?.data?.message || 'Error fetching student events');
+      setError(err.data?.message || 'Error fetching student events');
     }
     setSubmitted(true);
   };

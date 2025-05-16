@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { Card, Form, Button, Alert } from "react-bootstrap";
+import { FaUser, FaLock, FaUserTag, FaUserCircle } from "react-icons/fa";
 
 const Register = () => {
   const [form, setForm] = useState({
@@ -16,7 +17,6 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      console.log("Form data:", form);
       await axios.post("/api/register", form);
       setSuccess("🎉 Registration successful!");
       setError("");
@@ -28,20 +28,20 @@ const Register = () => {
   };
 
   return (
-    <div className="container mt-5 col-md-6">
-      <Card className="shadow border-0">
-        <Card.Header className="bg-primary text-white">
+    <div className="d-flex justify-content-center align-items-center min-vh-100 bg-light">
+      <Card className="shadow-lg border-0 rounded-4 p-3" style={{ width: "100%", maxWidth: "500px" }}>
+        <Card.Header className="bg-primary text-white text-center">
           <h4 className="mb-0">📝 User Registration</h4>
         </Card.Header>
-        <Card.Body className="bg-light">
+        <Card.Body className="bg-white rounded-bottom-4 px-4 py-4">
           {error && <Alert variant="danger">{error}</Alert>}
           {success && <Alert variant="success">{success}</Alert>}
           <Form onSubmit={handleSubmit}>
             <Form.Group className="mb-3" controlId="formName">
-              <Form.Label>Full Name</Form.Label>
+              <Form.Label><FaUserCircle className="me-2" />Full Name</Form.Label>
               <Form.Control
                 type="text"
-                placeholder="Enter full name"
+                placeholder="John Doe"
                 value={form.name}
                 onChange={(e) => setForm({ ...form, name: e.target.value })}
                 required
@@ -49,10 +49,10 @@ const Register = () => {
             </Form.Group>
 
             <Form.Group className="mb-3" controlId="formUsername">
-              <Form.Label>Username</Form.Label>
+              <Form.Label><FaUser className="me-2" />Username</Form.Label>
               <Form.Control
                 type="text"
-                placeholder="Enter username"
+                placeholder="johndoe123"
                 value={form.username}
                 onChange={(e) => setForm({ ...form, username: e.target.value })}
                 required
@@ -60,10 +60,10 @@ const Register = () => {
             </Form.Group>
 
             <Form.Group className="mb-3" controlId="formPassword">
-              <Form.Label>Password</Form.Label>
+              <Form.Label><FaLock className="me-2" />Password</Form.Label>
               <Form.Control
                 type="password"
-                placeholder="Enter password"
+                placeholder="••••••••"
                 value={form.password}
                 onChange={(e) => setForm({ ...form, password: e.target.value })}
                 required
@@ -71,21 +71,21 @@ const Register = () => {
             </Form.Group>
 
             <Form.Group className="mb-4" controlId="formRole">
-              <Form.Label>Select Role</Form.Label>
+              <Form.Label><FaUserTag className="me-2" />Select Role</Form.Label>
               <Form.Select
                 value={form.role}
                 onChange={(e) => setForm({ ...form, role: e.target.value })}
                 required
               >
-                <option value="">-- Select Role --</option>
+                <option value="">-- Choose Role --</option>
                 <option value="student">Student</option>
                 <option value="lecturer">Lecturer</option>
                 <option value="admin">Admin</option>
               </Form.Select>
             </Form.Group>
 
-            <Button type="submit" variant="primary" className="w-100">
-              Register
+            <Button type="submit" variant="primary" className="w-100 rounded-pill">
+              🚀 Register
             </Button>
           </Form>
         </Card.Body>

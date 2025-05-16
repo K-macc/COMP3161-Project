@@ -26,6 +26,7 @@ import AssignmentSubmissions from "./pages/assignment/AssignmentSubmissions";
 import SubmitAssignment from "./pages/assignment/SubmitAssignment";
 import GradeAssignment from "./pages/assignment/GradeAssignment";
 import FinalAverage from "./pages/assignment/FinalAverage";
+import ReportView from "./pages/report/ReportView";
 
 function App() {
   return (
@@ -56,7 +57,8 @@ function App() {
         <Route path="/assignment-submissions/:assignmentId" element={<AssignmentSubmissions />} />
         <Route path="/submit-assignment/:assignmentId" element={<SubmitAssignment />} />
         <Route path="/grade-assignment/:assignmentId/:studentId" element={<GradeAssignment />} />
-        <Route path="/final-average/:studentId" element={<FinalAverage />} />
+        <Route path="/my-final-average" element={<FinalAverage />} />
+        <Route path="/reports" element={<ReportView />} />
         <Route path="/my-courses" element={<MyCourses />} />
       </Routes>
     </Router>

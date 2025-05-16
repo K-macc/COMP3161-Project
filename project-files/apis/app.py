@@ -1262,6 +1262,46 @@ def get_final_average(student_id):
     finally:
         cursor.close()
         conn.close()
+        
+@app.route('/api/reports/<string:report_name>', methods=['GET'])
+@jwt_required()
+def get_view_report(report_name):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    
+    try:
+        if report_name == "courses_with_50_or_more_students":
+            cursor.execute("SELECT * FROM courses_with_50_or_more_students")
+        elif report_name == "lecturers_teaching_3_or_more_courses":
+            cursor.execute("SELECT * FROM lecturers_teaching_3_or_more_courses")
+        elif report_name == "students_with_5_or_more_courses":
+            cursor.execute("SELECT * FROM students_with_5_or_more_courses")
+        elif report_name == "top_10_most_enrolled_courses":
+            cursor.execute("SELECT * FROM top_10_most_enrolled_courses")
+        else:
+            cursor.execute("SELECT * FROM top_10_students_by_average_grade")
+    
+    
+        report_info = cursor.fetchall()
+        column_names = [desc[0] for desc in cursor.description]
+        
+        if not report_info:
+            return jsonify({'message':'Report information not found!'}),404
+        
+        
+        return jsonify({
+            'headers': column_names,
+            'rows': report_info
+        }),200
+        
+    except Exception as e:
+        return jsonify({'message': f'Error retrieving report: {str(e)}'}), 500
+
+    finally:
+        cursor.close()
+        conn.close()
+        
+    
 
 if __name__ == '__main__':
     app.run(port=5000)

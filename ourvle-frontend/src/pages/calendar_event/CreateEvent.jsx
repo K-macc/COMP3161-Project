@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Button, Form, Card } from 'react-bootstrap';
 import axios from 'axios';
+import useAuthFetch from '@/context/AuthFetch';
 
 const CreateEvent = () => {
   const { courseId } = useParams();
@@ -9,11 +10,12 @@ const CreateEvent = () => {
   const [description, setDescription] = useState('');
   const [eventDate, setEventDate] = useState('');
   const [error, setError] = useState('');
+  const authFetch = useAuthFetch();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post(
+      await authFetch(
         `/api/courses/${courseId}/events`,
         { title, description, event_date: eventDate },
         {

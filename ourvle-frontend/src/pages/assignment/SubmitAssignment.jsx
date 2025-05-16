@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react';
 import { Form, Button, Card, Alert } from 'react-bootstrap';
 import axios from 'axios';
 import { useParams } from "react-router-dom";
+import useAuthFetch from '@/context/AuthFetch';
 
 function SubmitAssignment() {
   const [file, setFile] = useState(null);
@@ -10,6 +11,7 @@ function SubmitAssignment() {
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
   const { assignmentId } = useParams();
+  const authFetch = useAuthFetch();
 
   const fileInputRef = useRef();
 
@@ -32,18 +34,19 @@ function SubmitAssignment() {
     formData.append('link', link);
 
     try {
-      const response = await axios.post(`/api/assignments/${assignmentId}/submit`, formData, {
+      const response = await authFetch(`/api/assignments/${assignmentId}/submit`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
           Authorization: `Bearer ${localStorage.getItem('token')}`,
         },
       });
-      setMessage(response.data.message);
+      const data = await response.json();
+      setMessage(data.message);
       setError('');
       fileInputRef.current.value = '';
     } catch (err) {
       setMessage('');
-      setError(err.response?.data?.message || 'An error occurred');
+      setError(err.data?.message || 'An error occurred');
     }
   };
 

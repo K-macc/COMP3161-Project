@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Card, Button, Offcanvas, ListGroup, Alert } from "react-bootstrap";
 import axios from "axios";
+import useAuthFetch from "@/context/AuthFetch";
 
 const CourseDetail = () => {
   const { courseId } = useParams();
@@ -12,18 +13,20 @@ const CourseDetail = () => {
   const [sectionError, setSectionError] = useState("");
   const ID = localStorage.getItem("ID");
   const role = localStorage.getItem("role");
+  const authFetch = useAuthFetch();
 
   useEffect(() => {
     const fetchCourse = async () => {
       try {
-        const response = await axios.get(`/api/get_course/${courseId}`, {
+        const response = await authFetch(`/api/get_course/${courseId}`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
         });
-        setCourse(response.data);
+        const data = await response.json();
+        setCourse(data);
       } catch (err) {
-        setError(err.response?.data?.message || "Error fetching course");
+        setError(err.data?.message || "Error fetching course");
       }
     };
 
@@ -181,6 +184,7 @@ const CourseDetail = () => {
             <Button variant="primary" className="mb-2 w-100" href={`/get-forums/${courseId}`}> View Forums </Button>
             <Button variant="primary" className="mb-2 w-100" href={`/get-events/${courseId}`}> View Events </Button>
             <Button variant="primary" className="mb-2 w-100" href={`/create-section/${courseId}`}> Add A New Section </Button>
+             <Button variant="primary" className="mb-2 w-100" href={`/get-assignments/${courseId}`}> View Assignments </Button>
             <Button variant="primary" className="mb-2 w-100" href={`/create-assignment/${courseId}`}> Create Assignment </Button>
             </>
           )}

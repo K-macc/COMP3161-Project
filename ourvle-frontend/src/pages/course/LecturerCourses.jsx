@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Card, Row, Col, Form, Button, Spinner, Alert, Container } from 'react-bootstrap';
 import axios from 'axios';
+import useAuthFetch from "@/context/AuthFetch"; 
 
 const LecturerCourses = () => {
   const [lecturerId, setLecturerId] = useState('');
@@ -8,6 +9,7 @@ const LecturerCourses = () => {
   const [error, setError] = useState('');
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
+  const authFetch = useAuthFetch();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -17,21 +19,22 @@ const LecturerCourses = () => {
     setLoading(true);
 
     try {
-      const response = await axios.get(`/api/lecturer_courses/${lecturerId}`, {
+      const response = await authFetch(`/api/lecturer_courses/${lecturerId}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
         },
       });
-      setLecturerCourses(response.data.lecturer_info.Courses);
+      const data = await response.json();
+      setLecturerCourses(data.lecturer_info.Courses);
     } catch (err) {
-      setError(err.response?.data?.message || 'Error fetching lecturer courses');
+      setError(err.data?.message || 'Error fetching lecturer courses');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <Container className="mt-5">
+    <Container className="mt-5 mb-5">
       <Row className="justify-content-center">
         <Col md={8} lg={6}>
           <Card className="shadow-lg border-0">
@@ -67,22 +70,30 @@ const LecturerCourses = () => {
           {lecturerCourses.length > 0 && (
             <>
               <h5 className="mb-3">📚 Assigned Courses:</h5>
-              <Row xs={1} md={2} lg={3} className="g-4">
+              <Row xs={1} sm={2} md={3} lg={4} className="g-4">
                 {lecturerCourses.map((course) => (
                   <Col key={course.CourseID}>
-                    <Card className="h-100 shadow-sm card-info">
-                      <Card.Body>
-                        <Card.Title className="text-primary">{course.CourseName}</Card.Title>
-                        <Card.Text><strong>Course ID:</strong> {course.CourseID}</Card.Text>
-                        <Button
-                          variant="primary"
-                          href={`/courses/${course.CourseID}`}
-                          className="w-100 mt-2"
-                        >
-                          🔗 View Course
-                        </Button>
-                      </Card.Body>
-                    </Card>
+                    <Card className="h-100 shadow-sm rounded-4 bg-light card-info">
+  <Card.Body className="p-4 d-flex flex-column justify-content-between">
+    <div>
+      <Card.Title className="text-primary fs-4 fw-bold mb-3">
+        {course.CourseName}
+      </Card.Title>
+      <Card.Text className="text-muted">
+        <i className="bi bi-hash text-secondary me-2"></i>
+        <strong>Course ID:</strong> {course.CourseID}
+      </Card.Text>
+    </div>
+    <Button
+      variant="outline-primary"
+      href={`/courses/${course.CourseID}`}
+      className="w-100 mt-4 fw-semibold rounded-pill"
+    >
+      🔗 View Course
+    </Button>
+  </Card.Body>
+</Card>
+
                   </Col>
                 ))}
               </Row>

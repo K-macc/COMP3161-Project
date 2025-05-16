@@ -2,17 +2,19 @@ import React, { useState } from "react";
 import axios from "axios";
 import { Card, Form, Button, Alert } from "react-bootstrap";
 import { FaBook, FaPlusCircle } from "react-icons/fa";
+import useAuthFetch from "@/context/AuthFetch";
 
 const CreateCourse = () => {
   const [course, setCourse] = useState({ CourseID: "", CourseName: "" });
   const [message, setMessage] = useState("");
-  const [messageType, setMessageType] = useState(""); // 'success' or 'error'
+  const [messageType, setMessageType] = useState(""); 
+  const authFetch = useAuthFetch();
 
   const handleCreate = async (e) => {
     e.preventDefault();
     try {
       const token = localStorage.getItem("token");
-      await axios.post("/api/create_course", course, {
+      await authFetch("/api/create_course", course, {
         headers: { Authorization: `Bearer ${token}` },
       });
 

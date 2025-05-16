@@ -1,17 +1,19 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { Card, Form, Button, Alert } from "react-bootstrap";
+import useAuthFetch from "@/context/AuthFetch"; 
 
 const CourseRegistration = () => {
   const [courseID, setCourseID] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const authFetch = useAuthFetch();
 
   const handleRegister = async (e) => {
     e.preventDefault();
     try {
       const token = localStorage.getItem("token");
-      await axios.post(
+      await authFetch(
         "/api/register_student",
         { CourseID: courseID },
         {
