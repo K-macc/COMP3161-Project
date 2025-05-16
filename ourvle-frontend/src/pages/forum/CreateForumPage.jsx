@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Button, Form, Container, Alert, Row, Col, Card } from 'react-bootstrap';
-import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import useAuthFetch from "@/context/AuthFetch";
 

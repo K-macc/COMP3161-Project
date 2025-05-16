@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { Card, Table, Alert, Spinner, Button } from "react-bootstrap";
 import useAuthFetch from "@/context/AuthFetch"; 

@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Button, Form, Card } from 'react-bootstrap';
-import axios from 'axios';
 import useAuthFetch from '@/context/AuthFetch';
 
 const CreateEvent = () => {

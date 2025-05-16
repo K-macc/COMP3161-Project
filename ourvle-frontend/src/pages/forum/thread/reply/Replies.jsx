@@ -8,7 +8,6 @@ import {
   Alert,
   Form,
 } from "react-bootstrap";
-import axios from "axios";
 import useAuthFetch from "@/context/AuthFetch";
 
 const ThreadReplies = () => {

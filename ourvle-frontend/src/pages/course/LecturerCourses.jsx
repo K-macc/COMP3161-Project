@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Card, Row, Col, Form, Button, Spinner, Alert, Container } from 'react-bootstrap';
-import axios from 'axios';
 import useAuthFetch from "@/context/AuthFetch"; 
 
 const LecturerCourses = () => {

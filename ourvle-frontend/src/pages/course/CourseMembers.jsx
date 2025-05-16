@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Row, Col, Card, Button, Alert, Spinner } from "react-bootstrap";
 import { FaUserCircle } from "react-icons/fa"; 
-import axios from "axios";
 import useAuthFetch from "@/context/AuthFetch";
 
 const CourseMembers = () => {

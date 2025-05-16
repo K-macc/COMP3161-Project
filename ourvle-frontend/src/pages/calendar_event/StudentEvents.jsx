@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Card, ListGroup, Form, Button } from 'react-bootstrap';
-import axios from 'axios';
 import useAuthFetch from '@/context/AuthFetch';
 
 const StudentEvents = () => {

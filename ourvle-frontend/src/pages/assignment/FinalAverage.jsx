@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 import { Container, Card, Alert, Spinner } from 'react-bootstrap';
 import useAuthFetch from "@/context/AuthFetch";
 

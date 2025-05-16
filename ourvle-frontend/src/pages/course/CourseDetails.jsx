@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Card, Button, Offcanvas, ListGroup, Alert } from "react-bootstrap";
-import axios from "axios";
 import useAuthFetch from "@/context/AuthFetch";
 
 const CourseDetail = () => {

@@ -8,7 +8,6 @@ import {
   Spinner,
   Container,
 } from "react-bootstrap";
-import axios from "axios";
 import useAuthFetch from "@/context/AuthFetch";
 
 const CourseAssignments = () => {

@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Card, Row, Col, Button, Alert } from "react-bootstrap";
-import axios from "axios";
 import useAuthFetch from "@/context/AuthFetch";
 
 const ForumThreads = () => {
