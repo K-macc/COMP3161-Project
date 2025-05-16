@@ -25,11 +25,7 @@ def index():
     return "Hello, World!"
 
 # USER
-<<<<<<< HEAD:apis/app.py
 @app.route('/api/register', methods=['POST'])
-=======
-@app.route('/register', methods=['POST'])
->>>>>>> b697f5c7b2961dc88e3f72f77dc51d5e1beca91a:project-files/apis/app.py
 def register():
     conn = get_db_connection()
     cursor = conn.cursor()
