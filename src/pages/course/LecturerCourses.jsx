@@ -1,18 +1,27 @@
-import React, { useState } from 'react';
-import { Card, Row, Col, Form, Button, Spinner, Alert, Container } from 'react-bootstrap';
-import useAuthFetch from "@/context/AuthFetch"; 
+import React, { useState } from "react";
+import {
+  Card,
+  Row,
+  Col,
+  Form,
+  Button,
+  Spinner,
+  Alert,
+  Container,
+} from "react-bootstrap";
+import useAuthFetch from "@/context/AuthFetch";
 
 const LecturerCourses = () => {
-  const [lecturerId, setLecturerId] = useState('');
+  const [lecturerId, setLecturerId] = useState("");
   const [lecturerCourses, setLecturerCourses] = useState([]);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const authFetch = useAuthFetch();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
+    setError("");
     setLecturerCourses([]);
     setSubmitted(true);
     setLoading(true);
@@ -20,13 +29,13 @@ const LecturerCourses = () => {
     try {
       const response = await authFetch(`/api/lecturer_courses/${lecturerId}`, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
       const data = await response.json();
       setLecturerCourses(data.courses.Courses);
     } catch (err) {
-      setError(err.data?.message || 'Error fetching lecturer courses');
+      setError(err.data?.message || "Error fetching lecturer courses");
     } finally {
       setLoading(false);
     }
@@ -41,7 +50,9 @@ const LecturerCourses = () => {
               <h3 className="text-center mb-4">🧑‍🏫 View Lecturer Courses</h3>
               <Form onSubmit={handleSubmit}>
                 <Form.Group controlId="lecturerId" className="mb-3">
-                  <Form.Label><strong>Lecturer ID</strong></Form.Label>
+                  <Form.Label>
+                    <strong>Lecturer ID</strong>
+                  </Form.Label>
                   <Form.Control
                     type="text"
                     placeholder="e.g., 10"
@@ -52,8 +63,17 @@ const LecturerCourses = () => {
                   />
                 </Form.Group>
                 <div className="d-grid">
-                  <Button type="submit" variant="primary" size="lg" className="shadow-sm">
-                    {loading ? <Spinner animation="border" size="sm" /> : '📘 Fetch Courses'}
+                  <Button
+                    type="submit"
+                    variant="primary"
+                    size="lg"
+                    className="shadow-sm"
+                  >
+                    {loading ? (
+                      <Spinner animation="border" size="sm" />
+                    ) : (
+                      "📘 Fetch Courses"
+                    )}
                   </Button>
                 </div>
               </Form>
@@ -72,27 +92,26 @@ const LecturerCourses = () => {
               <Row xs={1} sm={2} md={3} lg={4} className="g-4">
                 {lecturerCourses.map((course) => (
                   <Col key={course.CourseID}>
-                    <Card className="h-100 shadow-sm rounded-4 bg-light card-info">
-  <Card.Body className="p-4 d-flex flex-column justify-content-between">
-    <div>
-      <Card.Title className="text-primary fs-4 fw-bold mb-3">
-        {course.CourseName}
-      </Card.Title>
-      <Card.Text className="text-muted">
-        <i className="bi bi-hash text-secondary me-2"></i>
-        <strong>Course ID:</strong> {course.CourseID}
-      </Card.Text>
-    </div>
-    <Button
-      variant="outline-primary"
-      href={`/courses/${course.CourseID}`}
-      className="w-100 mt-4 fw-semibold rounded-pill"
-    >
-      🔗 View Course
-    </Button>
-  </Card.Body>
-</Card>
-
+                    <Card className="h-100 shadow-sm rounded-4 bg-white card-info">
+                      <Card.Body className="p-4 d-flex flex-column justify-content-between">
+                        <div>
+                          <Card.Title className="text-primary fs-4 fw-bold mb-3">
+                            {course.CourseName}
+                          </Card.Title>
+                          <Card.Text className="text-muted">
+                            <i className="bi bi-hash text-secondary me-2"></i>
+                            <strong>Course ID:</strong> {course.CourseID}
+                          </Card.Text>
+                        </div>
+                        <Button
+                          variant="outline-primary"
+                          href={`/courses/${course.CourseID}`}
+                          className="w-100 mt-4 fw-semibold rounded-pill"
+                        >
+                          🔗 View Course
+                        </Button>
+                      </Card.Body>
+                    </Card>
                   </Col>
                 ))}
               </Row>
