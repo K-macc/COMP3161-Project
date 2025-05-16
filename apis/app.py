@@ -108,11 +108,7 @@ def register():
         cursor.close()
         conn.close()
 
-<<<<<<< HEAD:apis/app.py
 @app.route('/api/login', methods=['POST'])
-=======
-@app.route('/login', methods=['POST'])
->>>>>>> b697f5c7b2961dc88e3f72f77dc51d5e1beca91a:project-files/apis/app.py
 def login():
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
