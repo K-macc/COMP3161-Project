@@ -12,13 +12,9 @@ const StudentEvents = () => {
   const authFetch = useAuthFetch();
 
   const fetchEvents = async () => {
+    console.log(date);
     try {
-      const response = await authFetch(`/api/students/${studentId}/events`, {
-        params: { date },
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
-      });
+      const response = await authFetch(`/api/students/${studentId}/events?date=${date}`);
       const data = await response.json();
       setEvents(data.data);
       setError('');

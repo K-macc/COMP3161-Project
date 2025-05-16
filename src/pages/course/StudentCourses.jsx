@@ -24,7 +24,7 @@ const StudentCourses = () => {
         },
       });
       const data = await response.json();
-      setStudentCourses(data.student_courses.Courses);
+      setStudentCourses(data.courses.Courses);
     } catch (err) {
       setError(err.data?.message || 'Error fetching student courses');
     } finally {

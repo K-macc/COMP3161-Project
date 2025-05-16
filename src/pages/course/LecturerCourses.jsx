@@ -24,7 +24,7 @@ const LecturerCourses = () => {
         },
       });
       const data = await response.json();
-      setLecturerCourses(data.lecturer_info.Courses);
+      setLecturerCourses(data.courses.Courses);
     } catch (err) {
       setError(err.data?.message || 'Error fetching lecturer courses');
     } finally {

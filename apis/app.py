@@ -10,7 +10,7 @@ import datetime
 app = Flask(__name__)
 jwt = JWTManager(app)
 app.config.from_object(Config)
-upload_folder = r"C:\Users\mkesh\OneDrive\Documents\UWI\Year 3\Semester 2\COMP3161\COMP3161-Project\ourvle-frontend\uploads"
+upload_folder = r"../uploads"
 
 def get_db_connection():
     return mysql.connector.connect(
@@ -20,9 +20,6 @@ def get_db_connection():
         database = "ourvle"
     )
 
-@app.route('/')
-def index():
-    return "Hello, World!"
 
 # USER
 @app.route('/api/register', methods=['POST'])
@@ -154,47 +151,6 @@ def login():
     finally:
         cursor.close()
         conn.close()
-
-@app.route('/api/protected', methods=['GET'])
-@jwt_required()
-def protected():
-    user_id = get_jwt_identity()
-    claims = get_jwt()
-    role = claims.get('role')
-
-    return jsonify({
-        'user_id': user_id,
-        'role': role
-    }), 200
-
-@app.route('/api/search_user', methods=['GET'])
-@jwt_required()
-def search_user():
-    user_id = request.args.get('user_id')
-    role = request.args.get('role')
-
-    if not user_id or not role:
-        return jsonify({'message': 'Missing user_id or role in query parameters'}), 400
-
-    conn = get_db_connection()
-    cursor = conn.cursor(dictionary=True)
-
-    try:
-        cursor.execute("SELECT * FROM user WHERE UserID = %s AND Role = %s", (user_id, role))
-        user = cursor.fetchone()
-
-        if not user:
-            return jsonify({'message': 'User not found'}), 404
-
-        return jsonify({'user': user}), 200
-
-    except Exception as e:
-        return jsonify({'message': f'Error searching user: {str(e)}'}), 500
-
-    finally:
-        cursor.close()
-        conn.close()
-
 
 # COURSES
 @app.route('/api/create_course', methods=['POST'])
@@ -379,7 +335,7 @@ def get_student_courses(student_id):
             ]
         } 
 
-        return jsonify({'student_courses': student_info}), 200
+        return jsonify({'courses': student_info}), 200
 
     except Exception as e:
         return jsonify({'message': f'An error occurred: {str(e)}'}), 500
@@ -417,7 +373,7 @@ def get_lecturer_courses(lecturer_id):
             ]
         }
 
-        return jsonify({'lecturer_info': lecturer_info}), 200
+        return jsonify({'courses': lecturer_info}), 200
 
     except Exception as e:
         return jsonify({'message': f'An error occurred: {str(e)}'}), 500
@@ -426,65 +382,6 @@ def get_lecturer_courses(lecturer_id):
         cursor.close()
         conn.close()
 
-@app.route('/api/specific_courses', methods=['GET'])
-@jwt_required()
-def get_specific_courses():
-    current_user_id = get_jwt_identity()
-    current_user_role = get_jwt().get('role')
-
-    conn = get_db_connection()
-    cursor = conn.cursor(dictionary=True)
-
-    try:
-        if current_user_role == 'lecturer':
-            cursor.execute("""
-                SELECT l.LecturerID, l.LecturerName, c.CourseID, c.CourseName
-                FROM lecturer l
-                JOIN teaches t ON l.LecturerID = t.LecturerID
-                JOIN course c ON t.CourseID = c.CourseID
-                WHERE l.UserID = %s
-            """, (current_user_id,))
-            courses = cursor.fetchall()
-
-            if not courses:
-                return jsonify({'courses': 'No courses found for this lecturer.'}), 404
-
-            lecturer_courses = [
-                {'CourseID': course['CourseID'], 'CourseName': course['CourseName']}
-                for course in courses
-            ]
-
-            return jsonify({'courses': lecturer_courses}), 200
-
-        elif current_user_role == 'student':
-            cursor.execute("""
-                SELECT s.StudentID, s.StudentName, c.CourseID, c.CourseName
-                FROM student s
-                JOIN enrols e ON s.StudentID = e.StudentID
-                JOIN course c ON e.CourseID = c.CourseID
-                WHERE s.UserID = %s
-            """, (current_user_id,))
-            courses = cursor.fetchall()
-
-            if not courses:
-                return jsonify({'courses': 'No courses found for this student.'}), 404
-
-            student_courses = [
-                {'CourseID': course['CourseID'], 'CourseName': course['CourseName']}
-                for course in courses
-            ]
-
-            return jsonify({'courses': student_courses}), 200
-
-        else:
-            return jsonify({'courses': 'No courses found.'}), 404
-
-    except Exception as e:
-        return jsonify({'message': f'An error occurred: {str(e)}'}), 500
-
-    finally:
-        cursor.close()
-        conn.close()
 
 # FORUMS
 @app.route('/api/courses/<string:course_id>/forums', methods=['POST'])
@@ -1101,7 +998,6 @@ def submit_assignment(assignment_id):
         file = request.files.get('file')
         link = request.form.get('link')
 
-        upload_folder = current_app.config.get('UPLOAD_FOLDER', 'uploads')
         if not os.path.exists(upload_folder):
             os.makedirs(upload_folder)
 
