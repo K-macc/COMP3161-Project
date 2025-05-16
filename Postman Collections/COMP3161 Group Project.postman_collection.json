@@ -56,6 +56,20 @@
 				},
 				{
 					"name": "Admin Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const response = pm.response.json();\r",
+									"pm.environment.set(\"admin_token\", response.access_token);\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
 					"request": {
 						"method": "POST",
 						"header": [
@@ -112,7 +126,8 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"\r",
+									"const response = pm.response.json();\r",
+									"pm.environment.set(\"lecturer_token\", response.access_token);\r",
 									""
 								],
 								"type": "text/javascript",
@@ -155,6 +170,19 @@
 				},
 				{
 					"name": "Student Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const response = pm.response.json();\r",
+									"pm.environment.set(\"student_token\", response.access_token);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
 					"request": {
 						"method": "POST",
 						"header": [],
@@ -201,7 +229,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc0NzQyNjE0MSwianRpIjoiY2U1YjkxYTAtNTZhMS00MjM0LWJkY2MtODg2YzMwOTFjNTBiIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IlVTRVItMDAwMDAxIiwibmJmIjoxNzQ3NDI2MTQxLCJjc3JmIjoiMTM0ZmNmOGEtYTBhNS00Y2JkLWEwNzktMTVhZTBhNjQxMTI1IiwiZXhwIjoxNzQ3NDI3MDQxLCJyb2xlIjoiYWRtaW4iLCJuYW1lIjoiS2F0aWUgTmVsc29uIiwiZW1haWwiOiJrYXRpZW5lbHNvbkBhZG1pbi51d2kiLCJpZCI6MX0.4ONxyqrLMFqYoFk3z_CNPH-edwtpctWsBR3NWvY6FGI",
+									"value": "{{admin_token}}",
 									"type": "string"
 								}
 							]
@@ -210,7 +238,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"CourseID\": \"COMP3161\",\r\n    \"CourseName\": \"DBMS\"\r\n}",
+							"raw": "{\r\n    \"CourseID\": \"COMP3162\",\r\n    \"CourseName\": \"DBMS2\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -240,7 +268,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc0NzQyNjM1MCwianRpIjoiZDg2ZTk5YTUtOWZlNy00Y2QxLWIzOWQtMjkzZDk0NDJlYzUzIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IlVTRVItMDAwMTA5IiwibmJmIjoxNzQ3NDI2MzUwLCJjc3JmIjoiMTA1ZjAzN2QtYmFlOC00YzEyLWIyOTktYTVkYmNiODM4YTNlIiwiZXhwIjoxNzQ3NDI3MjUwLCJyb2xlIjoic3R1ZGVudCIsIm5hbWUiOiJDaHJpc3RvcGhlciBMZXZpbmUiLCJlbWFpbCI6ImNocmlzdG9waGVybGV2aW5lQG15bW9uYS51d2kuZWR1IiwiaWQiOjYyMDAwMDA0OX0.G_RQ4M3IQqNVi8QXW57kjmORaUrh8ajMIjXVefRHiCE",
+									"value": "{{student_token}}",
 									"type": "string"
 								}
 							]
@@ -274,6 +302,16 @@
 				{
 					"name": "Course Members",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{admin_token}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
 						"header": [],
 						"url": {
@@ -295,6 +333,16 @@
 				{
 					"name": "Course Information",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{admin_token}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
 						"header": [],
 						"url": {
@@ -316,6 +364,16 @@
 				{
 					"name": "All Courses",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{admin_token}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
 						"header": [],
 						"url": {
@@ -336,6 +394,16 @@
 				{
 					"name": "Student's Courses",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{student_token}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
 						"header": [],
 						"url": {
@@ -362,7 +430,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc0NzQzMDU5NSwianRpIjoiMWRjYjIxOGItYTAxMy00YTZjLWIyNWUtNjMyMjZiNWYyNTQ4IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IlVTRVItMDAwMDExIiwibmJmIjoxNzQ3NDMwNTk1LCJjc3JmIjoiNzc5OTRjYjktNzQ1OC00MGZmLTg1OWMtMTBmYTMzMmZmYWZlIiwiZXhwIjoxNzQ3NDMxNDk1LCJyb2xlIjoibGVjdHVyZXIiLCJuYW1lIjoiRGlhbmUgU21pdGgiLCJlbWFpbCI6ImRpYW5lc21pdGhAdXdpbW9uYS5lZHUiLCJpZCI6MX0.wz1r4YlXTKw8jI25Xl_J1ezzOxOpssvhJC69ceqcrIg",
+									"value": "{{lecturer_token}}",
 									"type": "string"
 								}
 							]
@@ -414,7 +482,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc0NzQzMDk3NSwianRpIjoiMTg1MTA2ODEtNDJkMy00YzZkLThiNzAtYjAzNjkyODI5ZDIwIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IlVTRVItMDAwMDExIiwibmJmIjoxNzQ3NDMwOTc1LCJjc3JmIjoiZGNlYWE5OWUtMmJhNS00YzJmLTk0M2YtOTYwNzczOGIwZWFmIiwiZXhwIjoxNzQ3NDMxODc1LCJyb2xlIjoibGVjdHVyZXIiLCJuYW1lIjoiRGlhbmUgU21pdGgiLCJlbWFpbCI6ImRpYW5lc21pdGhAdXdpbW9uYS5lZHUiLCJpZCI6MX0._mwZ1MSDH1bKG2VGdZlWzH4ltVvg1rF2_LKfdkyjfx8",
+									"value": "{{admin_token}}",
 									"type": "string"
 								}
 							]
@@ -441,6 +509,16 @@
 				{
 					"name": "Lecturer's Courses",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{admin_token}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
 						"header": [],
 						"url": {
@@ -467,6 +545,16 @@
 				{
 					"name": "Create Forum",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{lecturer_token}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "POST",
 						"header": [],
 						"body": {
@@ -498,6 +586,16 @@
 				{
 					"name": "Get Forums",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{lecturer_token}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
 						"header": [],
 						"url": {
@@ -525,7 +623,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc0NzQyODg1NSwianRpIjoiMjIwNTZkNDMtYjE5NS00YmFiLWJmZjEtNTY3MzZlZTNmYjU3IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IlVTRVItMDAwMDExIiwibmJmIjoxNzQ3NDI4ODU1LCJjc3JmIjoiODYyNzQwM2ItNWQyOS00MDhhLThlNDctZTdlMTYxZjY2MzViIiwiZXhwIjoxNzQ3NDI5NzU1LCJyb2xlIjoibGVjdHVyZXIiLCJuYW1lIjoiRGlhbmUgU21pdGgiLCJlbWFpbCI6ImRpYW5lc21pdGhAdXdpbW9uYS5lZHUiLCJpZCI6MX0.Ol1BNniMRue-xmiIKIiBjgR7r7gk6IljgIMQMGZaOE4",
+									"value": "{{lecturer_token}}",
 									"type": "string"
 								}
 							]
@@ -566,7 +664,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc0NzQyODg1NSwianRpIjoiMjIwNTZkNDMtYjE5NS00YmFiLWJmZjEtNTY3MzZlZTNmYjU3IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IlVTRVItMDAwMDExIiwibmJmIjoxNzQ3NDI4ODU1LCJjc3JmIjoiODYyNzQwM2ItNWQyOS00MDhhLThlNDctZTdlMTYxZjY2MzViIiwiZXhwIjoxNzQ3NDI5NzU1LCJyb2xlIjoibGVjdHVyZXIiLCJuYW1lIjoiRGlhbmUgU21pdGgiLCJlbWFpbCI6ImRpYW5lc21pdGhAdXdpbW9uYS5lZHUiLCJpZCI6MX0.Ol1BNniMRue-xmiIKIiBjgR7r7gk6IljgIMQMGZaOE4",
+									"value": "{{lecturer_token}}",
 									"type": "string"
 								}
 							]
@@ -593,6 +691,16 @@
 				{
 					"name": "Add Reply",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{student_token}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "POST",
 						"header": [],
 						"body": {
@@ -624,6 +732,16 @@
 				{
 					"name": "Get Replies",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{student_token}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
 						"header": [],
 						"url": {
@@ -656,7 +774,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc0NzQyODg1NSwianRpIjoiMjIwNTZkNDMtYjE5NS00YmFiLWJmZjEtNTY3MzZlZTNmYjU3IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IlVTRVItMDAwMDExIiwibmJmIjoxNzQ3NDI4ODU1LCJjc3JmIjoiODYyNzQwM2ItNWQyOS00MDhhLThlNDctZTdlMTYxZjY2MzViIiwiZXhwIjoxNzQ3NDI5NzU1LCJyb2xlIjoibGVjdHVyZXIiLCJuYW1lIjoiRGlhbmUgU21pdGgiLCJlbWFpbCI6ImRpYW5lc21pdGhAdXdpbW9uYS5lZHUiLCJpZCI6MX0.Ol1BNniMRue-xmiIKIiBjgR7r7gk6IljgIMQMGZaOE4",
+									"value": "{{lecturer_token}}",
 									"type": "string"
 								}
 							]
@@ -700,7 +818,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc0NzQyOTcwNywianRpIjoiNDVjNjlmYmItZDk1Yi00YjlkLWI5NjktNGMwN2Y3MTgxZjExIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IlVTRVItMDAwMTA5IiwibmJmIjoxNzQ3NDI5NzA3LCJjc3JmIjoiZjQ3MzI5YjUtNTE0OC00ZjQzLThkYTQtY2QzNzRhZjg3ZGUzIiwiZXhwIjoxNzQ3NDMwNjA3LCJyb2xlIjoic3R1ZGVudCIsIm5hbWUiOiJDaHJpc3RvcGhlciBMZXZpbmUiLCJlbWFpbCI6ImNocmlzdG9waGVybGV2aW5lQG15bW9uYS51d2kuZWR1IiwiaWQiOjYyMDAwMDA0OX0.f_KEKo1dJ5KYRmbbWJJjbg1jJhycXXA1zH3-t6bNvg0",
+									"value": "{{student_token}}",
 									"type": "string"
 								}
 							]
@@ -747,7 +865,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc0NzQyODg1NSwianRpIjoiMjIwNTZkNDMtYjE5NS00YmFiLWJmZjEtNTY3MzZlZTNmYjU3IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IlVTRVItMDAwMDExIiwibmJmIjoxNzQ3NDI4ODU1LCJjc3JmIjoiODYyNzQwM2ItNWQyOS00MDhhLThlNDctZTdlMTYxZjY2MzViIiwiZXhwIjoxNzQ3NDI5NzU1LCJyb2xlIjoibGVjdHVyZXIiLCJuYW1lIjoiRGlhbmUgU21pdGgiLCJlbWFpbCI6ImRpYW5lc21pdGhAdXdpbW9uYS5lZHUiLCJpZCI6MX0.Ol1BNniMRue-xmiIKIiBjgR7r7gk6IljgIMQMGZaOE4",
+									"value": "{{lecturer_token}}",
 									"type": "string"
 								}
 							]
@@ -784,7 +902,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc0NzQzMDk3NSwianRpIjoiMTg1MTA2ODEtNDJkMy00YzZkLThiNzAtYjAzNjkyODI5ZDIwIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IlVTRVItMDAwMDExIiwibmJmIjoxNzQ3NDMwOTc1LCJjc3JmIjoiZGNlYWE5OWUtMmJhNS00YzJmLTk0M2YtOTYwNzczOGIwZWFmIiwiZXhwIjoxNzQ3NDMxODc1LCJyb2xlIjoibGVjdHVyZXIiLCJuYW1lIjoiRGlhbmUgU21pdGgiLCJlbWFpbCI6ImRpYW5lc21pdGhAdXdpbW9uYS5lZHUiLCJpZCI6MX0._mwZ1MSDH1bKG2VGdZlWzH4ltVvg1rF2_LKfdkyjfx8",
+									"value": "{{lecturer_token}}",
 									"type": "string"
 								}
 							]
@@ -840,7 +958,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc0NzQzMDk3NSwianRpIjoiMTg1MTA2ODEtNDJkMy00YzZkLThiNzAtYjAzNjkyODI5ZDIwIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IlVTRVItMDAwMDExIiwibmJmIjoxNzQ3NDMwOTc1LCJjc3JmIjoiZGNlYWE5OWUtMmJhNS00YzJmLTk0M2YtOTYwNzczOGIwZWFmIiwiZXhwIjoxNzQ3NDMxODc1LCJyb2xlIjoibGVjdHVyZXIiLCJuYW1lIjoiRGlhbmUgU21pdGgiLCJlbWFpbCI6ImRpYW5lc21pdGhAdXdpbW9uYS5lZHUiLCJpZCI6MX0._mwZ1MSDH1bKG2VGdZlWzH4ltVvg1rF2_LKfdkyjfx8",
+									"value": "{{lecturer_token}}",
 									"type": "string"
 								}
 							]
@@ -872,7 +990,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc0NzQzMDk3NSwianRpIjoiMTg1MTA2ODEtNDJkMy00YzZkLThiNzAtYjAzNjkyODI5ZDIwIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IlVTRVItMDAwMDExIiwibmJmIjoxNzQ3NDMwOTc1LCJjc3JmIjoiZGNlYWE5OWUtMmJhNS00YzJmLTk0M2YtOTYwNzczOGIwZWFmIiwiZXhwIjoxNzQ3NDMxODc1LCJyb2xlIjoibGVjdHVyZXIiLCJuYW1lIjoiRGlhbmUgU21pdGgiLCJlbWFpbCI6ImRpYW5lc21pdGhAdXdpbW9uYS5lZHUiLCJpZCI6MX0._mwZ1MSDH1bKG2VGdZlWzH4ltVvg1rF2_LKfdkyjfx8",
+									"value": "{{lecturer_token}}",
 									"type": "string"
 								}
 							]
@@ -880,7 +998,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:5000/api/assignments/604/submissions",
+							"raw": "http://localhost:5000/api/assignments/601/submissions",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -889,7 +1007,7 @@
 							"path": [
 								"api",
 								"assignments",
-								"604",
+								"601",
 								"submissions"
 							]
 						}
@@ -904,7 +1022,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc0NzQzMTQ4NCwianRpIjoiOWRiZTk2ZTctNjNjYy00MTRjLWFkOWMtM2VhMTBmZDVjM2VhIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IlVTRVItMDAwMTA5IiwibmJmIjoxNzQ3NDMxNDg0LCJjc3JmIjoiMTM1YmY1MjMtYjZmMC00NDkyLTk2NDUtYTVjNjVjZWNiYzM4IiwiZXhwIjoxNzQ3NDMyMzg0LCJyb2xlIjoic3R1ZGVudCIsIm5hbWUiOiJDaHJpc3RvcGhlciBMZXZpbmUiLCJlbWFpbCI6ImNocmlzdG9waGVybGV2aW5lQG15bW9uYS51d2kuZWR1IiwiaWQiOjYyMDAwMDA0OX0.9BDdzCvtAwfR4AUC9Q_4PJRn7AoLG8ubpNiZ1KGyaLw",
+									"value": "{{student_token}}",
 									"type": "string"
 								}
 							]
@@ -932,7 +1050,7 @@
 							]
 						},
 						"url": {
-							"raw": "http://localhost:5000/api/assignments/604/submit",
+							"raw": "http://localhost:5000/api/assignments/601/submit",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -941,7 +1059,7 @@
 							"path": [
 								"api",
 								"assignments",
-								"604",
+								"601",
 								"submit"
 							]
 						}
@@ -956,7 +1074,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc0NzQzMDk3NSwianRpIjoiMTg1MTA2ODEtNDJkMy00YzZkLThiNzAtYjAzNjkyODI5ZDIwIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IlVTRVItMDAwMDExIiwibmJmIjoxNzQ3NDMwOTc1LCJjc3JmIjoiZGNlYWE5OWUtMmJhNS00YzJmLTk0M2YtOTYwNzczOGIwZWFmIiwiZXhwIjoxNzQ3NDMxODc1LCJyb2xlIjoibGVjdHVyZXIiLCJuYW1lIjoiRGlhbmUgU21pdGgiLCJlbWFpbCI6ImRpYW5lc21pdGhAdXdpbW9uYS5lZHUiLCJpZCI6MX0._mwZ1MSDH1bKG2VGdZlWzH4ltVvg1rF2_LKfdkyjfx8",
+									"value": "{{lecturer_token}}",
 									"type": "string"
 								}
 							]
@@ -973,7 +1091,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:5000/api/604/620000049/grade",
+							"raw": "http://localhost:5000/api/602/620000049/grade",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -981,7 +1099,7 @@
 							"port": "5000",
 							"path": [
 								"api",
-								"604",
+								"602",
 								"620000049",
 								"grade"
 							]
@@ -997,7 +1115,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc0NzQzMTQ4NCwianRpIjoiOWRiZTk2ZTctNjNjYy00MTRjLWFkOWMtM2VhMTBmZDVjM2VhIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IlVTRVItMDAwMTA5IiwibmJmIjoxNzQ3NDMxNDg0LCJjc3JmIjoiMTM1YmY1MjMtYjZmMC00NDkyLTk2NDUtYTVjNjVjZWNiYzM4IiwiZXhwIjoxNzQ3NDMyMzg0LCJyb2xlIjoic3R1ZGVudCIsIm5hbWUiOiJDaHJpc3RvcGhlciBMZXZpbmUiLCJlbWFpbCI6ImNocmlzdG9waGVybGV2aW5lQG15bW9uYS51d2kuZWR1IiwiaWQiOjYyMDAwMDA0OX0.9BDdzCvtAwfR4AUC9Q_4PJRn7AoLG8ubpNiZ1KGyaLw",
+									"value": "{{student_token}}",
 									"type": "string"
 								}
 							]
@@ -1028,6 +1146,16 @@
 				{
 					"name": "Courses with 50 or more Students",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{admin_token}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
 						"header": [],
 						"url": {
@@ -1049,6 +1177,16 @@
 				{
 					"name": "Lecturers teaching 3 or more courses",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{admin_token}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
 						"header": [],
 						"url": {
@@ -1070,6 +1208,16 @@
 				{
 					"name": "Students with 5 or more courses",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{admin_token}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
 						"header": [],
 						"url": {
@@ -1091,6 +1239,16 @@
 				{
 					"name": "Top 10 most enrolled courses",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{admin_token}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
 						"header": [],
 						"url": {
@@ -1112,6 +1270,16 @@
 				{
 					"name": "Top 10 students by average grade",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{admin_token}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
 						"header": [],
 						"url": {
@@ -1138,7 +1306,7 @@
 		"bearer": [
 			{
 				"key": "token",
-				"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc0NzQzMTg1NywianRpIjoiMWU2YzNiMTQtN2YyZS00NTNlLWJjZWMtMGQ4NWUxNmU3ZjZiIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IlVTRVItMDAwMDAxIiwibmJmIjoxNzQ3NDMxODU3LCJjc3JmIjoiOTRjNWJjNmUtZGZlMi00NDEzLWEzNzgtMTIxNmI1NmU5MTcxIiwiZXhwIjoxNzQ3NDMyNzU3LCJyb2xlIjoiYWRtaW4iLCJuYW1lIjoiS2F0aWUgTmVsc29uIiwiZW1haWwiOiJrYXRpZW5lbHNvbkBhZG1pbi51d2kiLCJpZCI6MX0.8bI_bQPfAwxQ4OYjt9L19-rfpWXQyQ8bqS5jpBlX0bU",
+				"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc0NzQzNTgzOCwianRpIjoiNzY3MTE2ZjAtYzA5MC00OWMwLWE1ZjYtNGZhNjY0MmRhYzAzIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IlVTRVItMDAwMDAxIiwibmJmIjoxNzQ3NDM1ODM4LCJjc3JmIjoiNGM2Y2NkMWQtMzI3Ni00MjVmLWI2ODMtOTRiZDRmMTAxYjEyIiwiZXhwIjoxNzQ3NDM2NzM4LCJyb2xlIjoiYWRtaW4iLCJuYW1lIjoiS2F0aWUgTmVsc29uIiwiZW1haWwiOiJrYXRpZW5lbHNvbkBhZG1pbi51d2kiLCJpZCI6MX0.baHrbRb6n9Bh8nFcD3JQ3yBBSrqtFJpQTK8WvmJ1Qwg",
 				"type": "string"
 			}
 		]
