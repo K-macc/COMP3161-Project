@@ -78,7 +78,7 @@ const CourseDetail = () => {
       )}
 
       <div className="mt-4">
-        <h4>Course Content</h4>
+        <h4 className="text-white">Course Content</h4>
         <Card>
           <Card.Body>
             {sectionError && <Alert variant="danger">{sectionError}</Alert>}

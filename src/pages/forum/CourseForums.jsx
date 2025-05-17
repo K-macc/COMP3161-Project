@@ -68,14 +68,14 @@ const CourseForums = () => {
 
             {error && <Alert variant="danger">{error}</Alert>}
 
-            <Card className="shadow-sm">
+            <Card className="shadow-sm no-border-bg">
               <Card.Body>
                 <ListGroup variant="flush">
                   {Array.isArray(forums) && forums.length > 0 ? (
                     forums.map((forum) => (
                       <ListGroup.Item
                         key={forum.ForumID}
-                        className="mb-3 shadow-sm"
+                        className="mb-3 shadow-sm rounded-4 p-4"
                       >
                         <h5>{forum.Subject}</h5>
                         <p className="text-muted">

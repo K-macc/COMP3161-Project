@@ -75,9 +75,7 @@ const ReportView = () => {
         {reportOptions.map((option) => (
           <Button
             key={option.value}
-            variant={
-              reportName === option.value ? "primary" : "outline-primary"
-            }
+            variant= "primary"
             onClick={() => fetchReport(option.value)}
             className="d-flex align-items-center justify-content-center"
             style={{ width: "330px", height: "40px" }}
@@ -90,10 +88,10 @@ const ReportView = () => {
 
       {reportName && (
         <div className="d-flex justify-content-center align-items-center mb-4 gap-3">
-          <h4 className="text-capitalize mb-0">
+          <h4 className="text-capitalize mb-0 text-white">
             {reportName.replace(/_/g, " ")}
           </h4>
-          <Button variant="outline-danger" size="sm" onClick={clearReport}>
+          <Button variant="danger" size="sm" onClick={clearReport}>
             Deselect Report
           </Button>
         </div>
@@ -172,7 +170,7 @@ const ReportView = () => {
         <p className="text-muted text-center">
           {" "}
           <FaInfoCircle />
-          No No data found for this report.
+          No data found for this report.
         </p>
       )}
     </Container>

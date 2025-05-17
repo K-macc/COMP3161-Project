@@ -51,7 +51,7 @@ const Register = () => {
   };
 
   return (
-    <div className="d-flex justify-content-center align-items-center min-vh-100 bg-light">
+    <div className="d-flex justify-content-center align-items-center min-vh-100 bg-light user-container">
       <Card
         className="shadow-lg border-0 rounded-4"
         style={{ width: "100%", maxWidth: "500px" }}

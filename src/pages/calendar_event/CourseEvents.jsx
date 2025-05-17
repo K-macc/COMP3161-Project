@@ -49,7 +49,7 @@ const CourseEvents = () => {
               <FaRegCalendarAlt /> Upcoming Course Events
             </h4>
           </Card.Header>
-          <Card.Body className="bg-light">
+          <Card.Body className="transparent border-0">
             <div className="text-end mb-3">
               <Button variant="primary" onClick={() => setShowSidebar(true)}>
                 {" "}
@@ -64,11 +64,11 @@ const CourseEvents = () => {
                 <FaInfoCircle/> No events found for this course.
               </Alert>
             ) : (
-              <ListGroup variant="flush">
+              <ListGroup variant="success" className="bg-transparent border-0">
                 {events.map((event) => (
                   <ListGroup.Item
                     key={event.CalendarID}
-                    className="mb-3 border rounded shadow-sm p-3 bg-white"
+                    className="mb-3 border rounded shadow-sm p-3 bg-light"
                   >
                     <h5 className="text-primary mb-1">
                       <FaThumbtack className="me-2" /> {event.title}

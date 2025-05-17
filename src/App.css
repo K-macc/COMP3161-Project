@@ -3,8 +3,36 @@
   font-size: 14px;
 }
 
+
+
+body, .user-container {
+  background-image: url('/background.avif');
+  background-repeat: no-repeat;
+  background-size: cover;       /* Make the image cover the whole viewport */
+  background-position: center;  /* Center the image */
+  background-attachment: fixed; /* Optional: makes background fixed on scroll */
+  margin: 0;                    /* Optional: remove default margin */
+  min-height: 100vh;   
+}
+
+.fade-alert, .alert {
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+}
+
+
+.card.no-border-bg {
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+
+
+
 h2 {
   font-weight: bold;
+  color: white;
 }
 
 .logo {
@@ -42,7 +70,7 @@ h2 {
 
 .thread-tile:hover {
   background-color: #f8f9fa;
-  border-left: 5px solid #0d6efd;
+  border-left: 10px solid #0d6efd;
   transition: all 0.2s ease-in-out;
 }
 

@@ -34,10 +34,8 @@ function FinalAverage() {
     <Container className="mt-5 d-flex justify-content-center">
       <Card className="shadow p-4" style={{ maxWidth: "500px", width: "100%" }}>
         <Card.Body className="text-center">
-          <Card.Title className="mb-4 text-primary">
-            <h2>
+          <Card.Title className="mb-4 text-primary fs-3 fw-bold">
             <FaCalculator/> Final Average
-            </h2>
           </Card.Title>
 
           <h5 className="mb-3 text-muted">Student ID: {studentId}</h5>

@@ -141,7 +141,7 @@ const ThreadReplies = () => {
           Back
         </Button>
       </div>
-      <div className="container mt-5">
+      <div className="container mt-5 mb-5">
         <Card className="mb-4 shadow-lg">
           <Card.Header as="h3" className="text-center bg-primary text-white">
             {threadTitle}
@@ -160,7 +160,7 @@ const ThreadReplies = () => {
           </Alert>
         )}
 
-        <Card className="shadow-sm">
+        <Card className="shadow-sm mb-5">
           <Card.Body>
             {replies.length === 0 ? (
               <>

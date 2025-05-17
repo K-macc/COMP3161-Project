@@ -41,7 +41,7 @@ const CreateCourse = () => {
   return (
     <div className="container mt-4">
       <Card
-        className="shadow-lg border-0 mx-auto mt-5"
+        className="shadow-lg mx-auto mt-5"
         style={{ width: "100%", maxWidth: "600px" }}
       >
         {message && (

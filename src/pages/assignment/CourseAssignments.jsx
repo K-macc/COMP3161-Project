@@ -67,7 +67,7 @@ const CourseAssignments = () => {
               <FaClipboardList /> Assignments for {courseId}
             </h4>
           </Card.Header>
-          <Card.Body className="bg-light">
+          <Card.Body className="bg-transparent">
             {loading ? (
               <div className="text-center">
                 <Spinner animation="border" variant="primary" />
