@@ -9,6 +9,13 @@ import {
   Alert,
   Container,
 } from "react-bootstrap";
+import {
+  FaInfoCircle,
+  FaUserGraduate,
+  FaSearch,
+  FaLayerGroup,
+  FaClipboardList,
+} from "react-icons/fa";
 import useAuthFetch from "@/context/AuthFetch";
 
 const StudentCourses = () => {
@@ -71,7 +78,7 @@ const StudentCourses = () => {
     <Container className="mt-5 mb-5">
       <Row className="justify-content-center">
         <Col md={8} lg={6}>
-          <Card className="shadow-lg border-0 position-relative">
+          <Card className="shadow-lg position-relative">
             {error && (
               <Alert
                 variant="danger"
@@ -80,8 +87,12 @@ const StudentCourses = () => {
                 {error}
               </Alert>
             )}
+            <Card.Header className="bg-success text-white d-flex justify-content-center align-items-center">
+              <h3 className="mb-0">
+                <FaUserGraduate /> View Student Courses
+              </h3>
+            </Card.Header>
             <Card.Body>
-              <h3 className="text-center mb-4">🎓 View Student Courses</h3>
               <Form onSubmit={handleSubmit}>
                 <Form.Group controlId="studentId" className="mb-3">
                   <Form.Label>
@@ -105,7 +116,9 @@ const StudentCourses = () => {
                     {loading ? (
                       <Spinner animation="border" size="sm" />
                     ) : (
-                      "🔍 Fetch Courses"
+                      <>
+                        <FaSearch /> Fetch Courses
+                      </>
                     )}
                   </Button>
                 </div>
@@ -119,7 +132,9 @@ const StudentCourses = () => {
         <Col>
           {studentCourses.length > 0 && (
             <>
-              <h5 className="mb-3">📚 Enrolled Courses:</h5>
+              <h5 className="mb-3">
+                <FaLayerGroup /> Enrolled Courses:
+              </h5>
               <Row xs={1} sm={2} md={3} lg={4} className="g-4">
                 {studentCourses.map((course) => (
                   <Col key={course.CourseID}>
@@ -137,9 +152,10 @@ const StudentCourses = () => {
                         <Button
                           variant="outline-primary"
                           href={`/courses/${course.CourseID}`}
-                          className="w-100 mt-4 fw-semibold rounded-pill"
+                          className="w-100 mt-4 fw-semibold rounded-pill d-flex justify-content-center align-items-center gap-2"
                         >
-                          🔗 View Course
+                          <FaClipboardList />
+                          View Course
                         </Button>
                       </Card.Body>
                     </Card>
@@ -151,7 +167,7 @@ const StudentCourses = () => {
 
           {submitted && studentCourses.length === 0 && !error && !loading && (
             <Alert variant="info" className="mt-3 text-center">
-              ℹ️ No courses found for this student.
+              <FaInfoCircle /> No courses found for this student.
             </Alert>
           )}
         </Col>

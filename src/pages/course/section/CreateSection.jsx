@@ -3,6 +3,7 @@ import { Form, Button, Card, Alert } from "react-bootstrap";
 import { useParams } from "react-router-dom";
 import useAuthFetch from "@/context/AuthFetch";
 import { useNavigate } from "react-router-dom";
+import { FaBookOpen, FaFolder, FaLongArrowAltLeft } from "react-icons/fa";
 
 function CreateSectionContent() {
   const [slides, setSlides] = useState(null);
@@ -61,15 +62,18 @@ function CreateSectionContent() {
       <div className="container mt-4">
         <Button
           variant="primary"
-          className="mb-3"
+          className="mb-3 d-flex align-items-center"
           onClick={() => navigate(`/courses/${courseId}`)}
         >
-          ⬅️ Back
+          <FaLongArrowAltLeft className="me-2" />
+          Back
         </Button>
       </div>
       <Card className="shadow-sm border-0">
-        <Card.Header className="bg-primary text-white">
-          <h4 className="mb-0">📚 Create New Section</h4>
+        <Card.Header className="bg-success text-white">
+          <h4 className="mb-0">
+            <FaBookOpen /> Create New Section
+          </h4>
         </Card.Header>
         <Card.Body className="bg-light">
           {message && (
@@ -118,8 +122,8 @@ function CreateSectionContent() {
             </Form.Group>
 
             <div className="text-end">
-              <Button type="submit" variant="success">
-                📥 Create Section
+              <Button type="submit" variant="primary">
+                <FaFolder /> Create Section
               </Button>
             </div>
           </Form>

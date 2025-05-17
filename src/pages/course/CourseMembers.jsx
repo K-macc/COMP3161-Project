@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Row, Col, Card, Button, Alert, Spinner } from "react-bootstrap";
-import { FaUserCircle } from "react-icons/fa";
+import { FaUserCircle, FaLongArrowAltLeft, FaInfoCircle } from "react-icons/fa";
 import useAuthFetch from "@/context/AuthFetch";
 
 const CourseMembers = () => {
@@ -35,12 +35,17 @@ const CourseMembers = () => {
   return (
     <>
       <div className="container mt-4">
-        <Button variant="primary" className="mb-3" onClick={() => navigate(-1)}>
-          ⬅️ Back
+        <Button
+          variant="primary"
+          className="mb-3 d-flex align-items-center"
+          onClick={() => navigate(-1)}
+        >
+          <FaLongArrowAltLeft className="me-2" />
+          Back
         </Button>
       </div>
       <div className="container mt-4">
-        <h3>Course Members</h3>
+        <h2>Course Members</h2>
 
         {error && <Alert variant="danger">{error}</Alert>}
 
@@ -78,7 +83,7 @@ const CourseMembers = () => {
           </Row>
         ) : (
           !loading && (
-            <Alert variant="info">ℹ️ No members found for this course.</Alert>
+            <Alert variant="info"><FaInfoCircle/> No members found for this course.</Alert>
           )
         )}
 

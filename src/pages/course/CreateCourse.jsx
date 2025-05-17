@@ -39,10 +39,10 @@ const CreateCourse = () => {
   };
 
   return (
-    <div className="d-flex justify-content-center align-items-center mt-5">
+    <div className="container mt-4">
       <Card
-        className="p-4 shadow-lg"
-        style={{ width: "100%", maxWidth: "500px" }}
+        className="shadow-lg border-0 mx-auto mt-5"
+        style={{ width: "100%", maxWidth: "600px" }}
       >
         {message && (
           <Alert
@@ -52,15 +52,15 @@ const CreateCourse = () => {
             {message}
           </Alert>
         )}
-
-        <h4 className="text-center mb-4">
-          <FaPlusCircle className="me-2 text-primary" />
+        <Card.Header className="bg-success text-white d-flex justify-content-center align-items-center">
+        <h4 className="d-flex align-items-center mb-0">
+          <FaPlusCircle className="me-2 text-white" />
           Create New Course
         </h4>
-
-        <Form onSubmit={handleCreate}>
+        </Card.Header>
+        <Form onSubmit={handleCreate} className="p-4">
           <Form.Group className="mb-3" controlId="courseId">
-            <Form.Label>Course ID</Form.Label>
+            <Form.Label><strong>CourseID</strong></Form.Label>
             <Form.Control
               type="text"
               placeholder="e.g. COMP3161"
@@ -72,7 +72,7 @@ const CreateCourse = () => {
           </Form.Group>
 
           <Form.Group className="mb-3" controlId="courseName">
-            <Form.Label>Course Name</Form.Label>
+            <Form.Label><strong>Course Name</strong></Form.Label>
             <Form.Control
               type="text"
               placeholder="e.g. Data Structures"
@@ -84,7 +84,7 @@ const CreateCourse = () => {
           </Form.Group>
 
           <Button type="submit" variant="primary" className="btn-set">
-            <FaBook className="me-2" />
+            <FaBook className="me-1" />
             Create Course
           </Button>
         </Form>

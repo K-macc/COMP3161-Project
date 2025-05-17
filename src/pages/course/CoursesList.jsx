@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { FaClipboardList } from "react-icons/fa";
 import { Card, Button, Row, Col, Container, Alert } from "react-bootstrap";
 import useAuthFetch from "@/context/AuthFetch";
 
@@ -6,6 +7,7 @@ const CoursesList = () => {
   const [courses, setCourses] = useState([]);
   const [error, setError] = useState("");
   const authFetch = useAuthFetch();
+  const role = localStorage.getItem("role");
 
   useEffect(() => {
     const fetchCourses = async () => {
@@ -26,7 +28,7 @@ const CoursesList = () => {
 
   return (
     <Container className="mt-4">
-      <h3 className="mb-4">Available Courses</h3>
+      <h2 className="mb-4">Available Courses</h2>
       {error && <Alert variant="danger">{error}</Alert>}
 
       <Row xs={1} sm={2} md={3} lg={4} className="g-4">
@@ -43,13 +45,16 @@ const CoursesList = () => {
                     {course.CourseID}
                   </Card.Text>
                 </div>
-                <Button
-                  variant="outline-primary"
-                  href={`/courses/${course.CourseID}`}
-                  className="w-100 fw-semibold rounded-pill"
-                >
-                  View Details
-                </Button>
+                {role !== "student" && (
+                  <Button
+                    variant="outline-primary"
+                    href={`/courses/${course.CourseID}`}
+                    className="w-100 mt-4 fw-semibold rounded-pill d-flex justify-content-center align-items-center gap-2"
+                  >
+                    <FaClipboardList />
+                    View Course
+                  </Button>
+                )}
               </Card.Body>
             </Card>
           </Col>

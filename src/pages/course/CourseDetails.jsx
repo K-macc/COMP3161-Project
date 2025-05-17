@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Card, Button, Offcanvas, ListGroup, Alert } from "react-bootstrap";
 import useAuthFetch from "@/context/AuthFetch";
+import { FaBook, FaInfoCircle } from "react-icons/fa";
 
 const CourseDetail = () => {
   const { courseId } = useParams();
@@ -51,7 +52,7 @@ const CourseDetail = () => {
   return (
     <div className="container mt-4">
       <div className="d-flex justify-content-between align-items-center">
-        <h3>Course Details</h3>
+        <h2>Course Details</h2>
         <Button variant="primary" onClick={() => setShowSidebar(true)}>
           Open Menu
         </Button>
@@ -62,9 +63,7 @@ const CourseDetail = () => {
       {course && (
         <Card className="mt-4 shadow-sm border-0 rounded">
           <Card.Header className="bg-info text-white d-flex align-items-center">
-            <span role="img" aria-label="book" className="me-2">
-              📘
-            </span>
+            <FaBook className="me-2"/>
             <h5 className="mb-0">{course.CourseName}</h5>
           </Card.Header>
           <Card.Body className="bg-light">
@@ -153,7 +152,7 @@ const CourseDetail = () => {
                 ))
               : !sectionError && (
                   <Alert variant="info" className="text-muted">
-                    ℹ️ No section content found.
+                    <FaInfoCircle/> No section content found.
                   </Alert>
                 )}
           </Card.Body>

@@ -8,6 +8,7 @@ import {
   Alert,
   Form,
 } from "react-bootstrap";
+import { FaLongArrowAltLeft } from "react-icons/fa";
 import useAuthFetch from "@/context/AuthFetch";
 
 const ThreadReplies = () => {
@@ -131,8 +132,13 @@ const ThreadReplies = () => {
   return (
     <>
       <div className="container mt-4">
-        <Button variant="primary" className="mb-3" onClick={() => navigate(-1)}>
-          ⬅️ Back
+        <Button
+          variant="primary"
+          className="mb-3 d-flex align-items-center"
+          onClick={() => navigate(-1)}
+        >
+          <FaLongArrowAltLeft className="me-2" />
+          Back
         </Button>
       </div>
       <div className="container mt-5">

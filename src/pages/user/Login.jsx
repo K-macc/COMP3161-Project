@@ -3,7 +3,7 @@ import axios from "axios";
 import { useNavigate, useLocation } from "react-router-dom";
 import { AuthContext } from "@/context/AuthContext";
 import { Card, Form, Button, Alert } from "react-bootstrap";
-import { FaUser, FaLock } from "react-icons/fa";
+import { FaUser, FaLock, FaUserCircle, FaSignInAlt } from "react-icons/fa";
 
 const Login = () => {
   const [user_id, setUserID] = useState("");
@@ -74,11 +74,14 @@ const Login = () => {
   return (
     <div className="d-flex justify-content-center align-items-center min-vh-100 bg-light">
       <Card
-        className="shadow-lg border-0 rounded-4 p-3"
+        className="shadow-lg border-0 rounded-4"
         style={{ width: "100%", maxWidth: "500px" }}
       >
-        <Card.Header className="bg-primary text-white text-center">
-          <h4 className="mb-0">👤 Login</h4>
+        <Card.Header className="bg-success text-white d-flex justify-content-center align-items-center">
+          <h4 className="mb-0">
+            <FaUserCircle className="me-2" /> 
+            Login
+          </h4>
         </Card.Header>
         <Card.Body className="bg-white rounded-bottom-4 px-4 py-4">
           {message && (
@@ -90,11 +93,11 @@ const Login = () => {
             </Alert>
           )}
 
-          <p className="text-center text-muted mb-4">
+          <h5 className="text-center text-muted mb-4">
             {redirect
               ? "Session expired. Please login to continue."
               : "Please login to your account."}
-          </p>
+          </h5>
 
           <Form onSubmit={handleLogin} autoComplete="off">
             <Form.Group className="mb-3" controlId="formUserID">
@@ -125,8 +128,8 @@ const Login = () => {
               />
             </Form.Group>
 
-            <Button type="submit" variant="primary" className="w-100 rounded-pill">
-              🔓 Login
+            <Button type="submit" variant="primary" className="btn-set">
+              <FaSignInAlt/> Login
             </Button>
           </Form>
         </Card.Body>

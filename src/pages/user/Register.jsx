@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { Card, Form, Button, Alert } from "react-bootstrap";
-import { FaUser, FaLock, FaUserTag, FaUserCircle } from "react-icons/fa";
+import { FaUser, FaLock, FaUserTag, FaUserCircle, FaUserPlus, FaUserEdit } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
 const Register = () => {
@@ -53,11 +53,11 @@ const Register = () => {
   return (
     <div className="d-flex justify-content-center align-items-center min-vh-100 bg-light">
       <Card
-        className="shadow-lg border-0 rounded-4 p-3"
+        className="shadow-lg border-0 rounded-4"
         style={{ width: "100%", maxWidth: "500px" }}
       >
-        <Card.Header className="bg-primary text-white text-center">
-          <h4 className="mb-0">📝 User Registration</h4>
+        <Card.Header className="bg-success text-white d-flex justify-content-center align-items-center">
+          <h4 className="mb-0"><FaUserPlus/> User Registration</h4>
         </Card.Header>
         <Card.Body className="bg-white rounded-bottom-4 px-4 py-4">
           {message && (
@@ -131,9 +131,9 @@ const Register = () => {
             <Button
               type="submit"
               variant="primary"
-              className="w-100 rounded-pill"
+              className="btn-set"
             >
-              🚀 Register
+              <FaUserEdit/> Register
             </Button>
           </Form>
         </Card.Body>

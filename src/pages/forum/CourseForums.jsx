@@ -9,6 +9,7 @@ import {
   Alert,
   Container,
 } from "react-bootstrap";
+import { FaLongArrowAltLeft, FaInfoCircle } from "react-icons/fa";
 import useAuthFetch from "@/context/AuthFetch";
 
 const CourseForums = () => {
@@ -42,8 +43,13 @@ const CourseForums = () => {
   return (
     <>
       <div className="container mt-4">
-        <Button variant="primary" className="mb-3" onClick={() => navigate(-1)}>
-          ⬅️ Back
+        <Button
+          variant="primary"
+          className="mb-3 d-flex align-items-center"
+          onClick={() => navigate(-1)}
+        >
+          <FaLongArrowAltLeft className="me-2" />
+          Back
         </Button>
       </div>
 
@@ -51,7 +57,7 @@ const CourseForums = () => {
         <Row>
           <Col md={8} className="mx-auto">
             <div className="d-flex justify-content-between align-items-center mb-3">
-              <h3 className="text-center">Course Forums</h3>
+              <h2 className="text-center">Course Forums</h2>
 
               {role !== "student" && (
                 <Button href={`/create-forum/${courseId}`} className="ms-auto">
@@ -78,16 +84,16 @@ const CourseForums = () => {
                         <Button
                           variant="outline-primary"
                           href={`/forums/${forum.ForumID}/threads`}
-                          className="w-100"
+                          className="btn-set"
                         >
                           View Threads
                         </Button>
                       </ListGroup.Item>
                     ))
                   ) : (
-                    <p className="text-center text-muted mb-0">
-                      No forums available.
-                    </p>
+                    <Alert className="text-center text-muted mb-0">
+                      <FaInfoCircle/>No forums available.
+                    </Alert>
                   )}
                 </ListGroup>
               </Card.Body>

@@ -30,6 +30,7 @@ export default function Navbar() {
               {role === "student" && (
                 <>
                   <li className="nav-item"><Link className={`nav-link ${location.pathname === '/register-course' ? 'active' : ''}`} to="/register-course">Course Registration</Link></li>
+                  <li className="nav-item"><Link className={`nav-link ${location.pathname === '/courses-list' ? 'active' : ''}`} to="/courses-list">Courses List</Link></li>
                   <li className="nav-item"><Link className={`nav-link ${location.pathname === '/my-courses' ? 'active' : ''}`} to="/my-courses">My Courses</Link></li>
                   <li className="nav-item"><Link className={`nav-link ${location.pathname === '/my-events' ? 'active' : ''}`} to="/my-events">My Events</Link></li>
                   <li className="nav-item"><Link className={`nav-link ${location.pathname === '/my-final-average' ? 'active' : ''}`} to="/my-final-average">View Final Average</Link></li>

@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { Button, Form, Card, Alert } from "react-bootstrap";
 import useAuthFetch from "@/context/AuthFetch";
 import { useNavigate } from "react-router-dom";
+import { FaThumbtack, FaRegCalendarAlt, FaLongArrowAltLeft } from "react-icons/fa";
 
 const CreateEvent = () => {
   const { courseId } = useParams();
@@ -52,15 +53,18 @@ const CreateEvent = () => {
       <div className="container mt-4">
         <Button
           variant="primary"
-          className="mb-3"
+          className="mb-3 d-flex align-items-center"
           onClick={() => navigate(`/courses/${courseId}`)}
         >
-          ⬅️ Back
+          <FaLongArrowAltLeft className="me-2" />
+          Back
         </Button>
       </div>
       <Card className="shadow-sm border-0">
         <Card.Header className="bg-success text-white">
-          <h4 className="mb-0">📅 Create A New Calendar Event</h4>
+          <h4 className="mb-0">
+            <FaRegCalendarAlt /> Create A New Calendar Event
+          </h4>
         </Card.Header>
         <Card.Body className="bg-light">
           {message && (
@@ -107,7 +111,8 @@ const CreateEvent = () => {
             </Form.Group>
             <div className="text-end">
               <Button variant="primary" type="submit">
-                📌 Create Calendar Event
+                <FaThumbtack className="me-2" />
+                Create Calendar Event
               </Button>
             </div>
           </Form>

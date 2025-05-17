@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Card, ListGroup, Button, Offcanvas, Alert } from "react-bootstrap";
+import { FaThumbtack, FaRegCalendarAlt, FaLongArrowAltLeft, FaInfoCircle } from "react-icons/fa";
 import useAuthFetch from "@/context/AuthFetch";
 
 const CourseEvents = () => {
@@ -8,7 +9,6 @@ const CourseEvents = () => {
   const [events, setEvents] = useState([]);
   const [error, setError] = useState("");
   const [showSidebar, setShowSidebar] = useState(false);
-  const role = localStorage.getItem("role");
   const navigate = useNavigate();
   const authFetch = useAuthFetch();
 
@@ -33,14 +33,21 @@ const CourseEvents = () => {
   return (
     <>
       <div className="container mt-4">
-        <Button variant="primary" className="mb-3" onClick={() => navigate(-1)}>
-          ⬅️ Back
+        <Button
+          variant="primary"
+          className="mb-3 d-flex align-items-center"
+          onClick={() => navigate(-1)}
+        >
+          <FaLongArrowAltLeft className="me-2" />
+          Back
         </Button>
       </div>
       <div className="container mt-4">
         <Card className="shadow-sm border-0">
           <Card.Header className="bg-info text-white">
-            <h4 className="mb-0">📅 Upcoming Course Events</h4>
+            <h4 className="mb-0">
+              <FaRegCalendarAlt /> Upcoming Course Events
+            </h4>
           </Card.Header>
           <Card.Body className="bg-light">
             <div className="text-end mb-3">
@@ -53,7 +60,9 @@ const CourseEvents = () => {
             {error && <div className="alert alert-danger">{error}</div>}
 
             {events.length === 0 ? (
-              <Alert variant="info" className="text-muted">ℹ️ No events found for this course.</Alert>
+              <Alert variant="info" className="text-muted">
+                <FaInfoCircle/> No events found for this course.
+              </Alert>
             ) : (
               <ListGroup variant="flush">
                 {events.map((event) => (
@@ -61,7 +70,9 @@ const CourseEvents = () => {
                     key={event.CalendarID}
                     className="mb-3 border rounded shadow-sm p-3 bg-white"
                   >
-                    <h5 className="text-primary mb-1">📌 {event.title}</h5>
+                    <h5 className="text-primary mb-1">
+                      <FaThumbtack className="me-2" /> {event.title}
+                    </h5>
                     <p className="mb-1">
                       <strong>Date:</strong>{" "}
                       {new Date(event.event_date).toLocaleString()}

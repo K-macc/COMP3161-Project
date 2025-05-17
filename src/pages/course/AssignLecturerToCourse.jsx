@@ -10,6 +10,7 @@ import {
   Form,
 } from "react-bootstrap";
 import { useParams, useNavigate } from "react-router-dom";
+import { FaUserTie, FaLongArrowAltLeft } from "react-icons/fa";
 import useAuthFetch from "@/context/AuthFetch";
 
 function AssignLecturer() {
@@ -73,13 +74,14 @@ function AssignLecturer() {
       <div className="container mt-4">
         <Button
           variant="primary"
-          className="mb-3"
+          className="mb-3 d-flex align-items-center"
           onClick={() => navigate(`/courses/${courseId}`)}
         >
-          ⬅️ Back
+          <FaLongArrowAltLeft className="me-2" />
+          Back
         </Button>
       </div>
-      <h3 className="mb-4 text-center">Assign Lecturer to Course</h3>
+      <h2 className="mb-4 text-center">Assign Lecturer to Course</h2>
 
       {message && (
         <Alert
@@ -100,7 +102,7 @@ function AssignLecturer() {
             <div className="w-100" style={{ maxWidth: "300px" }}>
               <Form.Group>
                 <Form.Label className="text-center w-100">
-                  Selected Lecturer ID
+                  <h5>Selected Lecturer ID</h5>
                 </Form.Label>
                 <Form.Control
                   type="text"
@@ -120,6 +122,7 @@ function AssignLecturer() {
               disabled={!selectedLecturerId}
               className="w-auto px-4"
             >
+              <FaUserTie className="me-2" />
               Assign Lecturer to Course
             </Button>
           </div>

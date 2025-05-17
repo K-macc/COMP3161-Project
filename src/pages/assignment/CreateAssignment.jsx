@@ -3,6 +3,7 @@ import { Form, Button, Card, Alert } from "react-bootstrap";
 import { useParams } from "react-router-dom";
 import useAuthFetch from "@/context/AuthFetch";
 import { useNavigate } from "react-router-dom";
+import { FaFileAlt, FaClipboardList, FaLongArrowAltLeft } from "react-icons/fa";
 
 function CreateAssignment() {
   const [assignmentName, setAssignmentName] = useState("");
@@ -65,15 +66,18 @@ function CreateAssignment() {
       <div className="container mt-4">
         <Button
           variant="primary"
-          className="mb-3"
+          className="mb-3 d-flex align-items-center"
           onClick={() => navigate(`/courses/${courseId}`)}
         >
-          ⬅️ Back
+          <FaLongArrowAltLeft className="me-2" />
+          Back
         </Button>
       </div>
       <Card className="shadow-sm border-0">
-        <Card.Header className="bg-primary text-white">
-          <h4 className="mb-0">📘 Create New Assignment</h4>
+        <Card.Header className="bg-success text-white">
+          <h4 className="mb-0">
+            <FaClipboardList /> Create New Assignment
+          </h4>
         </Card.Header>
         <Card.Body className="bg-light">
           {message && (
@@ -135,8 +139,8 @@ function CreateAssignment() {
             </Form.Group>
 
             <div className="text-end">
-              <Button type="submit" variant="success">
-                ✅ Create Assignment
+              <Button type="submit" variant="primary">
+                <FaFileAlt /> Create Assignment
               </Button>
             </div>
           </Form>

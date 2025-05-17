@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { Button, Form, Card, Alert } from "react-bootstrap";
 import useAuthFetch from "@/context/AuthFetch";
 import { useNavigate } from "react-router-dom";
+import { FaCommentDots, FaCheckSquare, FaLongArrowAltLeft } from "react-icons/fa";
 
 const CreateThread = () => {
   const { forumId } = useParams();
@@ -46,15 +47,19 @@ const CreateThread = () => {
       <div className="container mt-4">
         <Button
           variant="primary"
-          className="mb-3"
+          className="mb-3 d-flex align-items-center"
           onClick={() => navigate(`/courses/${localStorage.getItem("CourseID")}`)}
         >
-          ⬅️ Back
+          <FaLongArrowAltLeft className="me-2" />
+          Back
         </Button>
       </div>
       <Card className="shadow-sm border-0">
-        <Card.Header className="bg-primary text-white">
-          <h4 className="mb-0">📝 Create New Thread</h4>
+        <Card.Header className="bg-success text-white">
+          <h4 className="mb-0">
+            <FaCommentDots className="me-1" />
+            Create New Thread
+          </h4>
         </Card.Header>
         <Card.Body className="bg-light">
           {message && (
@@ -90,8 +95,9 @@ const CreateThread = () => {
               />
             </Form.Group>
             <div className="text-end">
-              <Button variant="success" type="submit">
-                ✅ Submit Thread
+              <Button variant="primary" type="submit">
+                <FaCheckSquare className="me-2" />
+                Submit Thread
               </Button>
             </div>
           </Form>

@@ -11,6 +11,7 @@ import {
 import { useParams } from "react-router-dom";
 import useAuthFetch from "@/context/AuthFetch";
 import { useNavigate } from "react-router-dom";
+import { FaForumbee, FaPlusCircle, FaLongArrowAltLeft } from "react-icons/fa";
 
 const CreateForum = () => {
   const [subject, setSubject] = useState("");
@@ -52,17 +53,21 @@ const CreateForum = () => {
       <div className="container mt-4">
         <Button
           variant="primary"
-          className="mb-3"
+          className="mb-3 d-flex align-items-center"
           onClick={() => navigate(`/courses/${courseId}`)}
         >
-          ⬅️ Back
+          <FaLongArrowAltLeft className="me-2" />
+          Back
         </Button>
       </div>
       <Row>
         <Col md={8} lg={6} className="mx-auto">
           <Card className="shadow border-0">
-            <Card.Header className="bg-primary text-white text-center">
-              <h4 className="mb-0">📝 Create Forum for Course {courseId}</h4>
+            <Card.Header className="bg-success text-white text-center">
+              <h4 className="mb-0">
+                <FaForumbee className="me-2" />
+                Create Forum for Course {courseId}
+              </h4>
             </Card.Header>
             <Card.Body className="bg-light">
               {message && (
@@ -90,11 +95,12 @@ const CreateForum = () => {
 
                 <div className="text-end">
                   <Button
-                    variant="success"
+                    variant="primary"
                     type="submit"
                     className="px-4 shadow"
                   >
-                    ➕ Create Forum
+                    <FaPlusCircle className="me-2 text-white" />
+                    Create Forum
                   </Button>
                 </div>
               </Form>

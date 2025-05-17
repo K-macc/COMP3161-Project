@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Card, Row, Col, Button, Alert } from "react-bootstrap";
+import { FaLongArrowAltLeft, FaInfoCircle } from "react-icons/fa";
 import useAuthFetch from "@/context/AuthFetch";
 
 const ForumThreads = () => {
@@ -31,13 +32,18 @@ const ForumThreads = () => {
   return (
     <>
       <div className="container mt-4">
-        <Button variant="primary" className="mb-3" onClick={() => navigate(-1)}>
-          ⬅️ Back
+        <Button
+          variant="primary"
+          className="mb-3 d-flex align-items-center"
+          onClick={() => navigate(-1)}
+        >
+          <FaLongArrowAltLeft className="me-2" />
+          Back
         </Button>
       </div>
       <div className="container mt-4">
         <div className="d-flex justify-content-between align-items-center">
-          <h3 className="mb-4">Forum Threads</h3>
+          <h2 className="mb-4">Forum Threads</h2>
           {error && <Alert variant="danger">{error}</Alert>}
 
           {role != "student" && (
@@ -76,7 +82,7 @@ const ForumThreads = () => {
         </Row>
 
         {threads.length === 0 && !error && (
-          <Alert variant="info">ℹ️ No threads available.</Alert>
+          <Alert variant="info"><FaInfoCircle/> No threads available.</Alert>
         )}
       </div>
     </>

@@ -1,10 +1,12 @@
-/* #root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+#root {
+  font-family: Inter;
+  font-size: 14px;
 }
-*/
+
+h2 {
+  font-weight: bold;
+}
+
 .logo {
   height: 6em;
   padding: 1.5em;
@@ -46,9 +48,14 @@
 
 .btn-set {
   display: flex;
+  align-items: center;
+  justify-content: center;
   width: 40%;
-  justify-self: center;
+  padding: 4px 10px;
+  margin: 0 auto; 
+  gap: 6px;
 }
+
 
 .card-info {
   transition: transform 0.3s ease, box-shadow 0.3s ease;

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Card, Row, Col, Button, Alert } from "react-bootstrap";
+import { FaInfoCircle, FaClipboardList } from "react-icons/fa";
 import useAuthFetch from "@/context/AuthFetch";
 
 const MyCourses = () => {
@@ -52,7 +53,7 @@ const MyCourses = () => {
 
   return (
     <div className="container mt-4">
-      <h3>My Courses</h3>
+      <h2>My Courses</h2>
 
       {error && <Alert variant="warning">{error}</Alert>}
 
@@ -74,9 +75,10 @@ const MyCourses = () => {
                   <Button
                     variant="outline-primary"
                     href={`/courses/${course.CourseID}`}
-                    className="mt-auto w-100 fw-semibold rounded-pill"
+                    className="w-100 mt-4 fw-semibold rounded-pill d-flex justify-content-center align-items-center gap-2"
                   >
-                    View Details
+                    <FaClipboardList />
+                    View Course
                   </Button>
                 </Card.Body>
               </Card>
@@ -86,7 +88,7 @@ const MyCourses = () => {
       ) : (
         !error && (
           <Alert variant="info">
-            ℹ️ You are not assigned to any courses yet.
+            <FaInfoCircle /> You are not assigned to any courses yet.
           </Alert>
         )
       )}

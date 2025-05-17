@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Card, ListGroup, Form, Button } from 'react-bootstrap';
+import { FaBullhorn, FaSearch, FaThumbtack, FaInfoCircle } from 'react-icons/fa';
 import useAuthFetch from '@/context/AuthFetch';
 
 const StudentEvents = () => {
@@ -33,17 +34,11 @@ const StudentEvents = () => {
   };
 
   return (
-    <>
     <div className="container mt-4">
-        <Button variant="primary" className="mb-3" onClick={() => navigate(-1)}>
-          ⬅️ Back
-        </Button>
-      </div>
-    <div className="container mt-4">
-      <Card className="shadow-sm border-0">
-        <Card.Header className="bg-primary text-white d-flex justify-content-between align-items-center">
+      <Card className="shadow-lg border-0 mt-5 mx-auto" style={{ width: "100%", maxWidth: "600px" }}>
+        <Card.Header className="bg-success text-white d-flex justify-content-between align-items-center">
           <h5 className="mb-0">
-            🎓 Student Events
+            <FaBullhorn/> Student Events
           </h5>
         </Card.Header>
         <Card.Body className="bg-light">
@@ -58,8 +53,8 @@ const StudentEvents = () => {
                   onChange={(e) => setDate(e.target.value)}
                   required
                 />
-                <Button variant="success" type="submit">
-                  🔍 Fetch
+                <Button variant="primary" type="submit">
+                  <FaSearch/> Fetch
                 </Button>
               </div>
             </Form.Group>
@@ -73,7 +68,7 @@ const StudentEvents = () => {
             <ListGroup variant="flush">
               {events.map((event) => (
                 <ListGroup.Item key={event.CalendarID} className="bg-white rounded shadow-sm mb-3 p-3">
-                  <h5 className="mb-2">📌 {event.title}</h5>
+                  <h5 className="mb-2"><FaThumbtack className="me-2" /> {event.title}</h5>
                   <p className="mb-1 text-muted">
                     <i className="bi bi-calendar-event"></i>{' '}
                     <strong>Date:</strong> {new Date(event.event_date).toLocaleString()}
@@ -88,12 +83,11 @@ const StudentEvents = () => {
           )}
 
           {submitted && events.length === 0 && !error && (
-            <Alert variant="info" className="text-muted">ℹ️ No events found for the selected date.</Alert>
+            <Alert variant="info" className="text-muted"><FaInfoCircle/> No events found for the selected date.</Alert>
           )}
         </Card.Body>
       </Card>
     </div>
-    </>
   );
 };
 

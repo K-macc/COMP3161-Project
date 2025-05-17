@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { Card, Table, Spinner, Button, Alert } from "react-bootstrap";
+import { FaLongArrowAltLeft, FaInfoCircle, FaFileUpload } from "react-icons/fa";
 import useAuthFetch from "@/context/AuthFetch";
 
 const AssignmentSubmissions = () => {
@@ -41,14 +42,19 @@ const AssignmentSubmissions = () => {
   return (
     <>
       <div className="container mt-4">
-        <Button variant="primary" className="mb-3" onClick={() => navigate(-1)}>
-          ⬅️ Back
+        <Button
+          variant="primary"
+          className="mb-3 d-flex align-items-center"
+          onClick={() => navigate(-1)}
+        >
+          <FaLongArrowAltLeft className="me-2" />
+          Back
         </Button>
       </div>
       <div className="container mt-4">
         <Card className="shadow-sm">
           <Card.Header className="bg-primary text-white">
-            <h4 className="mb-0">📄 Assignment Submissions</h4>
+            <h4 className="mb-0"><FaFileUpload/> Assignment Submissions</h4>
           </Card.Header>
           <Card.Body className="bg-light">
             {loading ? (
@@ -59,7 +65,7 @@ const AssignmentSubmissions = () => {
               <p className="text-danger text-center">Error: {error}</p>
             ) : submissions.length === 0 ? (
               <Alert variant="info" className="text-center">
-                ℹ️ No submissions found.
+                <FaInfoCircle/> No submissions found.
               </Alert>
             ) : (
               <Table bordered hover responsive>

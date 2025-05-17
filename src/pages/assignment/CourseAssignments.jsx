@@ -8,6 +8,7 @@ import {
   Container,
   Alert,
 } from "react-bootstrap";
+import { FaClipboardList, FaLongArrowAltLeft, FaInfoCircle } from "react-icons/fa";
 import useAuthFetch from "@/context/AuthFetch";
 
 const CourseAssignments = () => {
@@ -50,14 +51,21 @@ const CourseAssignments = () => {
   return (
     <>
       <div className="container mt-4">
-        <Button variant="primary" className="mb-3" onClick={() => navigate(-1)}>
-          ⬅️ Back
+        <Button
+          variant="primary"
+          className="mb-3 d-flex align-items-center"
+          onClick={() => navigate(-1)}
+        >
+          <FaLongArrowAltLeft className="me-2" />
+          Back
         </Button>
       </div>
       <Container className="mt-4">
         <Card className="shadow-sm border-0">
           <Card.Header className="bg-primary text-white d-flex justify-content-between align-items-center">
-            <h4 className="mb-0">📚 Assignments for {courseId}</h4>
+            <h4 className="mb-0">
+              <FaClipboardList /> Assignments for {courseId}
+            </h4>
           </Card.Header>
           <Card.Body className="bg-light">
             {loading ? (
@@ -67,7 +75,7 @@ const CourseAssignments = () => {
               </div>
             ) : error && assignments.length === 0 ? (
               <Alert variant="info" className="text-center">
-                ℹ️ No assignments available for this course.
+                <FaInfoCircle/> No assignments available for this course.
               </Alert>
             ) : (
               <ListGroup variant="flush">

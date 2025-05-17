@@ -3,6 +3,7 @@ import { Form, Button, Card, Alert } from "react-bootstrap";
 import { useParams } from "react-router-dom";
 import useAuthFetch from "@/context/AuthFetch";
 import { useNavigate } from "react-router-dom";
+import { FaPen, FaCheckCircle, FaLongArrowAltLeft } from "react-icons/fa";
 
 function GradeAssignment() {
   const [grade, setGrade] = useState("");
@@ -49,17 +50,20 @@ function GradeAssignment() {
       <div className="container mt-4">
         <Button
           variant="primary"
-          className="mb-3"
+          className="mb-3 d-flex align-items-center"
           onClick={() =>
             navigate(`/courses/${localStorage.getItem("CourseID")}`)
           }
         >
-          ⬅️ Back
+          <FaLongArrowAltLeft className="me-2" />
+          Back
         </Button>
       </div>
       <Card className="shadow-sm border-0">
-        <Card.Header className="bg-info text-white">
-          <h4 className="mb-0">📊 Grade Assignment</h4>
+        <Card.Header className="bg-success text-white">
+          <h4 className="mb-0">
+            <FaPen /> Grade Assignment
+          </h4>
         </Card.Header>
         <Card.Body className="bg-light">
           <p>
@@ -96,7 +100,7 @@ function GradeAssignment() {
 
             <div className="text-end">
               <Button type="submit" variant="primary">
-                ✅ Submit Grade
+                <FaCheckCircle /> Submit Grade
               </Button>
             </div>
           </Form>

@@ -2,6 +2,7 @@ import React, { useState, useRef } from "react";
 import { Form, Button, Card, Alert } from "react-bootstrap";
 import { useParams } from "react-router-dom";
 import useAuthFetch from "@/context/AuthFetch";
+import { FaUpload, FaPaperPlane, FaLongArrowAltLeft } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
 function SubmitAssignment() {
@@ -71,17 +72,20 @@ function SubmitAssignment() {
       <div className="container mt-4">
         <Button
           variant="primary"
-          className="mb-3"
+          className="mb-3 d-flex align-items-center"
           onClick={() =>
             navigate(`/courses/${localStorage.getItem("CourseID")}`)
           }
         >
-          ⬅️ Back
+          <FaLongArrowAltLeft className="me-2" />
+          Back
         </Button>
       </div>
-      <Card className="shadow-sm border-0">
-        <Card.Header className="bg-primary text-white">
-          <h4 className="mb-0">📤 Submit Assignment</h4>
+      <Card className="shadow-lg border-0 mx-auto" style={{ width: "100%", maxWidth: "600px" }}>
+        <Card.Header className="bg-success text-white">
+          <h4 className="mb-0">
+            <FaUpload /> Submit Assignment
+          </h4>
         </Card.Header>
         <Card.Body className="bg-light">
           {message && (
@@ -137,8 +141,8 @@ function SubmitAssignment() {
             )}
 
             <div className="text-end">
-              <Button type="submit" variant="success">
-                ✅ Submit Assignment
+              <Button type="submit" variant="primary">
+                <FaPaperPlane /> Submit Assignment
               </Button>
             </div>
           </Form>
