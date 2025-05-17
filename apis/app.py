@@ -20,10 +20,8 @@ def get_db_connection():
         database = "ourvle"
     )
 
-
-# USER
-@app.route('/api/register', methods=['POST'])
-def register():
+@app.route('/')
+def index():
     conn = get_db_connection()
     cursor = conn.cursor()
 
@@ -32,6 +30,10 @@ def register():
 
         if data['name'] == "" or data['username'] == "" or data['password'] == "" or data['role'] == "":
             return jsonify({'message': 'Missing required fields!'}), 400
+        data = request.get_json()
+
+        if not data or 'name' not in data or 'username' not in data or 'password' not in data or 'role' not in data:
+            return jsonify({'message': 'Missing required fields'}), 400
 
         name = data['name']
         username = data['username']
@@ -58,9 +60,7 @@ def register():
 
         existing_user = get_user_by_userid(user_id)
         if existing_user:
-            return jsonify({'message': 'User already exists!'}), 400
-
-        create_user(user_id, username, password, role)
+            create_user(user_id, username, password, role)
 
         if role == "student":
             cursor.execute("SELECT MAX(StudentID) FROM Student")
