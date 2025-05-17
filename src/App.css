@@ -8,10 +8,10 @@
 body, .user-container {
   background-image: url('/background.avif');
   background-repeat: no-repeat;
-  background-size: cover;       /* Make the image cover the whole viewport */
-  background-position: center;  /* Center the image */
-  background-attachment: fixed; /* Optional: makes background fixed on scroll */
-  margin: 0;                    /* Optional: remove default margin */
+  background-size: cover;      
+  background-position: center; 
+  background-attachment: fixed; 
+  margin: 0;                    
   min-height: 100vh;   
 }
 
@@ -99,7 +99,7 @@ h2 {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 150px; /* or 100vh if you want full-screen */
+  height: 150px; 
 }
 
 .spinner {
