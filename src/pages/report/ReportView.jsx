@@ -1,8 +1,6 @@
 import React, { useState } from "react";
 import useAuthFetch from "@/context/AuthFetch";
 
-
-
 const reportOptions = [
   {
     label: "Courses with 50+ Students",
@@ -92,7 +90,10 @@ const ReportView = () => {
 
       {loading && (
         <div className="text-center">
-          <div className="spinner-border text-primary mb-2 spinner" role="status">
+          <div
+            className="spinner-border text-primary mb-2 spinner"
+            role="status"
+          >
             <span className="visually-hidden"></span>
           </div>
           <p>Loading report...</p>

@@ -2,12 +2,14 @@ import React, { useState } from "react";
 import { Card, Form, Button, Alert } from "react-bootstrap";
 import { FaBook, FaPlusCircle } from "react-icons/fa";
 import useAuthFetch from "@/context/AuthFetch";
+import { useNavigate } from "react-router-dom";
 
 const CreateCourse = () => {
   const [course, setCourse] = useState({ CourseID: "", CourseName: "" });
   const [message, setMessage] = useState("");
   const [messageType, setMessageType] = useState("");
   const authFetch = useAuthFetch();
+  const navigate = useNavigate();
 
   const handleCreate = async (e) => {
     e.preventDefault();
@@ -17,14 +19,17 @@ const CreateCourse = () => {
       const response = await authFetch("/api/create_course", {
         method: "POST",
         body: JSON.stringify(course),
-        headers: { "Content-Type": "application/json" }
+        headers: { "Content-Type": "application/json" },
       });
       const data = await response.json();
-      if (response.status !== 201){
+      if (response.status !== 201) {
         setMessageType("danger");
       } else {
         setMessageType("success");
         setCourse({ CourseID: "", CourseName: "" });
+        setTimeout(() => {
+          navigate("/courses-list");
+        }, 5000);
       }
       setMessage(data.message);
     } catch (err) {
@@ -41,7 +46,7 @@ const CreateCourse = () => {
       >
         {message && (
           <Alert
-            variant={messageType === "success" ? "success" : "error"}
+            variant={messageType === "success" ? "success" : "danger"}
             className="fade-alert position-absolute top-0 end-0 m-3"
           >
             {message}
@@ -78,7 +83,7 @@ const CreateCourse = () => {
             />
           </Form.Group>
 
-          <Button type="submit" variant="primary" className="w-100">
+          <Button type="submit" variant="primary" className="btn-set">
             <FaBook className="me-2" />
             Create Course
           </Button>

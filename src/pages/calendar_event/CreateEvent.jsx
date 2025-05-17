@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import { Button, Form, Card, Alert } from "react-bootstrap";
 import useAuthFetch from "@/context/AuthFetch";
+import { useNavigate } from "react-router-dom";
 
 const CreateEvent = () => {
   const { courseId } = useParams();
@@ -11,6 +12,7 @@ const CreateEvent = () => {
   const [message, setMessage] = useState("");
   const [messageType, setMessageType] = useState("");
   const authFetch = useAuthFetch();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -34,6 +36,9 @@ const CreateEvent = () => {
         setTitle("");
         setDescription("");
         setEventDate("");
+        setTimeout(() => {
+          navigate(`/get-events/${courseId}`);
+        }, 5000);
       }
       setMessage(data.message);
     } catch (err) {
@@ -44,6 +49,15 @@ const CreateEvent = () => {
 
   return (
     <div className="container mt-4">
+      <div className="container mt-4">
+        <Button
+          variant="primary"
+          className="mb-3"
+          onClick={() => navigate(`/courses/${courseId}`)}
+        >
+          ⬅️ Back
+        </Button>
+      </div>
       <Card className="shadow-sm border-0">
         <Card.Header className="bg-success text-white">
           <h4 className="mb-0">📅 Create A New Calendar Event</h4>

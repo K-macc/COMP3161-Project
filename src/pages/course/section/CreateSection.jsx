@@ -2,6 +2,7 @@ import React, { useState, useRef } from "react";
 import { Form, Button, Card, Alert } from "react-bootstrap";
 import { useParams } from "react-router-dom";
 import useAuthFetch from "@/context/AuthFetch";
+import { useNavigate } from "react-router-dom";
 
 function CreateSectionContent() {
   const [slides, setSlides] = useState(null);
@@ -11,7 +12,7 @@ function CreateSectionContent() {
   const [messageType, setMessageType] = useState("");
   const { courseId } = useParams();
   const authFetch = useAuthFetch();
-
+  const navigate = useNavigate();
   const slidesInputRef = useRef();
   const fileInputRef = useRef();
 
@@ -28,7 +29,7 @@ function CreateSectionContent() {
     try {
       const response = await authFetch(`/api/section/${courseId}/content`, {
         body: formData,
-        method: "POST"
+        method: "POST",
       });
       const data = await response.json();
       if (response.status !== 201) {
@@ -38,8 +39,15 @@ function CreateSectionContent() {
         setSlides(null);
         setFile(null);
         setLink("");
-        slidesInputRef.current.value = "";
-        fileInputRef.current.value = "";
+        if (slidesInputRef.current) {
+          slidesInputRef.current.value = "";
+        }
+        if (fileInputRef.current) {
+          fileInputRef.current.value = "";
+        }
+        setTimeout(() => {
+          navigate(`/courses/${courseId}`);
+        }, 5000);
       }
       setMessage(data.message);
     } catch (err) {
@@ -50,6 +58,15 @@ function CreateSectionContent() {
 
   return (
     <div className="container mt-4">
+      <div className="container mt-4">
+        <Button
+          variant="primary"
+          className="mb-3"
+          onClick={() => navigate(`/courses/${courseId}`)}
+        >
+          ⬅️ Back
+        </Button>
+      </div>
       <Card className="shadow-sm border-0">
         <Card.Header className="bg-primary text-white">
           <h4 className="mb-0">📚 Create New Section</h4>

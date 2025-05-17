@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
-import { Card, Table, Alert, Spinner, Button } from "react-bootstrap";
-import useAuthFetch from "@/context/AuthFetch"; 
+import { Card, Table, Spinner, Button, Alert } from "react-bootstrap";
+import useAuthFetch from "@/context/AuthFetch";
 
 const AssignmentSubmissions = () => {
   const { assignmentId } = useParams();
@@ -22,11 +22,14 @@ const AssignmentSubmissions = () => {
             },
           }
         );
+        if (!response.ok) {
+          throw new Error("Failed to fetch submissions.");
+        }
         const data = await response.json();
         setSubmissions(data || []);
         setError("");
       } catch (err) {
-        setError(err.data?.message || "Failed to fetch submissions.");
+        setError(err.message || "Failed to fetch submissions.");
       } finally {
         setLoading(false);
       }
@@ -53,9 +56,11 @@ const AssignmentSubmissions = () => {
                 <Spinner animation="border" />
               </div>
             ) : error ? (
-              <Alert variant="danger">{error}</Alert>
+              <p className="text-danger text-center">Error: {error}</p>
             ) : submissions.length === 0 ? (
-              <Alert variant="info">No submissions found.</Alert>
+              <Alert variant="info" className="text-center">
+                ℹ️ No submissions found.
+              </Alert>
             ) : (
               <Table bordered hover responsive>
                 <thead>

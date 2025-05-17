@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Form, Button, Card, Alert } from "react-bootstrap";
 import { useParams } from "react-router-dom";
 import useAuthFetch from "@/context/AuthFetch";
+import { useNavigate } from "react-router-dom";
 
 function GradeAssignment() {
   const [grade, setGrade] = useState("");
@@ -10,6 +11,7 @@ function GradeAssignment() {
   const { assignmentId } = useParams();
   const { studentId } = useParams();
   const authFetch = useAuthFetch();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -31,6 +33,9 @@ function GradeAssignment() {
       } else {
         setMessageType("success");
         setGrade("");
+        setTimeout(() => {
+          navigate(`/assignment-submissions/${assignmentId}`);
+        }, 5000);
       }
       setMessage(data.message);
     } catch (err) {
@@ -41,6 +46,17 @@ function GradeAssignment() {
 
   return (
     <div className="container mt-4">
+      <div className="container mt-4">
+        <Button
+          variant="primary"
+          className="mb-3"
+          onClick={() =>
+            navigate(`/courses/${localStorage.getItem("CourseID")}`)
+          }
+        >
+          ⬅️ Back
+        </Button>
+      </div>
       <Card className="shadow-sm border-0">
         <Card.Header className="bg-info text-white">
           <h4 className="mb-0">📊 Grade Assignment</h4>

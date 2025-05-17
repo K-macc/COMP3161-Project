@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import axios from "axios";
 import { useNavigate, useLocation } from "react-router-dom";
 import { AuthContext } from "@/context/AuthContext";
@@ -15,6 +15,22 @@ const Login = () => {
   const location = useLocation();
   const params = new URLSearchParams(location.search);
   const redirect = params.get("redirect");
+
+  useEffect(() => {
+    const loginSuccess = localStorage.getItem("loginSuccess");
+    if (!loginSuccess) {
+      setUserID("USER-");
+    }
+  }, []);
+
+  const handleUserIDChange = (e) => {
+    const input = e.target.value;
+    if (input.startsWith("USER-")) {
+      setUserID(input);
+    } else {
+      setUserID("USER-");
+    }
+  };
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -37,14 +53,16 @@ const Login = () => {
         setMessageType("danger");
       } else {
         setMessageType("success");
-        setUserID("");
+        setUserID(""); 
         setPassword("");
 
         localStorage.setItem("token", data.access_token);
+        localStorage.setItem("loginSuccess", "true"); 
         syncAuth();
+
         setTimeout(() => {
           navigate(redirect || "/dashboard");
-        }, 5000)
+        }, 5000);
       }
       setMessage(data.message);
     } catch (err) {
@@ -88,7 +106,7 @@ const Login = () => {
                 type="text"
                 placeholder="UserID"
                 value={user_id}
-                onChange={(e) => setUserID(e.target.value)}
+                onChange={handleUserIDChange}
                 autoComplete="off"
               />
             </Form.Group>

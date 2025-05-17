@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import { Container, Card, Alert, Spinner } from 'react-bootstrap';
+import React, { useEffect, useState } from "react";
+import { Container, Card, Alert, Spinner } from "react-bootstrap";
 import useAuthFetch from "@/context/AuthFetch";
 
 function FinalAverage() {
   const [finalAverage, setFinalAverage] = useState(null);
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(true);
   const studentId = localStorage.getItem("ID");
   const authFetch = useAuthFetch();
@@ -14,13 +14,13 @@ function FinalAverage() {
       try {
         const response = await authFetch(`/api/${studentId}/final_average`, {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
         });
         const data = await response.json();
         setFinalAverage(data.final_average);
       } catch (error) {
-        setMessage(error.data?.message || 'An error occurred');
+        setMessage(error.data?.message || "An error occurred");
       } finally {
         setLoading(false);
       }
@@ -31,9 +31,11 @@ function FinalAverage() {
 
   return (
     <Container className="mt-5 d-flex justify-content-center">
-      <Card className="shadow p-4" style={{ maxWidth: '500px', width: '100%' }}>
+      <Card className="shadow p-4" style={{ maxWidth: "500px", width: "100%" }}>
         <Card.Body className="text-center">
-          <Card.Title className="mb-4 text-primary">📊 Final Average</Card.Title>
+          <Card.Title className="mb-4 text-primary">
+            📊 Final Average
+          </Card.Title>
 
           <h5 className="mb-3 text-muted">Student ID: {studentId}</h5>
 
@@ -43,7 +45,8 @@ function FinalAverage() {
             <Alert variant="danger">{message}</Alert>
           ) : finalAverage !== null ? (
             <Alert variant="success">
-              Your final average for all courses is: <strong>{finalAverage}%</strong>
+              Your final average for all courses is:{" "}
+              <strong>{finalAverage}%</strong>
             </Alert>
           ) : (
             <Alert variant="info">No grades found for this student.</Alert>

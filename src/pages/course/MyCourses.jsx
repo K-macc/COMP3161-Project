@@ -9,22 +9,44 @@ const MyCourses = () => {
   const role = localStorage.getItem("role");
   const userID = localStorage.getItem("ID");
 
-  useEffect(() => {
-    const fetchMyCourses = async () => {
-      try {
-        const endpoint =
-          role === "student"
-            ? `/api/student_courses/${userID}`
-            : `/api/lecturer_courses/${userID}`;
+  const fetchMyCourses = async () => {
+    try {
+      const endpoint =
+        role === "student"
+          ? `/api/student_courses/${userID}`
+          : `/api/lecturer_courses/${userID}`;
 
-        const response = await authFetch(endpoint);
-        const data = await response.json();
-        setCourses(data.courses.Courses);
-      } catch (err) {
-        setError(err.data?.message || "Error fetching your courses");
+      const response = await authFetch(endpoint);
+
+      const data = await response.json();
+
+      if (response.ok) {
+        if (data.courses && data.courses.Courses) {
+          setCourses(data.courses.Courses);
+        } else {
+          setCourses([]);
+        }
+        setError("");
+      } else {
+        if (
+          response.status === 404 &&
+          data.message &&
+          data.message.toLowerCase().includes("no courses found")
+        ) {
+          setCourses([]);
+          setError("");
+        } else {
+          setCourses([]);
+          setError(data.message || "Error fetching your courses");
+        }
       }
-    };
+    } catch (err) {
+      setCourses([]);
+      setError(err.message || "Error fetching your courses");
+    }
+  };
 
+  useEffect(() => {
     fetchMyCourses();
   }, []);
 
@@ -34,7 +56,7 @@ const MyCourses = () => {
 
       {error && <Alert variant="warning">{error}</Alert>}
 
-      {!error && courses.length > 0 && (
+      {courses && courses.length > 0 ? (
         <Row xs={1} sm={2} md={3} lg={4} className="g-4">
           {courses.map((course) => (
             <Col key={course.CourseID}>
@@ -61,10 +83,12 @@ const MyCourses = () => {
             </Col>
           ))}
         </Row>
-      )}
-
-      {!error && courses.length === 0 && (
-        <Alert variant="info">You are not enrolled in any courses yet.</Alert>
+      ) : (
+        !error && (
+          <Alert variant="info">
+            ℹ️ You are not assigned to any courses yet.
+          </Alert>
+        )
       )}
     </div>
   );

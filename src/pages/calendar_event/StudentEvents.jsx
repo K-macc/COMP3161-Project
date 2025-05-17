@@ -33,6 +33,12 @@ const StudentEvents = () => {
   };
 
   return (
+    <>
+    <div className="container mt-4">
+        <Button variant="primary" className="mb-3" onClick={() => navigate(-1)}>
+          ⬅️ Back
+        </Button>
+      </div>
     <div className="container mt-4">
       <Card className="shadow-sm border-0">
         <Card.Header className="bg-primary text-white d-flex justify-content-between align-items-center">
@@ -82,11 +88,12 @@ const StudentEvents = () => {
           )}
 
           {submitted && events.length === 0 && !error && (
-            <p className="text-muted">No events found for the selected date.</p>
+            <Alert variant="info" className="text-muted">ℹ️ No events found for the selected date.</Alert>
           )}
         </Card.Body>
       </Card>
     </div>
+    </>
   );
 };
 

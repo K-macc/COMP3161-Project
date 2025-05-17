@@ -4,9 +4,9 @@ import {
   Card,
   ListGroup,
   Button,
-  Alert,
   Spinner,
   Container,
+  Alert,
 } from "react-bootstrap";
 import useAuthFetch from "@/context/AuthFetch";
 
@@ -21,6 +21,8 @@ const CourseAssignments = () => {
 
   useEffect(() => {
     const fetchAssignments = async () => {
+      setLoading(true);
+      setError("");
       try {
         const response = await authFetch(
           `/api/courses/${courseId}/assignments`,
@@ -30,10 +32,13 @@ const CourseAssignments = () => {
             },
           }
         );
+        if (!response.ok) {
+          throw new Error("Failed to fetch assignments");
+        }
         const data = await response.json();
         setAssignments(data);
       } catch (err) {
-        setError(err.data?.message || "Error fetching assignments");
+        setError(err.message || "Error fetching assignments");
       } finally {
         setLoading(false);
       }
@@ -60,11 +65,9 @@ const CourseAssignments = () => {
                 <Spinner animation="border" variant="primary" />
                 <p className="mt-2">Loading assignments...</p>
               </div>
-            ) : error ? (
-              <Alert variant="danger">{error}</Alert>
-            ) : assignments.length === 0 ? (
-              <Alert variant="info">
-                No assignments available for this course.
+            ) : error && assignments.length === 0 ? (
+              <Alert variant="info" className="text-center">
+                ℹ️ No assignments available for this course.
               </Alert>
             ) : (
               <ListGroup variant="flush">
@@ -105,22 +108,19 @@ const CourseAssignments = () => {
                       </p>
                     )}
                     <div className="mt-3 text-start">
-                      {role != "student" && (
+                      {role !== "student" ? (
                         <Button
                           variant="primary"
                           href={`/assignment-submissions/${assignment.AssignmentID}`}
                         >
-                          {" "}
-                          Submissions{" "}
+                          Submissions
                         </Button>
-                      )}
-                      {role == "student" && (
+                      ) : (
                         <Button
                           variant="primary"
                           href={`/submit-assignment/${assignment.AssignmentID}`}
                         >
-                          {" "}
-                          Submit Assignment{" "}
+                          Submit Assignment
                         </Button>
                       )}
                     </div>

@@ -2,6 +2,7 @@ import React, { useState, useRef } from "react";
 import { Form, Button, Card, Alert } from "react-bootstrap";
 import { useParams } from "react-router-dom";
 import useAuthFetch from "@/context/AuthFetch";
+import { useNavigate } from "react-router-dom";
 
 function CreateAssignment() {
   const [assignmentName, setAssignmentName] = useState("");
@@ -13,6 +14,7 @@ function CreateAssignment() {
   const { courseId } = useParams();
   const fileInputRef = useRef();
   const authFetch = useAuthFetch();
+  const navigate = useNavigate();
 
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
@@ -43,7 +45,12 @@ function CreateAssignment() {
         setDueDate("");
         setFile(null);
         setLink("");
-        fileInputRef.current.value = "";
+        if (fileInputRef.current) {
+          fileInputRef.current.value = "";
+        }
+        setTimeout(() => {
+          navigate(`/get-assignments/${courseId}`);
+        }, 5000);
       }
 
       setMessage(data.message);
@@ -55,6 +62,15 @@ function CreateAssignment() {
 
   return (
     <div className="container mt-4">
+      <div className="container mt-4">
+        <Button
+          variant="primary"
+          className="mb-3"
+          onClick={() => navigate(`/courses/${courseId}`)}
+        >
+          ⬅️ Back
+        </Button>
+      </div>
       <Card className="shadow-sm border-0">
         <Card.Header className="bg-primary text-white">
           <h4 className="mb-0">📘 Create New Assignment</h4>
@@ -102,7 +118,7 @@ function CreateAssignment() {
               <Form.Control
                 type="file"
                 onChange={handleFileChange}
-                ref={fileInputRef} 
+                ref={fileInputRef}
               />
             </Form.Group>
 

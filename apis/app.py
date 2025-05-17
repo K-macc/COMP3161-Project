@@ -95,7 +95,7 @@ def register():
             )
             conn.commit()
 
-        return jsonify({'message': 'User registered successfully!'}), 201
+        return jsonify({'message': f'Registration successful! \nYour userID is {user_id}'}), 201
 
     except Exception as e:
         conn.rollback()
@@ -141,7 +141,7 @@ def login():
             
             
         return jsonify({
-            'message': 'Login successful!',
+            'message': f'Login successful!',
             'access_token': access_token
         }), 200
 
@@ -151,6 +151,8 @@ def login():
     finally:
         cursor.close()
         conn.close()
+
+
 
 # COURSES
 @app.route('/api/create_course', methods=['POST'])
@@ -183,6 +185,78 @@ def create_course():
     except Exception as e:
         conn.rollback()
         return jsonify({'message': f'Error creating course: {str(e)}'}), 500
+
+    finally:
+        cursor.close()
+        conn.close()
+
+@app.route('/api/lecturers', methods=['GET'])
+@jwt_required()
+def get_all_lecturers():
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+
+    try:
+        cursor.execute("SELECT * FROM lecturer")
+        lecturers = cursor.fetchall()
+
+        return jsonify(lecturers), 200
+
+    except Exception as e:
+        return jsonify({'message': f'Error fetching lecturers: {str(e)}'}), 500
+
+    finally:
+        cursor.close()
+        conn.close()
+
+@app.route('/api/courses/<string:course_id>/assign-lecturer', methods=['POST'])
+@jwt_required()
+def assign_lecturer(course_id):
+    current_user_role = get_jwt().get('role')
+    if current_user_role != 'admin':
+        return jsonify({'message': 'Admin access required!'}), 403
+
+    data = request.get_json()
+    if data['LecturerID'] == "":
+        return jsonify({'message': 'Select a Lecturer!'}), 400
+
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+
+    try:
+        cursor.execute("SELECT * FROM course WHERE CourseID = %s", (course_id,))
+        course = cursor.fetchone()
+        if not course:
+            return jsonify({'message': 'Course not found!'}), 404
+        
+        cursor.execute("SELECT * FROM lecturer WHERE LecturerID = %s", (data['LecturerID'],))
+        lecturer = cursor.fetchone()
+        if not lecturer:
+            return jsonify({'message': 'Lecturer not found!'}), 404
+        
+        cursor.execute("SELECT * FROM teaches WHERE LecturerID = %s AND CourseID = %s", (data['LecturerID'], course_id))
+        teaches = cursor.fetchone()
+        if teaches:
+            return jsonify({'message': 'This Lecturer already assigned to the course!'}), 400
+        
+        cursor.execute("SELECT * FROM teaches WHERE CourseID = %s", (course_id,))
+        course_fetch = cursor.fetchone()
+        if course_fetch:
+            return jsonify({'message': 'Another Lecturer already assigned to this course!'}), 400
+        
+        cursor.execute("SELECT LecturerID, COUNT(CourseID) FROM teaches WHERE LecturerID = %s GROUP BY LecturerID",(data['LecturerID'],))
+        courses_count = cursor.fetchone()
+        if courses_count and courses_count['COUNT(CourseID)'] == 5:
+            return jsonify({'message': 'Lecturer already assigned to 5 courses!'}), 400
+      
+        cursor.execute("INSERT INTO teaches (LecturerID,CourseID) VALUES (%s,%s)",(data['LecturerID'], course_id))
+        conn.commit()
+
+        return jsonify({'message': f"{lecturer['LecturerName']} assigned to {course_id}!"}), 201
+
+    except Exception as e:
+        conn.rollback()
+        return jsonify({'message': f'Error assigning lecturer to course: {str(e)}'}), 500
 
     finally:
         cursor.close()
@@ -381,6 +455,8 @@ def get_lecturer_courses(lecturer_id):
     finally:
         cursor.close()
         conn.close()
+
+
 
 
 # FORUMS
@@ -584,6 +660,8 @@ def get_thread_replies(thread_id):
         conn.close()
 
 
+
+
 # CALENDAR EVENT
 @app.route('/api/courses/<string:course_id>/events', methods=['POST'])
 @jwt_required()
@@ -740,6 +818,8 @@ def get_student_events(student_id):
         conn.close()
 
 
+
+
 # COURSE SECTIONS
 @app.route('/api/section/<string:course_id>/content', methods=['POST'])
 @jwt_required()
@@ -761,16 +841,18 @@ def create_section_content(course_id):
             os.makedirs(upload_folder)
 
         if not slide:
-            return jsonify({'message': 'Upload a slide'}), 400        
-        slidename = secure_filename(slide.filename)
+            return jsonify({'message': 'Upload a slide!'}), 400        
+        slidename = f"{course_id}_{secure_filename(slide.filename)}"
         filepath = os.path.join(upload_folder, slidename)
         slide.save(filepath)
+        submission_slide = filepath
         
         if not file:
-            return jsonify({'message': 'Upload a file'}), 400
-        filename = secure_filename(file.filename)
+            return jsonify({'message': 'Upload a file!'}), 400
+        filename = f"{course_id}_{secure_filename(file.filename)}"
         filepath = os.path.join(upload_folder, filename)
         file.save(filepath)
+        submission_file = filepath
         
         if not link:
             return jsonify({'message': 'Upload a link!'}),400
@@ -782,10 +864,10 @@ def create_section_content(course_id):
             INSERT INTO Section (SectionID, CourseID, LectureSlides, Files, Links) 
             VALUES (%s, %s, %s, %s, %s)
         """
-        cursor.execute(query, (new_id, course_id, slidename, filename, link))
+        cursor.execute(query, (new_id, course_id, submission_slide, submission_file, link))
         conn.commit()
 
-        return jsonify({'message': 'Section created successfully!'}), 200
+        return jsonify({'message': 'Section created successfully!'}), 201
 
     except Exception as e:
         conn.rollback()
@@ -821,6 +903,9 @@ def get_section_content(course_id):
     finally:
         cursor.close()
         conn.close()
+
+
+
 
 # ASSIGNMENTS
 @app.route('/api/<string:course_id>/create_assignment', methods=['POST'])
@@ -1161,7 +1246,10 @@ def get_final_average(student_id):
     finally:
         cursor.close()
         conn.close()
-        
+
+
+
+#REPORTS     
 @app.route('/api/reports/<string:report_name>', methods=['GET'])
 @jwt_required()
 def get_view_report(report_name):

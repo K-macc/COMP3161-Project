@@ -4,7 +4,7 @@
   padding: 2rem;
   text-align: center;
 }
-
+*/
 .logo {
   height: 6em;
   padding: 1.5em;
@@ -33,13 +33,10 @@
   }
 }
 
-.card {
-  padding: 2em;
+.bg-primary-dark {
+  background-color: #003366; 
 }
 
-.read-the-docs {
-  color: #888;
-} */
 
 .thread-tile:hover {
   background-color: #f8f9fa;
@@ -47,7 +44,11 @@
   transition: all 0.2s ease-in-out;
 }
 
-
+.btn-set {
+  display: flex;
+  width: 40%;
+  justify-self: center;
+}
 
 .card-info {
   transition: transform 0.3s ease, box-shadow 0.3s ease;

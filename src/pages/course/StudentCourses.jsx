@@ -26,6 +26,12 @@ const StudentCourses = () => {
     setSubmitted(true);
     setLoading(true);
 
+    if (!studentId) {
+      setLoading(false);
+      setError("Please enter a valid Student ID!");
+      return;
+    }
+
     try {
       const response = await authFetch(`/api/student_courses/${studentId}`, {
         headers: {
@@ -33,7 +39,27 @@ const StudentCourses = () => {
         },
       });
       const data = await response.json();
-      setStudentCourses(data.courses.Courses);
+
+      if (response.ok) {
+        if (data.courses && data.courses.Courses) {
+          setStudentCourses(data.courses.Courses);
+        } else {
+          setStudentCourses([]);
+        }
+        setError("");
+      } else {
+        if (
+          response.status === 404 &&
+          data.message &&
+          data.message.toLowerCase().includes("no courses found")
+        ) {
+          setStudentCourses([]);
+          setError("");
+        } else {
+          setStudentCourses([]);
+          setError(data.message || "Error fetching your courses");
+        }
+      }
     } catch (err) {
       setError(err.data?.message || "Error fetching student courses");
     } finally {
@@ -45,7 +71,15 @@ const StudentCourses = () => {
     <Container className="mt-5 mb-5">
       <Row className="justify-content-center">
         <Col md={8} lg={6}>
-          <Card className="shadow-lg border-0">
+          <Card className="shadow-lg border-0 position-relative">
+            {error && (
+              <Alert
+                variant="danger"
+                className="fade-alert position-absolute top-0 end-0 m-3"
+              >
+                {error}
+              </Alert>
+            )}
             <Card.Body>
               <h3 className="text-center mb-4">🎓 View Student Courses</h3>
               <Form onSubmit={handleSubmit}>
@@ -58,7 +92,6 @@ const StudentCourses = () => {
                     placeholder="e.g., 620000000"
                     value={studentId}
                     onChange={(e) => setStudentId(e.target.value)}
-                    required
                     className="shadow-sm"
                   />
                 </Form.Group>
@@ -67,7 +100,7 @@ const StudentCourses = () => {
                     type="submit"
                     variant="primary"
                     size="lg"
-                    className="shadow-sm"
+                    className="btn-set"
                   >
                     {loading ? (
                       <Spinner animation="border" size="sm" />
@@ -84,8 +117,6 @@ const StudentCourses = () => {
 
       <Row className="mt-4">
         <Col>
-          {error && <Alert variant="danger">{error}</Alert>}
-
           {studentCourses.length > 0 && (
             <>
               <h5 className="mb-3">📚 Enrolled Courses:</h5>

@@ -2,6 +2,7 @@ import React, { useState, useRef } from "react";
 import { Form, Button, Card, Alert } from "react-bootstrap";
 import { useParams } from "react-router-dom";
 import useAuthFetch from "@/context/AuthFetch";
+import { useNavigate } from "react-router-dom";
 
 function SubmitAssignment() {
   const [file, setFile] = useState(null);
@@ -11,6 +12,7 @@ function SubmitAssignment() {
   const [messageType, setMessageType] = useState("");
   const { assignmentId } = useParams();
   const authFetch = useAuthFetch();
+  const navigate = useNavigate();
 
   const fileInputRef = useRef();
 
@@ -50,6 +52,9 @@ function SubmitAssignment() {
         setFile(null);
         setLink("");
         setContentType("");
+        setTimeout(() => {
+          navigate(`/get-assignments/${courseId}`);
+        }, 5000);
         if (fileInputRef.current) {
           fileInputRef.current.value = "";
         }
@@ -63,6 +68,17 @@ function SubmitAssignment() {
 
   return (
     <div className="container mt-4">
+      <div className="container mt-4">
+        <Button
+          variant="primary"
+          className="mb-3"
+          onClick={() =>
+            navigate(`/courses/${localStorage.getItem("CourseID")}`)
+          }
+        >
+          ⬅️ Back
+        </Button>
+      </div>
       <Card className="shadow-sm border-0">
         <Card.Header className="bg-primary text-white">
           <h4 className="mb-0">📤 Submit Assignment</h4>

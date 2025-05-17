@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Card, ListGroup, Button, Offcanvas } from "react-bootstrap";
+import { Card, ListGroup, Button, Offcanvas, Alert } from "react-bootstrap";
 import useAuthFetch from "@/context/AuthFetch";
 
 const CourseEvents = () => {
@@ -53,7 +53,7 @@ const CourseEvents = () => {
             {error && <div className="alert alert-danger">{error}</div>}
 
             {events.length === 0 ? (
-              <p className="text-muted">No events found for this course.</p>
+              <Alert variant="info" className="text-muted">ℹ️ No events found for this course.</Alert>
             ) : (
               <ListGroup variant="flush">
                 {events.map((event) => (
@@ -95,16 +95,6 @@ const CourseEvents = () => {
             >
               Create New Event
             </Button>
-
-            {role == "admin" && (
-              <Button
-                variant="primary"
-                className="mb-2 w-100"
-                href={`/student-events`}
-              >
-                View Student Events
-              </Button>
-            )}
           </Offcanvas.Body>
         </Offcanvas>
       </div>

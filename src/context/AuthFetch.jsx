@@ -6,12 +6,14 @@ const useAuthFetch = () => {
 
   const authFetch = async (url, options = {}) => {
     const token = localStorage.getItem("token");
-    const redirectPath = encodeURIComponent(location.pathname + location.search);
+    const redirectPath = encodeURIComponent(
+      location.pathname + location.search
+    );
 
     const method = options.method ? options.method.toUpperCase() : "GET";
 
     const headers = {
-      "Authorization": `Bearer ${token}`,
+      Authorization: `Bearer ${token}`,
       ...options.headers,
     };
 

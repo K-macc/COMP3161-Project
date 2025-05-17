@@ -9,16 +9,17 @@ export default function Navbar() {
 
   const handleLogout = () => {
     localStorage.removeItem("token");
+    localStorage.removeItem("loginSuccess");
     setIsAuthenticated(false);
     setRole(null);
     navigate("/");
   };
 
   return (
-    <nav className="navbar navbar-expand-lg navbar-dark bg-primary px-4">
-      <Link className="navbar-brand" to="/">AppVLE</Link>
+    <nav className="navbar navbar-expand-lg navbar-dark bg-primary-dark px-4">
+      <img src="/AppVLE_logo.png" alt="AppVLE Logo" width="40" height="40" className="me-2" />
+      <Link className="navbar-brand" to="/dashboard">AppVLE</Link>
       <div className="collapse navbar-collapse" id="navbarNav">
-        {/* Left-aligned navigation */}
         <ul className="navbar-nav me-auto">
           {isAuthenticated && (
             <>

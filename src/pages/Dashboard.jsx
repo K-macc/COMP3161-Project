@@ -5,9 +5,8 @@ import { FaUserCircle, FaIdBadge, FaUserShield } from "react-icons/fa";
 const Dashboard = () => {
   const token = localStorage.getItem("token");
   const payload = token ? JSON.parse(atob(token.split(".")[1])) : null;
-  localStorage.setItem('role',payload.role);
-  localStorage.setItem('ID',payload.id);
-
+  localStorage.setItem("role", payload.role);
+  localStorage.setItem("ID", payload.id);
 
   return (
     <Container className="mt-5">
@@ -16,13 +15,20 @@ const Dashboard = () => {
       {payload ? (
         <Card className="p-4 shadow-sm">
           <Row>
-            <Col md={2} className="d-flex justify-content-center align-items-center">
+            <Col
+              md={2}
+              className="d-flex justify-content-center align-items-center"
+            >
               <FaUserCircle size={80} className="text-primary" />
             </Col>
 
             <Col md={10}>
               <h4>
-                Hello, <strong>{payload.name || "User"} <span className="wave">👋</span></strong>
+                Hello,{" "}
+                <strong>
+                  {payload.name.split(" ")[0] || "User"}{" "}
+                  <span className="wave">👋</span>
+                </strong>
               </h4>
               <p className="mb-2">
                 <FaIdBadge className="me-2" />

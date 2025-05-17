@@ -10,12 +10,15 @@ const CourseDetail = () => {
   const [showSidebar, setShowSidebar] = useState(false);
   const [sectionContent, setSectionContent] = useState(null);
   const [sectionError, setSectionError] = useState("");
-  const ID = localStorage.getItem("ID");
   const role = localStorage.getItem("role");
   const authFetch = useAuthFetch();
 
   useEffect(() => {
     const fetchCourse = async () => {
+      if(localStorage.getItem("CourseID")){
+        localStorage.removeItem("CourseID");
+      }
+      localStorage.setItem("CourseID",courseId);
       try {
         const response = await authFetch(`/api/get_course/${courseId}`, {
           headers: {
@@ -31,19 +34,13 @@ const CourseDetail = () => {
 
     const fetchSectionContent = async () => {
       try {
-        const response = await authFetch(`/api/section/${courseId}/content`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        });
+        const response = await authFetch(`/api/section/${courseId}/content`);
         const data = await response.json();
         setSectionContent(data);
         setSectionError("");
       } catch (err) {
         setSectionContent(null);
-        setSectionError(
-          err.data?.message || "Error fetching section content"
-        );
+        setSectionError(err.data?.message || "Error fetching section content");
       }
     };
 
@@ -76,7 +73,6 @@ const CourseDetail = () => {
                 <strong>Course ID:</strong>{" "}
                 <span className="ms-2">{course.CourseID}</span>
               </div>
-              {/* You can add more fields here like Instructor, Credits, etc. */}
             </div>
           </Card.Body>
         </Card>
@@ -156,7 +152,9 @@ const CourseDetail = () => {
                   </Card>
                 ))
               : !sectionError && (
-                  <p className="text-muted">No section content found.</p>
+                  <Alert variant="info" className="text-muted">
+                    ℹ️ No section content found.
+                  </Alert>
                 )}
           </Card.Body>
         </Card>
@@ -173,19 +171,134 @@ const CourseDetail = () => {
         <Offcanvas.Body>
           {role == "student" && (
             <>
-            <Button variant="primary" className="mb-2 w-100" href={`/get-forums/${courseId}`}> View Forums </Button>
-            <Button variant="primary" className="mb-2 w-100" href={`/get-assignments/${courseId}`}> View Assignments </Button>
-            <Button variant="primary" className="mb-2 w-100" href={`/final-average/${ID}`}> Calculate My Average Grade </Button>
+              <Button
+                variant="primary"
+                className="mb-2 w-100"
+                href={`/get-forums/${courseId}`}
+              >
+                {" "}
+                View Forums{" "}
+              </Button>
+              <Button
+                variant="primary"
+                className="mb-2 w-100"
+                href={`/get-assignments/${courseId}`}
+              >
+                {" "}
+                View Assignments{" "}
+              </Button>
             </>
-          )} 
-          {role != "student" && (
+          )}
+          {role == "lecturer" && (
             <>
-            <Button variant="primary" className="mb-2 w-100" href={`/course-members/${courseId}`}> Get Members </Button>
-            <Button variant="primary" className="mb-2 w-100" href={`/get-forums/${courseId}`}> View Forums </Button>
-            <Button variant="primary" className="mb-2 w-100" href={`/get-events/${courseId}`}> View Events </Button>
-            <Button variant="primary" className="mb-2 w-100" href={`/create-section/${courseId}`}> Add A New Section </Button>
-             <Button variant="primary" className="mb-2 w-100" href={`/get-assignments/${courseId}`}> View Assignments </Button>
-            <Button variant="primary" className="mb-2 w-100" href={`/create-assignment/${courseId}`}> Create Assignment </Button>
+              <Button
+                variant="primary"
+                className="mb-2 w-100"
+                href={`/course-members/${courseId}`}
+              >
+                {" "}
+                Get Members{" "}
+              </Button>
+              <Button
+                variant="primary"
+                className="mb-2 w-100"
+                href={`/get-forums/${courseId}`}
+              >
+                {" "}
+                View Forums{" "}
+              </Button>
+              <Button
+                variant="primary"
+                className="mb-2 w-100"
+                href={`/get-events/${courseId}`}
+              >
+                {" "}
+                View Events{" "}
+              </Button>
+              <Button
+                variant="primary"
+                className="mb-2 w-100"
+                href={`/create-section/${courseId}`}
+              >
+                {" "}
+                Add A New Section{" "}
+              </Button>
+              <Button
+                variant="primary"
+                className="mb-2 w-100"
+                href={`/get-assignments/${courseId}`}
+              >
+                {" "}
+                View Assignments{" "}
+              </Button>
+              <Button
+                variant="primary"
+                className="mb-2 w-100"
+                href={`/create-assignment/${courseId}`}
+              >
+                {" "}
+                Create Assignment{" "}
+              </Button>
+            </>
+          )}
+          {role == "admin" && (
+            <>
+              <Button
+                variant="primary"
+                className="mb-2 w-100"
+                href={`/course-members/${courseId}`}
+              >
+                {" "}
+                Get Members{" "}
+              </Button>
+              <Button
+                variant="primary"
+                className="mb-2 w-100"
+                href={`/assign-lecturer/${courseId}`}
+              >
+                {" "}
+                Assign Lecturer{" "}
+              </Button>
+              <Button
+                variant="primary"
+                className="mb-2 w-100"
+                href={`/get-forums/${courseId}`}
+              >
+                {" "}
+                View Forums{" "}
+              </Button>
+              <Button
+                variant="primary"
+                className="mb-2 w-100"
+                href={`/get-events/${courseId}`}
+              >
+                {" "}
+                View Events{" "}
+              </Button>
+              <Button
+                variant="primary"
+                className="mb-2 w-100"
+                href={`/create-section/${courseId}`}
+              >
+                {" "}
+                Add A New Section{" "}
+              </Button>
+              <Button
+                variant="primary"
+                className="mb-2 w-100"
+                href={`/get-assignments/${courseId}`}
+              >
+                {" "}
+                View Assignments{" "}
+              </Button>
+              <Button
+                variant="primary"
+                className="mb-2 w-100"
+                href={`/create-assignment/${courseId}`}
+              >
+                {" "}
+                Create Assignment{" "}
+              </Button>
             </>
           )}
         </Offcanvas.Body>

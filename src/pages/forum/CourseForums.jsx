@@ -11,8 +11,6 @@ import {
 } from "react-bootstrap";
 import useAuthFetch from "@/context/AuthFetch";
 
-
-
 const CourseForums = () => {
   const { courseId } = useParams();
   const [forums, setForums] = useState([]);
@@ -29,12 +27,15 @@ const CourseForums = () => {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
         });
+
         const data = await response.json();
         setForums(data.forums);
       } catch (err) {
-        setError(err.data?.message || "Error fetching forums");
+        console.error("Error fetching forums:", err);
+        setError(err?.data?.message || "Error fetching forums");
       }
     };
+
     fetchForums();
   }, [courseId]);
 
@@ -45,43 +46,49 @@ const CourseForums = () => {
           ⬅️ Back
         </Button>
       </div>
+
       <Container className="mt-5">
         <Row>
           <Col md={8} className="mx-auto">
-            <div className="d-flex justify-content-between align-items-center">
-              <h3 className="text-center mb-4">Course Forums</h3>
+            <div className="d-flex justify-content-between align-items-center mb-3">
+              <h3 className="text-center">Course Forums</h3>
 
-              {error && <Alert variant="danger">{error}</Alert>}
-
-              {role != "student" && (
-                <Button href={`/create-forum/${courseId}`} className="mb-3">
-                  {" "}
-                  Create New Forum{" "}
+              {role !== "student" && (
+                <Button href={`/create-forum/${courseId}`} className="ms-auto">
+                  Create New Forum
                 </Button>
               )}
             </div>
 
+            {error && <Alert variant="danger">{error}</Alert>}
+
             <Card className="shadow-sm">
               <Card.Body>
                 <ListGroup variant="flush">
-                  {forums.map((forum) => (
-                    <ListGroup.Item
-                      key={forum.ForumID}
-                      className="mb-3 shadow-sm"
-                    >
-                      <h5>{forum.Subject}</h5>
-                      <p className="text-muted">
-                        {new Date(forum.DateCreated).toLocaleString()}
-                      </p>
-                      <Button
-                        variant="outline-primary"
-                        href={`/forums/${forum.ForumID}/threads`}
-                        className="w-100"
+                  {Array.isArray(forums) && forums.length > 0 ? (
+                    forums.map((forum) => (
+                      <ListGroup.Item
+                        key={forum.ForumID}
+                        className="mb-3 shadow-sm"
                       >
-                        View Threads
-                      </Button>
-                    </ListGroup.Item>
-                  ))}
+                        <h5>{forum.Subject}</h5>
+                        <p className="text-muted">
+                          {new Date(forum.DateCreated).toLocaleString()}
+                        </p>
+                        <Button
+                          variant="outline-primary"
+                          href={`/forums/${forum.ForumID}/threads`}
+                          className="w-100"
+                        >
+                          View Threads
+                        </Button>
+                      </ListGroup.Item>
+                    ))
+                  ) : (
+                    <p className="text-center text-muted mb-0">
+                      No forums available.
+                    </p>
+                  )}
                 </ListGroup>
               </Card.Body>
             </Card>

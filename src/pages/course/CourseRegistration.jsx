@@ -1,12 +1,14 @@
 import React, { useState } from "react";
 import { Card, Form, Button, Alert } from "react-bootstrap";
 import useAuthFetch from "@/context/AuthFetch";
+import { useNavigate } from "react-router-dom";
 
 const CourseRegistration = () => {
   const [courseID, setCourseID] = useState("");
   const [message, setMessage] = useState("");
   const [messageType, setMessageType] = useState("");
   const authFetch = useAuthFetch();
+  const navigate = useNavigate();
 
   const handleRegister = async (e) => {
     e.preventDefault();
@@ -16,7 +18,7 @@ const CourseRegistration = () => {
       const response = await authFetch("/api/register_student", {
         body: JSON.stringify({ CourseID: courseID }),
         method: "POST",
-        headers: { "Content-Type": "application/json" }
+        headers: { "Content-Type": "application/json" },
       });
       const data = await response.json();
       if (response.status !== 201) {
@@ -24,6 +26,9 @@ const CourseRegistration = () => {
       } else {
         setMessageType("success");
         setCourseID("");
+        setTimeout(() => {
+          navigate("/my-courses");
+        }, 5000);
       }
       setMessage(data.message);
     } catch (err) {

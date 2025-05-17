@@ -10,6 +10,7 @@ import {
 } from "react-bootstrap";
 import { useParams } from "react-router-dom";
 import useAuthFetch from "@/context/AuthFetch";
+import { useNavigate } from "react-router-dom";
 
 const CreateForum = () => {
   const [subject, setSubject] = useState("");
@@ -17,6 +18,7 @@ const CreateForum = () => {
   const [messageType, setMessageType] = useState("");
   const { courseId } = useParams();
   const authFetch = useAuthFetch();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -34,6 +36,9 @@ const CreateForum = () => {
       } else {
         setMessageType("success");
         setSubject("");
+        setTimeout(() => {
+          navigate(`/get-forums/${courseId}`);
+        }, 5000);
       }
       setMessage(data.message);
     } catch (err) {
@@ -44,6 +49,15 @@ const CreateForum = () => {
 
   return (
     <Container className="mt-5">
+      <div className="container mt-4">
+        <Button
+          variant="primary"
+          className="mb-3"
+          onClick={() => navigate(`/courses/${courseId}`)}
+        >
+          ⬅️ Back
+        </Button>
+      </div>
       <Row>
         <Col md={8} lg={6} className="mx-auto">
           <Card className="shadow border-0">

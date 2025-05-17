@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import { Button, Form, Card, Alert } from "react-bootstrap";
 import useAuthFetch from "@/context/AuthFetch";
+import { useNavigate } from "react-router-dom";
 
 const CreateThread = () => {
   const { forumId } = useParams();
@@ -10,6 +11,7 @@ const CreateThread = () => {
   const [message, setMessage] = useState("");
   const [messageType, setMessageType] = useState("");
   const authFetch = useAuthFetch();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -28,6 +30,9 @@ const CreateThread = () => {
         setMessageType("success");
         setTitle("");
         setPost("");
+        setTimeout(() => {
+          navigate(`/forums/${forumId}/threads`);
+        }, 5000);
       }
       setMessage(data.message);
     } catch (err) {
@@ -38,6 +43,15 @@ const CreateThread = () => {
 
   return (
     <div className="container mt-4">
+      <div className="container mt-4">
+        <Button
+          variant="primary"
+          className="mb-3"
+          onClick={() => navigate(`/courses/${localStorage.getItem("CourseID")}`)}
+        >
+          ⬅️ Back
+        </Button>
+      </div>
       <Card className="shadow-sm border-0">
         <Card.Header className="bg-primary text-white">
           <h4 className="mb-0">📝 Create New Thread</h4>

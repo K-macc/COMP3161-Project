@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { Card, Form, Button, Alert } from "react-bootstrap";
 import { FaUser, FaLock, FaUserTag, FaUserCircle } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 const Register = () => {
   const [name, setName] = useState("");
@@ -10,6 +11,7 @@ const Register = () => {
   const [role, setRole] = useState("");
   const [message, setMessage] = useState("");
   const [messageType, setMessageType] = useState("");
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -23,10 +25,10 @@ const Register = () => {
     formData.append("role", role);
 
     try {
-      const response = await axios.post("/api/register", formData,{
-         headers: {
-        "Content-Type": "multipart/form-data",
-      },
+      const response = await axios.post("/api/register", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
       });
       const data = response.data;
       if (response.status !== 201) {
@@ -37,6 +39,9 @@ const Register = () => {
         setUsername("");
         setPassword("");
         setRole("");
+        setTimeout(() => {
+          navigate("/");
+        }, 5000);
       }
       setMessage(data.message);
     } catch (err) {

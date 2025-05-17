@@ -39,7 +39,6 @@ const ForumThreads = () => {
         <div className="d-flex justify-content-between align-items-center">
           <h3 className="mb-4">Forum Threads</h3>
           {error && <Alert variant="danger">{error}</Alert>}
-          {threads.length === 0 && !error && <p>No threads available.</p>}
 
           {role != "student" && (
             <Button
@@ -75,6 +74,10 @@ const ForumThreads = () => {
             </Col>
           ))}
         </Row>
+
+        {threads.length === 0 && !error && (
+          <Alert variant="info">ℹ️ No threads available.</Alert>
+        )}
       </div>
     </>
   );
