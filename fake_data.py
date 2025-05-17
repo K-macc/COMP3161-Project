@@ -10,7 +10,7 @@ num = 0
 
 # Open SQL file for writing
 try:
-    with open("project-files/insert_sql_queries.sql", "w") as f:
+    with open("insert_sql_queries.sql", "w") as f:
         users = []
         admin_ids = []
         lecturer_ids = []
