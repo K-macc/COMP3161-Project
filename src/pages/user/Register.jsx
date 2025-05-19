@@ -57,7 +57,7 @@ const Register = () => {
         style={{ width: "100%", maxWidth: "500px" }}
       >
         <Card.Header className="bg-success text-white d-flex justify-content-center align-items-center">
-          <h4 className="d-flex align-items-center mb-0"><FaUserPlus/> User Registration</h4>
+          <h4 className="d-flex align-items-center mb-0"><FaUserPlus className="me-2"/> User Registration</h4>
         </Card.Header>
         <Card.Body className="bg-white rounded-bottom-4 px-4 py-4">
           {message && (
