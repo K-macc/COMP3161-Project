@@ -66,7 +66,7 @@ const CreateForum = () => {
             <Card.Header className="bg-success text-white text-center">
               <h4 className="mb-0">
                 <FaForumbee className="me-2" />
-                Create Forum for Course {courseId}
+                Create Forum for {courseId}
               </h4>
             </Card.Header>
             <Card.Body className="bg-light">

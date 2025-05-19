@@ -27,7 +27,7 @@ const CoursesList = () => {
   }, []);
 
   return (
-    <Container className="mt-4">
+    <Container className="mt-4 mb-5">
       <h2 className="mb-4">Available Courses</h2>
       {error && <Alert variant="danger">{error}</Alert>}
 
@@ -41,8 +41,8 @@ const CoursesList = () => {
                     {course.CourseName}
                   </Card.Title>
                   <Card.Text className="text-muted mb-4">
-                    <i className="bi bi-bookmark me-2 text-secondary"></i>
-                    {course.CourseID}
+                    
+                    <strong>Course ID:</strong> {course.CourseID}
                   </Card.Text>
                 </div>
                 {role !== "student" && (

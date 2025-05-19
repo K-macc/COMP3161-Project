@@ -68,7 +68,7 @@ const ReportView = () => {
   };
 
   return (
-    <Container className="mt-4">
+    <Container className="mt-4 mb-5">
       <h2 className="mb-4 text-center">Reports</h2>
 
       <Row className="justify-content-center mb-3 gap-2">
@@ -77,7 +77,7 @@ const ReportView = () => {
             key={option.value}
             variant= "primary"
             onClick={() => fetchReport(option.value)}
-            className="d-flex align-items-center justify-content-center"
+            className="d-flex align-items-center justify-content-center custom-hover"
             style={{ width: "330px", height: "40px" }}
           >
             <FaFileInvoice size={24} className="me-2" />
@@ -91,7 +91,7 @@ const ReportView = () => {
           <h4 className="text-capitalize mb-0 text-white">
             {reportName.replace(/_/g, " ")}
           </h4>
-          <Button variant="danger" size="sm" onClick={clearReport}>
+          <Button variant="danger" size="sm" onClick={clearReport} className="custom-hover-danger">
             Deselect Report
           </Button>
         </div>
@@ -99,15 +99,15 @@ const ReportView = () => {
 
       {loading && (
         <div className="text-center mb-3">
-          <Spinner animation="border" variant="primary" role="status" />
-          <p className="mt-2">Loading report...</p>
+          <Spinner animation="border" variant="light" role="status" size="md"/>
+          <h5 className="mt-2 text-white">Loading report...</h5>
         </div>
       )}
 
       {error && <p className="text-danger text-center">{error}</p>}
 
       {!loading && !error && reportData.length > 0 && (
-        <Card className="shadow-lg p-3 mb-5 bg-body rounded">
+        <Card className="shadow-lg p-3 mb-5 bg-transparent rounded border-0">
             <Table
               responsive
               bordered
@@ -168,7 +168,6 @@ const ReportView = () => {
 
       {!loading && !error && reportData.length === 0 && reportName && (
         <p className="text-muted text-center">
-          {" "}
           <FaInfoCircle />
           No data found for this report.
         </p>

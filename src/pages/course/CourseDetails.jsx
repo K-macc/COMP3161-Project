@@ -2,7 +2,14 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Card, Button, Offcanvas, ListGroup, Alert } from "react-bootstrap";
 import useAuthFetch from "@/context/AuthFetch";
-import { FaBook, FaInfoCircle } from "react-icons/fa";
+import {
+  FaBook,
+  FaInfoCircle,
+  FaFilePowerpoint,
+  FaFile,
+  FaLink,
+  FaBars,
+} from "react-icons/fa";
 
 const CourseDetail = () => {
   const { courseId } = useParams();
@@ -16,10 +23,10 @@ const CourseDetail = () => {
 
   useEffect(() => {
     const fetchCourse = async () => {
-      if(localStorage.getItem("CourseID")){
+      if (localStorage.getItem("CourseID")) {
         localStorage.removeItem("CourseID");
       }
-      localStorage.setItem("CourseID",courseId);
+      localStorage.setItem("CourseID", courseId);
       try {
         const response = await authFetch(`/api/get_course/${courseId}`, {
           headers: {
@@ -53,7 +60,15 @@ const CourseDetail = () => {
     <div className="container mt-4">
       <div className="d-flex justify-content-between align-items-center">
         <h2>Course Details</h2>
-        <Button variant="primary" onClick={() => setShowSidebar(true)}>
+        <Button
+          variant="primary"
+          onClick={() => setShowSidebar(true)}
+          className="d-flex align-items-center"
+        >
+          <FaBars
+            className="me-2"
+            style={{ fontSize: "20px", color: "white" }}
+          />
           Open Menu
         </Button>
       </div>
@@ -63,13 +78,13 @@ const CourseDetail = () => {
       {course && (
         <Card className="mt-4 shadow-sm border-0 rounded">
           <Card.Header className="bg-info text-white d-flex align-items-center">
-            <FaBook className="me-2"/>
+            <FaBook className="me-2" />
             <h5 className="mb-0">{course.CourseName}</h5>
           </Card.Header>
           <Card.Body className="bg-light">
             <div className="row">
               <div className="col-md-6 mb-2">
-                <strong>Course ID:</strong>{" "}
+                <strong>Course ID:</strong>
                 <span className="ms-2">{course.CourseID}</span>
               </div>
             </div>
@@ -79,19 +94,28 @@ const CourseDetail = () => {
 
       <div className="mt-4">
         <h4 className="text-white">Course Content</h4>
-        <Card>
+        <Card className="bg-transparent border-0">
           <Card.Body>
             {sectionError && <Alert variant="danger">{sectionError}</Alert>}
             {sectionContent && sectionContent.length > 0
               ? sectionContent.map((section, index) => (
                   <Card key={index} className="mb-4 shadow-sm border-0">
-                    <Card.Header className="bg-primary text-white">
+                    <Card.Header
+                      className="bg-primary text-white"
+                      style={{ fontWeight: "bold" }}
+                    >
                       Section {index + 1}
                     </Card.Header>
                     <Card.Body>
                       <ListGroup variant="flush">
                         <ListGroup.Item>
-                          <strong>📚 Lecture Slides:</strong>
+                          <strong className="d-flex align-items-center">
+                            <FaFilePowerpoint
+                              className="me-1"
+                              style={{ color: "orange", fontSize: "16px" }}
+                            />
+                            Lecture Slides:
+                          </strong>
                           <div className="ms-3 mt-1 text-break">
                             {section.LectureSlides ? (
                               <a
@@ -110,7 +134,13 @@ const CourseDetail = () => {
                         </ListGroup.Item>
 
                         <ListGroup.Item>
-                          <strong>📁 Files:</strong>
+                          <strong className="d-flex align-items-center">
+                            <FaFile
+                              className="me-1"
+                              style={{ color: "#f9a602", fontSize: "16px" }}
+                            />
+                            Files:
+                          </strong>
                           <div className="ms-3 mt-1 text-break">
                             {section.Files ? (
                               <a
@@ -129,7 +159,13 @@ const CourseDetail = () => {
                         </ListGroup.Item>
 
                         <ListGroup.Item>
-                          <strong>🔗 Links:</strong>
+                          <strong className="d-flex align-items-center">
+                            <FaLink
+                              className="me-1"
+                              style={{ color: "#0078d7", fontSize: "16px" }}
+                            />
+                            Links:
+                          </strong>
                           <div className="ms-3 mt-1 text-break">
                             {section.Links ? (
                               <a
@@ -152,7 +188,7 @@ const CourseDetail = () => {
                 ))
               : !sectionError && (
                   <Alert variant="info" className="text-muted">
-                    <FaInfoCircle/> No section content found.
+                    <FaInfoCircle /> No section content found.
                   </Alert>
                 )}
           </Card.Body>
@@ -167,24 +203,22 @@ const CourseDetail = () => {
         <Offcanvas.Header closeButton>
           <Offcanvas.Title>Course Options</Offcanvas.Title>
         </Offcanvas.Header>
-        <Offcanvas.Body>
+        <Offcanvas.Body className="d-flex align-items-center flex-column">
           {role == "student" && (
             <>
               <Button
                 variant="primary"
-                className="mb-2 w-100"
+                className="mb-2 w-75"
                 href={`/get-forums/${courseId}`}
               >
-                {" "}
-                View Forums{" "}
+                View Forums
               </Button>
               <Button
                 variant="primary"
-                className="mb-2 w-100"
+                className="mb-2 w-75"
                 href={`/get-assignments/${courseId}`}
               >
-                {" "}
-                View Assignments{" "}
+                View Assignments
               </Button>
             </>
           )}
@@ -192,51 +226,50 @@ const CourseDetail = () => {
             <>
               <Button
                 variant="primary"
-                className="mb-2 w-100"
+                className="mb-2 w-75"
                 href={`/course-members/${courseId}`}
               >
-                {" "}
-                Get Members{" "}
+                Get Members
               </Button>
+
               <Button
                 variant="primary"
-                className="mb-2 w-100"
+                className="mb-2 w-75"
                 href={`/get-forums/${courseId}`}
               >
-                {" "}
-                View Forums{" "}
+                View Forums
               </Button>
+
               <Button
                 variant="primary"
-                className="mb-2 w-100"
+                className="mb-2 w-75"
                 href={`/get-events/${courseId}`}
               >
-                {" "}
-                View Events{" "}
+                View Events
               </Button>
+
               <Button
                 variant="primary"
-                className="mb-2 w-100"
-                href={`/create-section/${courseId}`}
-              >
-                {" "}
-                Add A New Section{" "}
-              </Button>
-              <Button
-                variant="primary"
-                className="mb-2 w-100"
+                className="mb-2 w-75"
                 href={`/get-assignments/${courseId}`}
               >
-                {" "}
-                View Assignments{" "}
+                View Assignments
               </Button>
+
               <Button
                 variant="primary"
-                className="mb-2 w-100"
+                className="mb-2 w-75"
+                href={`/create-section/${courseId}`}
+              >
+                Add A New Section
+              </Button>
+
+              <Button
+                variant="primary"
+                className="mb-2 w-75"
                 href={`/create-assignment/${courseId}`}
               >
-                {" "}
-                Create Assignment{" "}
+                Create Assignment
               </Button>
             </>
           )}
@@ -244,59 +277,58 @@ const CourseDetail = () => {
             <>
               <Button
                 variant="primary"
-                className="mb-2 w-100"
+                className="mb-2 w-75"
                 href={`/course-members/${courseId}`}
               >
-                {" "}
-                Get Members{" "}
+                Get Members
               </Button>
+
               <Button
                 variant="primary"
-                className="mb-2 w-100"
-                href={`/assign-lecturer/${courseId}`}
-              >
-                {" "}
-                Assign Lecturer{" "}
-              </Button>
-              <Button
-                variant="primary"
-                className="mb-2 w-100"
+                className="mb-2 w-75"
                 href={`/get-forums/${courseId}`}
               >
-                {" "}
-                View Forums{" "}
+                View Forums
               </Button>
+
               <Button
                 variant="primary"
-                className="mb-2 w-100"
+                className="mb-2 w-75"
                 href={`/get-events/${courseId}`}
               >
-                {" "}
-                View Events{" "}
+                View Events
               </Button>
+
               <Button
                 variant="primary"
-                className="mb-2 w-100"
-                href={`/create-section/${courseId}`}
-              >
-                {" "}
-                Add A New Section{" "}
-              </Button>
-              <Button
-                variant="primary"
-                className="mb-2 w-100"
+                className="mb-2 w-75"
                 href={`/get-assignments/${courseId}`}
               >
-                {" "}
-                View Assignments{" "}
+                View Assignments
               </Button>
+
               <Button
                 variant="primary"
-                className="mb-2 w-100"
+                className="mb-2 w-75"
+                href={`/assign-lecturer/${courseId}`}
+              >
+                Assign Lecturer
+              </Button>
+              
+              <Button
+                variant="primary"
+                className="mb-2 w-75"
+                href={`/create-section/${courseId}`}
+              >
+                Add A New Section
+              </Button>
+              
+              <Button
+                variant="primary"
+                className="mb-2 w-75"
                 href={`/create-assignment/${courseId}`}
               >
-                {" "}
-                Create Assignment{" "}
+                Create Assignment
               </Button>
             </>
           )}

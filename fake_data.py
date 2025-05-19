@@ -1,10 +1,19 @@
 import random
 import faker
+from tzlocal import get_localzone 
 import datetime
-
 
 # Initialize Faker
 fake = faker.Faker()
+
+local_tz = get_localzone()
+
+naive_dt = fake.date_time_between(start_date="-1y", end_date="now")
+
+now = datetime.datetime.now()
+two_months_later = now + datetime.timedelta(days=60)
+
+naive_due_t = fake.date_time_between(start_date=now, end_date=two_months_later)
 
 num = 0
 
@@ -373,7 +382,6 @@ try:
             "Environmental History",
         ]
 
-        # amazonq-ignore-next-line
         def switch(option):
             if option == "COMP":
                 choice = random.choice(cs_courses)
@@ -524,9 +532,7 @@ try:
             course_id = course[0]
             for i in range(1, 4):
                 subject = fake.sentence(nb_words=10)
-                date = datetime.datetime.fromtimestamp(
-                    fake.date_time_between(start_date="-1y", end_date="now").timestamp()
-                )
+                date = naive_dt.replace(tzinfo=datetime.timezone.utc).astimezone(local_tz)
                 discussion_forum.append((forum_id, course_id, subject, date))
                 f.write(
                     f"INSERT INTO DiscussionForum (ForumID, CourseID, Subject, DateCreated) VALUES ({forum_id}, '{course_id}', '{subject}', '{date}');\n"
@@ -547,9 +553,7 @@ try:
             for i in range(1, 5):
                 title = fake.sentence(nb_words=7)
                 post = fake.text(max_nb_chars=50)
-                date = datetime.datetime.fromtimestamp(
-                    fake.date_time_between(start_date="-1y", end_date="now").timestamp()
-                )
+                date = naive_dt.replace(tzinfo=datetime.timezone.utc).astimezone(local_tz)
                 discussion_thread.append((thread_id, forum_id, title, post, date))
                 f.write(
                     f"INSERT INTO DiscussionThread (ThreadID, ForumID, Title, Post, CreationDate) VALUES ({thread_id}, {forum_id}, '{title}', '{post}', '{date}');\n"
@@ -604,21 +608,40 @@ try:
         event_id = 1
         for course in courses:
             course_id = course[0]
-            for i in range(1, 4):
-                event_name = fake.text(max_nb_chars=20)
-                event_description = fake.text(max_nb_chars=40)
-                date = datetime.datetime.fromtimestamp(
-                    fake.date_time_between(start_date="-1y", end_date="now").timestamp()
-                )
-                calendar_events.append(
-                    (event_id, course_id, event_name, event_description, date)
-                )
-                f.write(
-                    f"INSERT INTO CalendarEvent (CalendarID, CourseID, EventTitle, EventDescription, EventDate) VALUES ({event_id}, '{course_id}', '{event_name}', '{event_description}', '{date}');\n"
-                )
-                event_id += 1
-                print(f" Statement#{num}: Insert statements created for calendar event")
-                num += 1
+
+            # Choose 2–4 unique days for this course (in the past year)
+            num_days = random.randint(2, 4)
+            event_days = [
+                fake.date_time_between(start_date="-1y", end_date="now").date()
+                for _ in range(num_days)
+            ]
+
+            for event_day in event_days:
+                events_today = random.randint(1, 4)
+
+                for _ in range(events_today):
+                    random_time = datetime.time(
+                        hour=random.randint(8, 18), minute=random.choice([0, 15, 30, 45])
+                    )
+                    
+                    date = datetime.datetime.combine(event_day, random_time)
+
+                    # Generate event details
+                    event_name = fake.text(max_nb_chars=20).replace("'", "''")
+                    event_description = fake.text(max_nb_chars=40).replace("'", "''")
+
+                    calendar_events.append(
+                        (event_id, course_id, event_name, event_description, date)
+                    )
+
+                    f.write(
+                        f"INSERT INTO CalendarEvent (CalendarID, CourseID, EventTitle, EventDescription, EventDate) "
+                        f"VALUES ({event_id}, '{course_id}', '{event_name}', '{event_description}', '{date}');\n"
+                    )
+
+                    print(f" Statement#{num}: Insert statements created for calendar event")
+                    event_id += 1
+                    num += 1
 
         f.write("\n")
 
@@ -629,9 +652,7 @@ try:
             course_id = course[0]
             for i in range(1, 4):
                 assignment_name = fake.text(max_nb_chars=20)
-                due_date = fake.date_between(
-                    start_date="+1d", end_date="+60d"
-                )  # Due within the next 2 months
+                due_date = naive_dt.replace(tzinfo=datetime.timezone.utc).astimezone(local_tz)
                 assignment_file = f"{fake.word()}.pdf"
                 assignment_link = fake.url()
 

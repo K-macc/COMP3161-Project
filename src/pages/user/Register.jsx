@@ -53,11 +53,11 @@ const Register = () => {
   return (
     <div className="d-flex justify-content-center align-items-center min-vh-100 bg-light user-container">
       <Card
-        className="shadow-lg border-0 rounded-4"
+        className="shadow-lg mx-auto mt-5 border-0"
         style={{ width: "100%", maxWidth: "500px" }}
       >
         <Card.Header className="bg-success text-white d-flex justify-content-center align-items-center">
-          <h4 className="mb-0"><FaUserPlus/> User Registration</h4>
+          <h4 className="d-flex align-items-center mb-0"><FaUserPlus className="me-2"/> User Registration</h4>
         </Card.Header>
         <Card.Body className="bg-white rounded-bottom-4 px-4 py-4">
           {message && (

@@ -62,7 +62,7 @@ const Login = () => {
 
         setTimeout(() => {
           navigate(redirect || "/dashboard");
-        }, 5000);
+        }, 4000);
       }
       setMessage(data.message);
     } catch (err) {
@@ -74,11 +74,11 @@ const Login = () => {
   return (
     <div className="d-flex justify-content-center align-items-center min-vh-100 bg-light user-container">
       <Card
-        className="shadow-lg border-0 rounded-4"
+        className="shadow-lg mx-auto mt-5 border-0"
         style={{ width: "100%", maxWidth: "500px" }}
       >
         <Card.Header className="bg-success text-white d-flex justify-content-center align-items-center">
-          <h4 className="mb-0">
+          <h4 className="d-flex align-items-center mb-0">
             <FaUserCircle className="me-2" /> 
             Login
           </h4>

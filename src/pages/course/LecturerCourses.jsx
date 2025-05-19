@@ -78,7 +78,7 @@ const LecturerCourses = () => {
     <Container className="mt-5 mb-5">
       <Row className="justify-content-center">
         <Col md={8} lg={6}>
-          <Card className="shadow-lg position-relative">
+          <Card className="shadow-lg position-relative border-0">
             {error && (
               <Alert
                 variant="danger"
@@ -114,7 +114,7 @@ const LecturerCourses = () => {
                     className="btn-set"
                   >
                     {loading ? (
-                      <Spinner animation="border" size="sm" />
+                      <Spinner animation="border" size="md" variant="light"/>
                     ) : (
                       <>
                         <FaSearch /> Fetch Courses
@@ -132,7 +132,7 @@ const LecturerCourses = () => {
         <Col>
           {lecturerCourses.length > 0 && (
             <>
-              <h5 className="mb-3">
+              <h5 className="mb-3 text-white">
                 <FaLayerGroup /> Assigned Courses:
               </h5>
               <Row xs={1} sm={2} md={3} lg={4} className="g-4">
@@ -145,7 +145,6 @@ const LecturerCourses = () => {
                             {course.CourseName}
                           </Card.Title>
                           <Card.Text className="text-muted">
-                            <i className="bi bi-hash text-secondary me-2"></i>
                             <strong>Course ID:</strong> {course.CourseID}
                           </Card.Text>
                         </div>
