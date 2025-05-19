@@ -1,11 +1,11 @@
 "Admin"
 UserID: USER-000001
-Password: 5)3)kDgHts
+Password: r0CUQ1Nu@h
 
 "Lecturer"
 UserID: USER-000011
-Password: 41Mzn)wx%D
+Password: 20DXg4E!%b
 
 "Student"
 UserID: USER-000061
-Password: bPzD44)v_8
+Password: O#Uz+0NnT7
