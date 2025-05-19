@@ -1,7 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Card, ListGroup, Button, Offcanvas, Alert } from "react-bootstrap";
-import { FaThumbtack, FaRegCalendarAlt, FaLongArrowAltLeft, FaInfoCircle } from "react-icons/fa";
+import {
+  FaThumbtack,
+  FaRegCalendarAlt,
+  FaLongArrowAltLeft,
+  FaInfoCircle,
+  FaBars,
+} from "react-icons/fa";
 import useAuthFetch from "@/context/AuthFetch";
 
 const CourseEvents = () => {
@@ -43,17 +49,24 @@ const CourseEvents = () => {
         </Button>
       </div>
       <div className="container mt-4">
-        <Card className="shadow-sm border-0">
+        <Card className="shadow-sm border-0 bg-transparent">
           <Card.Header className="bg-info text-white">
             <h4 className="mb-0">
               <FaRegCalendarAlt /> Upcoming Course Events
             </h4>
           </Card.Header>
           <Card.Body className="transparent border-0">
-            <div className="text-end mb-3">
-              <Button variant="primary" onClick={() => setShowSidebar(true)}>
-                {" "}
-                Open Menu{" "}
+            <div className="text-end mb-3 d-flex justify-content-end">
+              <Button
+                variant="primary"
+                onClick={() => setShowSidebar(true)}
+                className="d-flex align-items-center"
+              >
+                <FaBars
+                  className="me-2"
+                  style={{ fontSize: "20px", color: "white" }}
+                />
+                Open Menu
               </Button>
             </div>
 
@@ -61,7 +74,7 @@ const CourseEvents = () => {
 
             {events.length === 0 ? (
               <Alert variant="info" className="text-muted">
-                <FaInfoCircle/> No events found for this course.
+                <FaInfoCircle /> No events found for this course.
               </Alert>
             ) : (
               <ListGroup variant="success" className="bg-transparent border-0">
@@ -74,7 +87,7 @@ const CourseEvents = () => {
                       <FaThumbtack className="me-2" /> {event.title}
                     </h5>
                     <p className="mb-1">
-                      <strong>Date:</strong>{" "}
+                      <strong>Date:</strong>
                       {new Date(event.event_date).toLocaleString()}
                     </p>
                     <p className="text-muted">{event.description}</p>
@@ -98,10 +111,10 @@ const CourseEvents = () => {
           <Offcanvas.Header closeButton>
             <Offcanvas.Title>Event Options</Offcanvas.Title>
           </Offcanvas.Header>
-          <Offcanvas.Body>
+          <Offcanvas.Body className="d-flex align-items-center flex-column">
             <Button
               variant="primary"
-              className="mb-2 w-100"
+              className="mb-2 w-75"
               href={`/create-event/${courseId}`}
             >
               Create New Event

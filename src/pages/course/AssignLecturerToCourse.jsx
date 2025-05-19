@@ -70,7 +70,7 @@ function AssignLecturer() {
   };
 
   return (
-    <Container className="mt-5">
+    <Container className="mt-5 mb-5">
       <div className="container mt-4">
         <Button
           variant="primary"
@@ -94,7 +94,7 @@ function AssignLecturer() {
 
       {loading ? (
         <div className="d-flex justify-content-center my-4">
-          <Spinner animation="border" variant="primary" />
+          <Spinner animation="border" variant="light" />
         </div>
       ) : (
         <>
@@ -102,7 +102,7 @@ function AssignLecturer() {
             <div className="w-100" style={{ maxWidth: "300px" }}>
               <Form.Group>
                 <Form.Label className="text-center w-100">
-                  <h5>Selected Lecturer ID</h5>
+                  <h5 className="text-white">Selected Lecturer ID</h5>
                 </Form.Label>
                 <Form.Control
                   type="text"
@@ -143,8 +143,7 @@ function AssignLecturer() {
                         {lect.LecturerName}
                       </Card.Title>
                       <Card.Text className="text-muted mb-1">
-                        <i className="bi bi-envelope me-2 text-secondary"></i>
-                        {lect.Email}
+                        <strong>Email: </strong>{lect.Email}
                       </Card.Text>
                       <Card.Text>
                         <span className="badge bg-success">
@@ -166,7 +165,7 @@ function AssignLecturer() {
                       className="w-100 fw-semibold rounded-pill mt-3"
                     >
                       {selectedLecturerId === lect.LecturerID
-                        ? "Selected"
+                        ? "De-select"
                         : "Select"}
                     </Button>
                   </Card.Body>

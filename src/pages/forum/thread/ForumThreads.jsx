@@ -51,8 +51,7 @@ const ForumThreads = () => {
               href={`/forums/${forumId}/threads/create-thread`}
               className="mb-3"
             >
-              {" "}
-              Create New Thread{" "}
+              Create New Thread
             </Button>
           )}
         </div>

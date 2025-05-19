@@ -142,7 +142,7 @@ const ThreadReplies = () => {
         </Button>
       </div>
       <div className="container mt-5 mb-5">
-        <Card className="mb-4 shadow-lg">
+        <Card className="mb-4 shadow-lg border-0">
           <Card.Header as="h3" className="text-center bg-primary text-white">
             {threadTitle}
           </Card.Header>

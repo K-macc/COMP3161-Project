@@ -8,7 +8,14 @@ import {
   Container,
   Alert,
 } from "react-bootstrap";
-import { FaClipboardList, FaLongArrowAltLeft, FaInfoCircle } from "react-icons/fa";
+import {
+  FaClipboardList,
+  FaLongArrowAltLeft,
+  FaInfoCircle,
+  FaFile,
+  FaLink,
+  FaCalendarCheck,
+} from "react-icons/fa";
 import useAuthFetch from "@/context/AuthFetch";
 
 const CourseAssignments = () => {
@@ -61,8 +68,8 @@ const CourseAssignments = () => {
         </Button>
       </div>
       <Container className="mt-4">
-        <Card className="shadow-sm border-0">
-          <Card.Header className="bg-primary text-white d-flex justify-content-between align-items-center">
+        <Card className="shadow-sm border-0 mb-5 bg-transparent">
+          <Card.Header className="bg-primary text-white d-flex align-items-center">
             <h4 className="mb-0">
               <FaClipboardList /> Assignments for {courseId}
             </h4>
@@ -70,12 +77,12 @@ const CourseAssignments = () => {
           <Card.Body className="bg-transparent">
             {loading ? (
               <div className="text-center">
-                <Spinner animation="border" variant="primary" />
+                <Spinner animation="border" variant="light" />
                 <p className="mt-2">Loading assignments...</p>
               </div>
             ) : error && assignments.length === 0 ? (
               <Alert variant="info" className="text-center">
-                <FaInfoCircle/> No assignments available for this course.
+                <FaInfoCircle /> No assignments available for this course.
               </Alert>
             ) : (
               <ListGroup variant="flush">
@@ -88,12 +95,24 @@ const CourseAssignments = () => {
                       {assignment.AssignmentName}
                     </h5>
                     <p className="mb-1">
-                      <strong>📅 Due Date:</strong>{" "}
+                      <strong className="p-2">
+                        <FaCalendarCheck
+                          className="me-1"
+                          style={{ color: "#0078d7", fontSize: "16px" }}
+                        />{" "}
+                        Due Date:
+                      </strong>
                       {new Date(assignment.DueDate).toLocaleDateString()}
                     </p>
                     {assignment.AssignmentFile && (
                       <p className="mb-1">
-                        <strong>📎 File:</strong>{" "}
+                        <strong className="p-2">
+                          <FaFile
+                            className="me-1"
+                            style={{ color: "#f9a602", fontSize: "16px" }}
+                          />
+                          File:
+                        </strong>
                         <a
                           href={`/uploads/${assignment.AssignmentFile}`}
                           target="_blank"
@@ -105,7 +124,13 @@ const CourseAssignments = () => {
                     )}
                     {assignment.AssignmentLink && (
                       <p className="mb-1">
-                        <strong>🔗 Link:</strong>{" "}
+                        <strong className="p-2">
+                          <FaLink
+                            className="me-1"
+                            style={{ color: "#0078d7", fontSize: "16px" }}
+                          />{" "}
+                          Link:
+                        </strong>
                         <a
                           href={assignment.AssignmentLink}
                           target="_blank"

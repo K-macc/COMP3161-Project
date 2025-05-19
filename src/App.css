@@ -17,7 +17,7 @@ body, .user-container {
 
 .fade-alert, .alert {
   font-family: 'Inter', sans-serif;
-  font-size: 14px;
+  font-size: 16px;
 }
 
 
@@ -144,6 +144,16 @@ h2 {
   0% { opacity: 1; }
   80% { opacity: 1; }
   100% { opacity: 0; }
+}
+
+.custom-hover:hover {
+  background-color: #004080 !important; /* darker shade of Bootstrap 'primary' */
+  border-color: #003366 !important;
+}
+
+.custom-hover-danger:hover {
+  background-color: #a30000 !important; /* darker red */
+  border-color: #8b0000 !important;
 }
 
 

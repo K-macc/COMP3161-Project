@@ -52,30 +52,32 @@ const AssignmentSubmissions = () => {
         </Button>
       </div>
       <div className="container mt-4">
-        <Card className="shadow-sm">
+        <Card className="shadow-sm border-0 mb-5 bg-transparent">
           <Card.Header className="bg-primary text-white">
-            <h4 className="mb-0"><FaFileUpload/> Assignment Submissions</h4>
+            <h4 className="mb-0">
+              <FaFileUpload /> Assignment Submissions
+            </h4>
           </Card.Header>
-          <Card.Body className="bg-light">
+          <Card.Body className="bg-light bg-transparent">
             {loading ? (
               <div className="text-center">
-                <Spinner animation="border" />
+                <Spinner animation="border" variant="light"/>
               </div>
             ) : error ? (
               <p className="text-danger text-center">Error: {error}</p>
             ) : submissions.length === 0 ? (
               <Alert variant="info" className="text-center">
-                <FaInfoCircle/> No submissions found.
+                <FaInfoCircle /> No submissions found.
               </Alert>
             ) : (
               <Table bordered hover responsive>
                 <thead>
                   <tr>
-                    <th>Student</th>
-                    <th>Submission File</th>
-                    <th>Submission Link</th>
-                    <th>Submitted At</th>
-                    <th>Action</th>
+                    <th className="text-center">Student</th>
+                    <th className="text-center">Submission File</th>
+                    <th className="text-center">Submission Link</th>
+                    <th className="text-center">Submitted At</th>
+                    <th className="text-center">Action</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -108,10 +110,20 @@ const AssignmentSubmissions = () => {
                           "N/A"
                         )}
                       </td>
-                      <td>{new Date(sub.SubmissionDate).toLocaleString()}</td>
+                      <td>
+                        {new Date(sub.SubmissionDate).toLocaleString("en-GB", {
+                          day: "2-digit",
+                          month: "2-digit",
+                          year: "numeric",
+                          hour: "numeric",
+                          minute: "2-digit",
+                          hour12: true,
+                        })}
+                      </td>
                       <td>
                         <Link
                           to={`/grade-assignment/${assignmentId}/${sub.StudentID}`}
+                          className="d-flex justify-content-center"
                         >
                           <Button variant="success" size="sm">
                             Grade

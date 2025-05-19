@@ -26,7 +26,7 @@ const Dashboard = () => {
               <h4>
                 Hello,{" "}
                 <strong>
-                  {payload.name.split(" ")[0] || "User"}{" "}
+                  {payload.name.split(" ")[0] || "User"}
                   <span className="wave">👋</span>
                 </strong>
               </h4>
@@ -36,7 +36,7 @@ const Dashboard = () => {
               </p>
               <p>
                 <FaUserShield className="me-2" />
-                <strong>Role:</strong>{" "}
+                <strong>Role: </strong>
                 <Badge bg="success" className="text-uppercase">
                   {payload.role}
                 </Badge>

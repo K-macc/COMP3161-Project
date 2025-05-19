@@ -32,7 +32,7 @@ function FinalAverage() {
 
   return (
     <Container className="mt-5 d-flex justify-content-center">
-      <Card className="shadow p-4" style={{ maxWidth: "500px", width: "100%" }}>
+      <Card className="shadow p-4 border-0" style={{ maxWidth: "500px", width: "100%" }}>
         <Card.Body className="text-center">
           <Card.Title className="mb-4 text-primary fs-3 fw-bold">
             <FaCalculator/> Final Average
@@ -41,13 +41,13 @@ function FinalAverage() {
           <h5 className="mb-3 text-muted">Student ID: {studentId}</h5>
 
           {loading ? (
-            <Spinner animation="border" variant="primary" />
+            <Spinner animation="border" variant="light" />
           ) : message ? (
             <Alert variant="danger">{message}</Alert>
           ) : finalAverage !== null ? (
             <Alert variant="success">
-              Your final average for all courses is:{" "}
-              <strong>{finalAverage}%</strong>
+              Your final average for all courses is:
+              <strong> {finalAverage}%</strong>
             </Alert>
           ) : (
             <Alert variant="info">No grades found for this student.</Alert>

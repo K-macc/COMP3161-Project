@@ -44,13 +44,13 @@ const CourseMembers = () => {
           Back
         </Button>
       </div>
-      <div className="container mt-4">
+      <div className="container mt-4 mb-5">
         <h2>Course Members</h2>
 
         {error && <Alert variant="danger">{error}</Alert>}
 
         {members && members.length > 0 ? (
-          <Row xs={1} sm={2} md={3} lg={4} className="g-4">
+          <Row xs={1} sm={2} md={3} lg={5} className="g-4">
             {members.map((member) => (
               <Col key={member.StudentID}>
                 <Card className="h-100 shadow-sm">
@@ -89,7 +89,7 @@ const CourseMembers = () => {
 
         {loading && (
           <div className="spinner-container">
-            <Spinner animation="border" variant="primary" className="spinner" />
+            <Spinner animation="border" variant="light" className="spinner" />
           </div>
         )}
       </div>

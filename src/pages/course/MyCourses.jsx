@@ -58,16 +58,16 @@ const MyCourses = () => {
       {error && <Alert variant="warning">{error}</Alert>}
 
       {courses && courses.length > 0 ? (
-        <Row xs={1} sm={2} md={3} lg={4} className="g-4">
+        <Row xs={1} sm={2} md={3} lg={3} className="g-4">
           {courses.map((course) => (
-            <Col key={course.CourseID}>
-              <Card className="h-100 shadow rounded-4 bg-light card-info">
+            <Col key={course.CourseID} className="d-flex">
+              <Card className="h-100 shadow rounded-4 bg-light card-info w-100" >
                 <Card.Body className="d-flex flex-column justify-content-between p-4">
                   <div>
-                    <Card.Title className="mb-3 text-primary fs-4 fw-bold">
+                    <Card.Title className="mb-3 text-primary fs-3 fw-bold">
                       {course.CourseName}
                     </Card.Title>
-                    <Card.Text className="text-muted mb-4">
+                    <Card.Text className="text-muted mb-4 fs-6">
                       <i className="bi bi-hash text-secondary me-2"></i>
                       <strong>Course ID:</strong> {course.CourseID}
                     </Card.Text>
