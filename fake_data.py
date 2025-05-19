@@ -1,10 +1,7 @@
 import random
 import faker
 from tzlocal import get_localzone 
-import pytz
 import datetime
-import time
-
 
 # Initialize Faker
 fake = faker.Faker()
@@ -12,7 +9,6 @@ fake = faker.Faker()
 local_tz = get_localzone()
 
 naive_dt = fake.date_time_between(start_date="-1y", end_date="now")
-
 
 now = datetime.datetime.now()
 two_months_later = now + datetime.timedelta(days=60)
@@ -624,7 +620,6 @@ try:
                 events_today = random.randint(1, 4)
 
                 for _ in range(events_today):
-                    # Create naive datetime with a random time
                     random_time = datetime.time(
                         hour=random.randint(8, 18), minute=random.choice([0, 15, 30, 45])
                     )
